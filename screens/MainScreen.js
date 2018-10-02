@@ -15,7 +15,7 @@ export default class MainScreen extends React.Component {
     super(props);
     this.state = {
       zoom: 10,
-      action: 2,
+      action: 3,
     };
   }
 
@@ -72,8 +72,8 @@ const styles = StyleSheet.create({
     // borderWidth: 1,
   },
   containerGraphics: {
-    width: '100%',
-    height: '75%',
+    width: 600,
+    height: 450,
     padding: 10,
   },
   text: {

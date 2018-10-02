@@ -28,24 +28,48 @@ export default class Scene extends React.Component {
   }
 
   onClick = (event) => {
+    const touchX = event.locationX;
+    const touchY = event.locationY;
+
+    const mouseX = ( touchX/this.state.viewWidth ) * 2 - 1;
+    const mouseY = - ( touchY/this.state.viewWidth ) * 2 + 1;
+
+    const x = (Math.floor((touchX/this.state.viewWidth) * this.xMax)*this.r) + (this.r*0.5);
+    const y = (Math.floor(((this.state.viewHeight-touchY)/this.state.viewHeight) * this.yMax)*this.r) + (this.r*0.5);
+
+    this.setState({
+      mouse2D: new THREE.Vector3(touchX, touchY, 0.00001),
+      mouse3D: new THREE.Vector3(x, y, 0.00001),
+    });
 
     switch(this.props.action) {
       case ActionsEnum.STEPOUT:
         this.setState({
           zoom: this.state.zoom-1,
         });
+        break;
       case ActionsEnum.STEPIN:
         this.setState({
           zoom: this.state.zoom-1,
         });
+        break;
       case ActionsEnum.ADDCUBE:
-        const x = event.locationX;
-        const y = event.locationY;
         this.drawCube({x:x, y:y, z:0});
+        break;
       case ActionsEnum.REMVCUBE:
-        this.setState({
-          zoom: this.state.zoom-1,
-        });
+        //const raycaster = new THREE.Raycaster(new THREE.Vector3(x, y, 100), new THREE.Vector3(0, 0, -1));
+        // const raycaster = new THREE.Raycaster();
+        // raycaster.setFromCamera( new THREE.Vector3(mouseX, mouseY, 0.000001), this.camera );
+        // var intersects = raycaster.intersectObjects( this.scene.children );
+        // if ( intersects.length > 0 ) {
+        //   if ( ROLLOVERED ) ROLLOVERED.color.setHex( 0x00ff80 );
+        //   ROLLOVERED = intersects[ 0 ].face;
+        //   ROLLOVERED.color.setHex( 0xff8000 );
+        // }
+        // this.setState({
+        //   intersects: intersects,
+        // });
+        break;
     }
   }
 
@@ -98,22 +122,28 @@ export default class Scene extends React.Component {
     this.scene = new THREE.Scene();
     this.scene.background = new THREE.Color( 0x222222 );
 
-    this.camera = new THREE.OrthographicCamera( width / - 2, width / 2, height / 2, height / - 2, 1, 1000 );
+    this.r = 10; // resolution
+    this.xMin = 0; // resolution
+    this.xMax = 15; // resolution
+    this.yMin = 0; // resolution
+    this.yMax = 10; // resolution
+    const r = this.r;
+    const xMin = this.xMin;
+    const xMax = this.xMax;
+    const yMin = this.yMin;
+    const yMax = this.yMax;
+
+    this.camera = new THREE.OrthographicCamera( xMin*r, xMax*r, yMax*r, yMin*r, 1, 1000 );
     this.camera.position.x = 0;
     this.camera.position.y = 0;
-    this.camera.position.z = 100;
-    this.camera.zoom = 5;
-
-    // this.mouse2D = new THREE.Vector3( 0, 10000, 0.5 );
-    // this.mouse3D = null;
-    // this.ray = new THREE.Ray( this.camera.position, null );
+    this.camera.position.z = 1;
+    this.camera.zoom = 1;
 
     // grid
-    var gridSize = 200;
-    var gridSquareSize = 20;
-    var gridHelper = new THREE.GridHelper( gridSize*gridSquareSize, gridSize );
-    gridHelper.rotation.x = Math.PI/2;
-    this.scene.add( gridHelper );
+    // var gridSize = 200;
+    // var gridHelper = new THREE.GridHelper( gridSize*r, gridSize );
+    // gridHelper.rotation.x = Math.PI/2;
+    // this.scene.add( gridHelper );
 
     this.drawTopography();
     this.drawCubes();
@@ -140,13 +170,13 @@ export default class Scene extends React.Component {
   };
 
   drawCubes = () => {
-    this.drawCube({x:-10, y:10, z:0});
-    this.drawCube({x:-10, y:30, z:0});
-    this.drawCube({x:10, y:10, z:0});
+    this.drawCube({x:this.r*0.5, y:this.r*0.5, z:0});
+    this.drawCube({x:this.r*0.5, y:this.r*1.5, z:0});
+    this.drawCube({x:this.r*1.5, y:this.r*1.5, z:0});
   };
 
   drawCube = (position) => {
-    const geometry = new THREE.BoxGeometry( 20, 20, 20 );
+    const geometry = new THREE.BoxGeometry( this.r, this.r, this.r );
     const wireframe = new THREE.EdgesGeometry( geometry );
     const material = new THREE.LineBasicMaterial( { color: 0xffffff, linewidth: 1 } );
     const line = new THREE.LineSegments( wireframe, material );
