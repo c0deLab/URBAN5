@@ -2,18 +2,23 @@ import React from 'react';
 import {
   Text,
   View,
+  Button,
 } from 'react-native';
-import TextURBAN from './simple/TextURBAN';
+import ButtonURBAN from './simple/ButtonURBAN';
 
 export default class Menu extends React.Component {
+  constructor(props) {
+    super(props);
+  }
 
   render() {
-    const buttons = ['LGHTBTNS', 'STEP OUT', 'STEP  IN', 'STORPERM', 'STORTEMP', 'RETRIEVE', 'ADD NAME'];
     var buttonElements = [];
 
-    buttons.forEach((label) => {
-      buttonElements.push(<TextURBAN key={label}>{label}</TextURBAN>);
-    });
+    if (this.props.buttons) {
+      this.props.buttons.forEach((button, index) => {
+        buttonElements.push(<ButtonURBAN key={index} button={button} onClick={this.props.onClick} />);
+      });
+    }
 
     return (
       <View>

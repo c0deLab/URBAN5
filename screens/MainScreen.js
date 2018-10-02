@@ -7,10 +7,27 @@ import {
 import Scene from '../components/Scene';
 import Menu from '../components/Menu';
 import Conversation from '../components/Conversation';
+import ButtonsEnum from '../js/ButtonsEnum';
 
 export default class MainScreen extends React.Component {
 
+  constructor(props) {
+    super(props);
+    this.state = {
+      zoom: 10,
+      action: 2,
+    };
+  }
+
+  onMenuClick = (button) => {
+    this.setState({
+      action: button.action,
+    });
+  }
+
   render() {
+    const buttons = [ButtonsEnum.STEPOUT, ButtonsEnum.STEPIN, ButtonsEnum.ADDCUBE, ButtonsEnum.REMVCUBE];
+
     return (
       <View style={styles.container}>
         <View style={styles.containerLeft}>
@@ -18,12 +35,12 @@ export default class MainScreen extends React.Component {
             <Conversation user={this.props.user} />
           </View>
           <View style={styles.containerGraphics}>
-            <Scene />
+            <Scene action={this.state.action} />
           </View>
         </View>
         <View style={styles.containerRight}>
           <View style={styles.containerMenu}>
-            <Menu />
+            <Menu buttons={buttons} onClick={this.onMenuClick} />
           </View>
         </View>
       </View>
@@ -40,10 +57,10 @@ const styles = StyleSheet.create({
   },
   containerLeft: {
     flexDirection: 'column',
-    width: '75%',
+    width: '86%',
   },
   containerRight: {
-    width: '25%',
+    width: '14%',
   },
   containerMenu: {
     padding: 10,
@@ -51,6 +68,8 @@ const styles = StyleSheet.create({
   containerConversation: {
     padding: 10,
     height: '25%',
+    // borderColor: '#ff0000',
+    // borderWidth: 1,
   },
   containerGraphics: {
     width: '100%',

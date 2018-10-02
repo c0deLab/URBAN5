@@ -5,13 +5,25 @@ import { StyleSheet, Text, View } from 'react-native';
 import MainScreen from './screens/MainScreen';
 import StartScreen from './screens/StartScreen';
 import { AppLoading, Font } from 'expo';
+import { StatusBar } from 'react-native';
 
 export default class App extends React.Component {
   state = {
     isLoadingComplete: false,
-    isStart: true,
-    user: {},
+    isStart: false,
+    user: {
+      isNewUser: false,
+      name: 'Erik',
+    },
   };
+
+  componentDidMount() {
+    StatusBar.setHidden(true);
+  }
+
+  componentWillUnmount() {
+    StatusBar.setHidden(false);
+  }
 
   renderBody() {
     if (this.state.isStart) {
@@ -38,7 +50,9 @@ export default class App extends React.Component {
     } else {
       return (
         <View style={styles.container}>
-          {this.renderBody()}
+          <View style={styles.fixedRatio}>
+            {this.renderBody()}
+          </View>
         </View>
       );
     }
@@ -64,5 +78,12 @@ export default class App extends React.Component {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  fixedRatio: {
+    flex: 1,
+    aspectRatio: 1,
   },
 });

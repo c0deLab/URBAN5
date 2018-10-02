@@ -8,6 +8,7 @@ import {
 import TextURBAN from './simple/TextURBAN';
 
 export default class StartScreen extends React.Component {
+  
   constructor(props) {
     super(props);
     this.state = { text: '_' };

@@ -1,7 +1,7 @@
 {
   "expo": {
     "name": "URBAN5",
-    "description": "This project is really great.",
+    "description": "A modern reconstruction of Nicholas Negroponte's URBAN5 project",
     "slug": "URBAN5",
     "privacy": "public",
     "sdkVersion": "30.0.0",
