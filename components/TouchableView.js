@@ -1,3 +1,5 @@
+// Credit to: https://github.com/expo/expo-three/blob/master/example/components/TouchableView.js
+
 // @flow
 import { PropTypes } from 'prop-types';
 import React from 'react';

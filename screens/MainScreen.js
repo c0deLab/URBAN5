@@ -72,8 +72,8 @@ const styles = StyleSheet.create({
     // borderWidth: 1,
   },
   containerGraphics: {
-    width: 600,
-    height: 450,
+    width: '100%',
+    height: '75%',
     padding: 10,
   },
   text: {

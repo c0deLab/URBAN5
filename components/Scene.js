@@ -7,6 +7,7 @@ import {
   Platform, 
   StyleSheet,
   View,
+  Text,
 } from 'react-native';
 import TouchableView from './TouchableView';
 import ActionsEnum from '../js/ActionsEnum';
@@ -14,12 +15,37 @@ import ActionsEnum from '../js/ActionsEnum';
 export default class Scene extends React.Component {
   constructor(props) {
     super(props);
+
+    this.r = 10; // resolution
+    this.xMin = 0;
+    this.xMax = 14;
+    this.yMin = 0;
+    this.yMax = 9;
+    this.zMin = 0;
+    this.zMax = 9;
+
+    // Create 3D array of cubes
+    const objects = [];
+    let xRow, yRow;
+    for (let i = this.xMin; i <= this.xMax; i++) {
+      xRow = [];
+      for (let j = this.yMin; j <= this.yMax; j++) {
+        yRow = [];
+        for (let k = this.zMin; k <= this.zMax; k++) {
+          yRow.push(null);
+        }
+        xRow.push(yRow);
+      }
+      objects.push(xRow);
+    }
+
     this.state = {
       viewWidth: 0,
       viewHeight: 0,
-      zoom: 5,
-      mouse2D: null,
-      mouse3D: null,
+      x: 0,
+      y: 0,
+      z: 0,
+      objects: objects,
     };
   }
 
@@ -31,46 +57,43 @@ export default class Scene extends React.Component {
     const touchX = event.locationX;
     const touchY = event.locationY;
 
-    const mouseX = ( touchX/this.state.viewWidth ) * 2 - 1;
-    const mouseY = - ( touchY/this.state.viewWidth ) * 2 + 1;
+    const x = (Math.floor((touchX/this.state.viewWidth) * (this.xMax+1)));
+    const y = (Math.floor(((this.state.viewHeight-touchY)/this.state.viewHeight) * (this.yMax+1)));
 
-    const x = (Math.floor((touchX/this.state.viewWidth) * this.xMax)*this.r) + (this.r*0.5);
-    const y = (Math.floor(((this.state.viewHeight-touchY)/this.state.viewHeight) * this.yMax)*this.r) + (this.r*0.5);
-
-    this.setState({
-      mouse2D: new THREE.Vector3(touchX, touchY, 0.00001),
-      mouse3D: new THREE.Vector3(x, y, 0.00001),
-    });
-
+    let z;
     switch(this.props.action) {
       case ActionsEnum.STEPOUT:
+        z = Math.min(this.state.z + 1, this.zMax);
         this.setState({
-          zoom: this.state.zoom-1,
+          z: z,
         });
+        this.camera.position.z = (z+1) * this.r;
+        this.camera.updateProjectionMatrix();
         break;
       case ActionsEnum.STEPIN:
+        z = Math.max(this.state.z - 1, 0);
         this.setState({
-          zoom: this.state.zoom-1,
+          z: z,
         });
+        this.camera.position.z = (z+1) * this.r;
+        this.camera.updateProjectionMatrix();
         break;
       case ActionsEnum.ADDCUBE:
-        this.drawCube({x:x, y:y, z:0});
+        this.drawCube({x:x, y:y, z:this.state.z});
         break;
       case ActionsEnum.REMVCUBE:
-        //const raycaster = new THREE.Raycaster(new THREE.Vector3(x, y, 100), new THREE.Vector3(0, 0, -1));
-        // const raycaster = new THREE.Raycaster();
-        // raycaster.setFromCamera( new THREE.Vector3(mouseX, mouseY, 0.000001), this.camera );
-        // var intersects = raycaster.intersectObjects( this.scene.children );
-        // if ( intersects.length > 0 ) {
-        //   if ( ROLLOVERED ) ROLLOVERED.color.setHex( 0x00ff80 );
-        //   ROLLOVERED = intersects[ 0 ].face;
-        //   ROLLOVERED.color.setHex( 0xff8000 );
-        // }
-        // this.setState({
-        //   intersects: intersects,
-        // });
-        break;
+        if (this.state.objects && this.state.objects.length > x && this.state.objects[x].length > y && this.state.objects[y].length > this.state.z) {
+          const objectSelected = this.state.objects[x][y][this.state.z];
+          if (objectSelected) {
+            this.scene.remove(objectSelected);
+          }
+          break;
+        }
     }
+    this.setState({
+      x: x,
+      y: y,
+    });
   }
 
   onShouldReloadContext = () => {
@@ -90,17 +113,20 @@ export default class Scene extends React.Component {
     // Create an `ExpoGraphics.View` covering the whole screen, tell it to call our
     // `onContextCreate` function once it's initialized.
     return (
-      <TouchableView 
-        onTouchesBegan={this.onClick}
-        style={styles.containerGraphics} 
-        onLayout={this.onLayout}>
-        <GraphicsView 
-          onContextCreate={this.onContextCreate}
-          onRender={this.onRender}
-          onResize={this.onResize}
-          onShouldReloadContext={this.onShouldReloadContext}
-        />
-      </TouchableView>
+      <View>
+        <TouchableView 
+          onTouchesBegan={this.onClick}
+          style={styles.containerGraphics} 
+          onLayout={this.onLayout}>
+          <GraphicsView 
+            onContextCreate={this.onContextCreate}
+            onRender={this.onRender}
+            onResize={this.onResize}
+            onShouldReloadContext={this.onShouldReloadContext}
+          />
+        </TouchableView>
+        <Text style={styles.debugText}>x: {this.state.x}, y: {this.state.y}, z: {this.state.z}</Text>
+      </View>
     );
   }
 
@@ -122,21 +148,10 @@ export default class Scene extends React.Component {
     this.scene = new THREE.Scene();
     this.scene.background = new THREE.Color( 0x222222 );
 
-    this.r = 10; // resolution
-    this.xMin = 0; // resolution
-    this.xMax = 15; // resolution
-    this.yMin = 0; // resolution
-    this.yMax = 10; // resolution
-    const r = this.r;
-    const xMin = this.xMin;
-    const xMax = this.xMax;
-    const yMin = this.yMin;
-    const yMax = this.yMax;
-
-    this.camera = new THREE.OrthographicCamera( xMin*r, xMax*r, yMax*r, yMin*r, 1, 1000 );
+    this.camera = new THREE.OrthographicCamera( this.xMin*this.r, (this.xMax+1)*this.r, (this.yMax+1)*this.r, this.yMin*this.r, 0, this.r );
     this.camera.position.x = 0;
     this.camera.position.y = 0;
-    this.camera.position.z = 1;
+    this.camera.position.z = (this.r*(this.state.z+1));
     this.camera.zoom = 1;
 
     // grid
@@ -147,6 +162,9 @@ export default class Scene extends React.Component {
 
     this.drawTopography();
     this.drawCubes();
+    this.setState({
+      children: this.scene.children,
+    });
   };
 
   onResize = ({ width, height, scale }) => {
@@ -170,27 +188,44 @@ export default class Scene extends React.Component {
   };
 
   drawCubes = () => {
-    this.drawCube({x:this.r*0.5, y:this.r*0.5, z:0});
-    this.drawCube({x:this.r*0.5, y:this.r*1.5, z:0});
-    this.drawCube({x:this.r*1.5, y:this.r*1.5, z:0});
+    this.drawCube({x:0, y:0, z:0});
+    this.drawCube({x:1, y:1, z:1});
+    this.drawCube({x:2, y:2, z:2});
+    this.drawCube({x:3, y:3, z:3});
   };
 
   drawCube = (position) => {
-    const geometry = new THREE.BoxGeometry( this.r, this.r, this.r );
+    const geometry = new THREE.BoxGeometry( this.r, this.r, this.r-0.00001 );
     const wireframe = new THREE.EdgesGeometry( geometry );
     const material = new THREE.LineBasicMaterial( { color: 0xffffff, linewidth: 1 } );
     const line = new THREE.LineSegments( wireframe, material );
-    line.position.x = position.x;
-    line.position.y = position.y;
-    line.position.z = position.z;
+    line.position.x = (position.x+0.5)*this.r;
+    line.position.y = (position.y+0.5)*this.r;
+    line.position.z = (position.z+0.5)*this.r;
     this.scene.add( line );
+    // var material = new THREE.MeshBasicMaterial( {color: 0xffffff} );
+    // var cube = new THREE.Mesh( geometry, material );
+    // cube.position.x = position.x;
+    // cube.position.y = position.y;
+    // cube.position.z = position.z;
+    // this.scene.add( cube );
+    this.state.objects[position.x][position.y][position.z] = line;
+    this.setState({
+      objects: this.state.objects,
+    });
   };
 }
 
 const styles = StyleSheet.create({
   containerGraphics: {
     backgroundColor: '#222222',
-    width: '100%',
-    height: '100%',
+    width: 600,
+    height: 450,
+    // borderWidth: 1,
+    // borderStyle: 'solid',
+    // borderColor: '#ffffff',
+  },
+  debugText: {
+    color: '#ffffff',
   },
 });
