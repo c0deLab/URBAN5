@@ -1,246 +1,210 @@
-import * as THREE from 'three';
+/*
+*
+* DesignRenderer.js
+*
+* Responsible for rendering the design model to the scene and showing the appropriate camera view of it
+*
+* 2D rendering: 
+*
+*/
+
+import { createjs } from '@createjs/easeljs';
 import ObjectsEnum from './ObjectsEnum';
+import ViewsEnum from './ViewsEnum';
 
 export default class DesignRenderer {
 
-  constructor(designModel, resolution, size) {
+  constructor(designModel, stage) {
     this.designModel = designModel;
-    this.r = resolution;
-    this.size = size;
+    this.stage = stage;
+    this.r = 50;
+    this.width = 852;
+    this.height = 852;
+    this.viewSize = 17;
+    this.view = ViewsEnum.SOUTH;
+    this.slice = 0;
+    this.sliceMax = this.designModel.zMax;
 
-    this.camera = new THREE.OrthographicCamera( -1-this.r/2, 1+((this.size-1)*this.r)+this.r/2, 1+((this.size-1)*this.r)+this.r/2, -1-this.r/2, 0, this.r*18 );
-    this.camera.zoom = 1;
-
-    this.scene = new THREE.Scene();
-
-    this.north();
-    this.updateScene();
-
-    window.camera = this.camera;
+    this.south();
   }
 
-  updateScene = () => {
-    while(this.scene.children.length > 0){ 
-      this.scene.remove(this.scene.children[0]); 
+  // Get the model position of a click in the rendered view
+  getPosition = (clickX, clickY) => {
+    let x;
+    let y;
+    let z;
+
+    switch(this.view) {
+      case ViewsEnum.SOUTH:
+        x = Math.floor((clickX - 1)/this.r);
+        y = this.viewSize-1-Math.floor((clickY - 1)/this.r);
+        z = this.slice;
+        break;
+      case ViewsEnum.NORTH:
+        x = this.designModel.xMax-1-Math.floor((clickX - 1)/this.r);
+        y = this.viewSize-1-Math.floor((clickY - 1)/this.r);
+        z = this.sliceMax-1-this.slice;
+        break;
+      case ViewsEnum.WEST:
+        x = this.slice;
+        y = this.viewSize-1-Math.floor((clickY - 1)/this.r);
+        z = Math.floor((clickX - 1)/this.r);
+        break;
+      case ViewsEnum.EAST:
+        x = this.sliceMax-1-this.slice;
+        y = this.viewSize-1-Math.floor((clickY - 1)/this.r);
+        z = this.designModel.xMax-1-Math.floor((clickX - 1)/this.r);
+        break;
+      case ViewsEnum.TOP:
+        x = Math.floor((clickX - 1)/this.r);
+        y = this.sliceMax-1-this.slice;
+        z = this.viewSize-1-Math.floor((clickY - 1)/this.r);
+        break;
+      case ViewsEnum.BOTTOM:
+        x = Math.floor((clickX - 1)/this.r);
+        y = this.slice;
+        z = Math.floor((clickY - 1)/this.r);
+        break;
+      default:
+        throw new Error('view "' + this.view + '" is not recognized!');
     }
-    this.addPointsGridToScene();
-    this.addTopoToScene();
+
+    return {x:x, y:y, z:z};
+  };
+
+  updateStage = () => {
+    this.stage.removeAllChildren();
     this.addObjectsToScene();
+    this.stage.update();
   };
 
   nextSlice = () => {
-    console.log('next slice');
-    switch(this.direction) {
-      case 'NORTH':
-      case 'EAST':
-      case 'TOP':
-        if (this.slice > 0) this.slice--;
-        break;
-      case 'WEST':
-      case 'BOTTOM':
-      case 'SOUTH':
-        if (this.slice < this.size-1) this.slice++;
-        break;
+    if (this.slice < this.sliceMax) {
+      this.slice++;
     }
-    this.updateScene();
+    console.log('next slice: ' + this.slice);
+    this.updateStage();
   };
 
   previousSlice = () => {
-    console.log('previous slice');
-    switch(this.direction) {
-      case 'NORTH':
-      case 'EAST':
-      case 'TOP':
-        if (this.slice < this.size-1) this.slice++;
-        break;
-      case 'WEST':
-      case 'BOTTOM':
-      case 'SOUTH':
-        if (this.slice > 0) this.slice--;
-        break;
+    if (this.slice > 0) {
+      this.slice--;
     }
-    this.updateScene();
+    console.log('previous slice: ' + this.slice);
+    this.updateStage();
   };
 
   north = () => {
     console.log('north');
-    this.direction = 'NORTH';
-    this.slice = this.size-1;
-    this.setDirection({x:0,y:0,z:0}, {x:0,y:0,z:this.size*this.r});
-  };
-
-  west = () => {
-    console.log('west');
-    this.direction = 'WEST';
+    this.view = ViewsEnum.NORTH;
     this.slice = 0;
-    this.setDirection({x:0,y:-Math.PI/2,z:0}, {x:0,y:0,z:0});
-  };
-
-  south = () => {
-    console.log('south');
-    this.direction = 'SOUTH';
-    this.slice = 0;
-    this.setDirection({x:0,y:-Math.PI,z:0}, {x:(this.size-1)*this.r,y:0,z:0});
+    this.sliceMax = this.designModel.zMax;
+    this.updateStage();
   };
 
   east = () => {
     console.log('east');
-    this.direction = 'EAST';
-    this.slice = this.size-1;
-    this.setDirection({x:0,y:Math.PI/2,z:0}, {x:(this.size-1)*this.r,y:0,z:(this.size-1)*this.r});
+    this.view = ViewsEnum.EAST;
+    this.slice = 0;
+    this.sliceMax = this.designModel.xMax;
+    this.updateStage();
+  };
+
+  south = () => {
+    console.log('south');
+    this.view = ViewsEnum.SOUTH;
+    this.slice = 0;
+    this.sliceMax = this.designModel.zMax;
+    this.updateStage();
+  };
+
+  west = () => {
+    console.log('west');
+    this.view = ViewsEnum.WEST;
+    this.slice = 0;
+    this.sliceMax = this.designModel.xMax;
+    this.updateStage();
   };
 
   top = () => {
     console.log('top');
-    this.direction = 'TOP';
-    this.slice = this.designModel.yMax-1;
-    this.setDirection({x:-Math.PI/2,y:0,z:0}, {x:0,y:this.size*this.r,z:(this.size-1)*this.r});
+    this.view = ViewsEnum.TOP;
+    this.slice = 0;
+    this.sliceMax = this.designModel.yMax;
+    this.updateStage();
   };
 
   bottom = () => {
     console.log('bottom');
-    this.direction = 'BOTTOM';
+    this.view = ViewsEnum.BOTTOM;
     this.slice = 0;
-    this.setDirection({x:Math.PI/2,y:0,z:0}, {x:0,y:0,z:0});
+    this.sliceMax = this.designModel.yMax;
+    this.updateStage();
   };
 
   addObjectsToScene = () => {
-    console.log('slice: ' + this.slice);
-    this.designModel.objects.forEach((object, i) => {
-      const position = this.designModel.getPosition(i);
-      let renderType = null;
-      switch(this.direction) {
-        case 'NORTH':
-          if (position.z === this.slice) {
-            renderType = 'IN_SLICE';
-          } else if (position.z < this.slice) {
-            renderType = 'BEHIND';
-          }
-          break;
-        case 'EAST':
-          if (position.x === this.slice) {
-            renderType = 'IN_SLICE';
-          } else if (position.x < this.slice) {
-            renderType = 'BEHIND';
-          }
-          break;
-        case 'SOUTH':
-          if (position.z === this.slice) {
-            renderType = 'IN_SLICE';
-          } else if (position.z > this.slice) {
-            renderType = 'BEHIND';
-          }
-          break;
-        case 'WEST':
-          if (position.x === this.slice) {
-            renderType = 'IN_SLICE';
-          } else if (position.x > this.slice) {
-            renderType = 'BEHIND';
-          }
-          break;
-        case 'TOP':
-          if (position.y === this.slice) {
-            renderType = 'IN_SLICE';
-          } else if (position.y < this.slice) {
-            renderType = 'BEHIND';
-          }
-          break;
-        case 'BOTTOM':
-          if (position.y === this.slice) {
-            renderType = 'IN_SLICE';
-          } else if (position.y > this.slice) {
-            renderType = 'BEHIND';
-          }
-          break;
-        default:
-          break;
-      }
+    const backgroundSlice = this.designModel.getBackgroundSlice(this.view, this.slice);
+    //console.table(backgroundSlice);
+    this.addSlice(backgroundSlice, true);
 
-      switch(object) {
-        case ObjectsEnum.CUBE:
-          this.addCubeToScene(position, renderType);
-          break;
-        case ObjectsEnum.TREE:
-          //
-          break;
-        default:
-          // do nothing
-      }
-    });
+    const currentSlice = this.designModel.getSlice(this.view, this.slice);
+    //console.table(currentSlice);
+    this.addSlice(currentSlice);
   };
 
-  addCubeToScene = (position, renderType) => {
-    if (renderType) {
-      const geometry = new THREE.PlaneGeometry( this.r, this.r, 1 );
-      const wireframe = new THREE.EdgesGeometry( geometry );
-      let material;
-      if (renderType === 'IN_SLICE') {
-        material = new THREE.LineBasicMaterial( { color: 0xffffff } );
-      } else {
-        console.log('dash');
-        material = new THREE.LineDashedMaterial( { color: 0xffffff, dashSize: 8, gapSize: 8 } );
-      }
-      
-      const line = new THREE.LineSegments( wireframe, material );
+  addSlice = (slice, isDashed = false) => {
+    for (let x = 0; x < slice.length; x++) {
+      const row = slice[x];
+      for (let y = 0; y < row.length; y++) {
+        const cell = row[y];
 
-      switch(this.direction) {
-        case 'NORTH':
-        case 'SOUTH':
-          break;
-        case 'WEST':
-        case 'EAST':
-          line.rotation.y = Math.PI/2;
-        case 'TOP':
-        case 'BOTTOM':
-          line.rotation.x = Math.PI/2;
-          break;
-      }
+        // draw object
+        switch(cell) {
+          case ObjectsEnum.CUBE:
+            this.addCube(x, y, isDashed);
+            break;
+          case ObjectsEnum.TRUNK:
+            this.addTrunk(x, y);
+            break;
+          case ObjectsEnum.FOLIAGE:
+            this.addFoliage(x, y);
+            break;
+          default:
+            // Draw nothing
+            break;
+        }
 
-      line.computeLineDistances();
-      line.position.x = position.x*this.r;
-      line.position.y = position.y*this.r;
-      line.position.z = position.z*this.r;
-      this.scene.add( line );
+        // draw center point
+        const point = new createjs.Shape();
+        point.graphics.beginStroke('#ffffff').setStrokeStyle(2).drawRect(((x+0.5)*this.r), this.height-((y+0.5)*this.r), 2, -2);
+        this.stage.addChild(point);
+      }
     }
   };
 
-  addPointsGridToScene = () => {
-    var material = new THREE.PointsMaterial( { color: 0xffffff } );
-    material.size = 3;
-    var geometry = new THREE.Geometry();
-    const xMax = this.designModel.xMax;
-    const yMax = this.designModel.yMax;
-    const zMax = this.designModel.zMax;
+  addCube = (x, y, isDashed = false) => {
+    const shape = new createjs.Shape();
 
-    for (let x = 0; x < xMax; x++) {
-      for (let y = 0; y < yMax; y++) {
-        for (let z = 0; z < zMax; z++) {
-          geometry.vertices.push(new THREE.Vector3( x*this.r, y*this.r, z*this.r) );
-        } 
-      }
+    if (isDashed) {
+      shape.graphics.setStrokeDash([3, 7], 0);
     }
 
-    var points = new THREE.Points( geometry, material );
-    this.scene.add( points );
+    shape.graphics.beginStroke('#ffffff').setStrokeStyle(3).drawRect((x*this.r)+1, this.height-(y*this.r)-1, this.r, -this.r);
+    this.stage.addChild(shape);
   };
 
-  addTopoToScene = () => {
-    var material = new THREE.LineBasicMaterial( { color: 0xffffff } );
-    var geometry = new THREE.Geometry();
-    geometry.vertices.push(new THREE.Vector3( -this.r/2, -this.r/2, this.r*16.5) );
-    geometry.vertices.push(new THREE.Vector3( this.r*17.5, -this.r/2, this.r*16.5) );
-    var line = new THREE.Line( geometry, material );
-    this.scene.add( line );
+  addTrunk = (x, y) => {
+    const trunk = new createjs.Shape();
+    trunk.graphics.beginStroke('#ffffff').setStrokeStyle(3).drawRect(((x+0.5)*this.r)+1, this.height-(y*this.r)-1, 2, -this.r);
+    
+    this.stage.addChild(trunk);
   };
 
-  setDirection = (rotation, position) => {
-    this.camera.position.x = position.x;
-    this.camera.position.y = position.y;
-    this.camera.position.z = position.z;
-    this.camera.rotation.x = rotation.x;
-    this.camera.rotation.y = rotation.y;
-    this.camera.rotation.z = rotation.z;
-    this.updateScene();
+  addFoliage = (x, y) => {
+    const foliage = new createjs.Shape();
+    foliage.graphics.beginStroke('#ffffff').setStrokeStyle(3).drawCircle(((x+0.5)*this.r)+1, this.height-((y+0.45)*this.r)-1, this.r*0.40);
+    
+    this.stage.addChild(foliage);
   };
   
 }

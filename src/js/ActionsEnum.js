@@ -1,4 +1,4 @@
-var ActionsEnum = {
+const ActionsEnum = {
   STEPOUT: 0,
   STEPIN: 1,
   ADDCUBE: 2,

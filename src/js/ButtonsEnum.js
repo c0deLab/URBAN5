@@ -1,6 +1,6 @@
 import ActionsEnum from '../js/ActionsEnum';
 
-var ButtonsEnum = {
+const ButtonsEnum = {
   STEPOUT: {label: 'STEP OUT', action: ActionsEnum.STEPOUT },
   STEPIN: {label: 'STEP  IN', action: ActionsEnum.STEPIN },
   ADDCUBE: {label: 'ADD CUBE', action: ActionsEnum.ADDCUBE },

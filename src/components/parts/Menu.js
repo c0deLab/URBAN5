@@ -7,7 +7,7 @@ export default class Menu extends React.Component {
 
     if (this.props.buttons) {
       this.props.buttons.forEach((button, index) => {
-        buttonElements.push((<a 
+        buttonElements.push((<button 
             key={index} 
             button={button} 
             onClick={(e) => {
@@ -15,7 +15,7 @@ export default class Menu extends React.Component {
               this.props.onClick(button);
             }}
             style={{display: 'block'}}
-          >{button.label}</a>));
+          >{button.label}</button>));
       });
     }
 

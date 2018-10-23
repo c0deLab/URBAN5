@@ -7,6 +7,8 @@
   "rules": {
     "comma-dangle": [2, "never"],
     "arrow-parens": [2, "as-needed"],
-    "indent": ["error", "2"]
+    "indent": ["error", "2"],
+    "space-in-parens": ["error", "never"],
+    "no-var": "error",
   }
 }

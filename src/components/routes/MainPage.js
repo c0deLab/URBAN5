@@ -25,7 +25,7 @@ export default class MainPage extends React.Component {
           <div style={{width: '864px', height: '160px'}}>
             <Conversation user={this.props.user} />
           </div>
-          <div style={{width: '850px', height: '850px', padding: '7px'}}>
+          <div style={{width: '852px', height: '852px', padding: '5px'}}>
             <DesignViewer action={this.state.action} />
           </div>
         </div>
