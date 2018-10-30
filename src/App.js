@@ -11,9 +11,10 @@ export default class App extends Component {
   };
 
   render() {
+    const { user } = this.state;
     return (
       <div className="app">
-        <MainPage user={this.state.user} />
+        <MainPage user={user} />
       </div>
     );
   }

@@ -1,11 +1,16 @@
 import React from 'react';
+import PropTypes from 'prop-types';
+import { createjs } from '@createjs/easeljs';
+
 import DesignModel from '../../js/DesignModel';
 import DesignRenderer from '../../js/DesignRenderer';
-import { createjs } from '@createjs/easeljs';
 import ActionsEnum from '../../js/ActionsEnum';
 import ObjectsEnum from '../../js/ObjectsEnum';
 
 export default class DesignViewer extends React.Component {
+  propTypes = {
+    action: PropTypes.number.isRequired
+  }
 
   componentDidMount() {
     const container = document.getElementById('canvas');
@@ -14,7 +19,8 @@ export default class DesignViewer extends React.Component {
     // Add class to recieve inputs and update and store model
     this.designModel = new DesignModel(17, 7, 17);
 
-    // Add class to create new scene or update scene as user makes changes (also responsible for line vs. dotted line rendering)
+    // Add class to create new scene or update scene as user makes changes
+    // (also responsible for line vs. dotted line rendering)
     this.designRenderer = new DesignRenderer(this.designModel, stage);
 
     document.addEventListener('keydown', this.handleKeyDown);
@@ -25,15 +31,10 @@ export default class DesignViewer extends React.Component {
     document.removeEventListener('keydown', this.handleKeyDown);
   }
 
-  render() {
-    return (
-      <canvas id="canvas" width={852} height={852}></canvas>
-    );
-  }
-
-  handleKeyDown = (event) => {
+  handleKeyDown = event => {
     console.log(event.keyCode);
-    switch(event.keyCode) {
+
+    switch (event.keyCode) {
       case 87: // w
         this.designRenderer.north();
         break;
@@ -58,18 +59,19 @@ export default class DesignViewer extends React.Component {
       case 40: // down
         this.designRenderer.previousSlice();
         break;
-      default: 
+      default:
         break;
     }
   }
 
-  handleClick = (event) => {
-    let clickX = event.offsetX;
-    let clickY = event.offsetY;
+  handleClick = event => {
+    const clickX = event.offsetX;
+    const clickY = event.offsetY;
 
     const modelPosition = this.designRenderer.getPosition(clickX, clickY);
 
-    switch(this.props.action) {
+    const { action } = this.props;
+    switch (action) {
       case ActionsEnum.STEPOUT:
         this.designRenderer.previousSlice();
         break;
@@ -77,16 +79,29 @@ export default class DesignViewer extends React.Component {
         this.designRenderer.nextSlice();
         break;
       case ActionsEnum.ADDCUBE:
-        this.designModel.addObject(modelPosition, ObjectsEnum.CUBE);
-        this.designRenderer.updateStage();
+        if (modelPosition) {
+          this.designModel.addObject(modelPosition, ObjectsEnum.CUBE);
+          this.designRenderer.updateStage();
+        }
         break;
       case ActionsEnum.REMVCUBE:
-        this.designModel.addObject(modelPosition);
-        this.designRenderer.updateStage();
+        if (modelPosition) {
+          this.designModel.addObject(modelPosition);
+          this.designRenderer.updateStage();
+        }
         break;
-      default: 
+      case ActionsEnum.ROTATELT:
+        this.designRenderer.rotateLeft();
+        break;
+      default:
         // nothing
         break;
     }
+  }
+
+  render() {
+    return (
+      <canvas id="canvas" width={852} height={852} />
+    );
   }
 }
