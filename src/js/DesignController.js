@@ -125,13 +125,14 @@ export default class DesignController {
   _updateView = () => {
     const backgroundSlice = this.model.getBackgroundSlice(this.camera, this.slice);
     const currentSlice = this.model.getSlice(this.camera, this.slice);
+    const topoSlice = this.model.getTopoSlice(this.camera, this.slice);
 
     // Print currentSlice to console
     // Source: https://stackoverflow.com/questions/17428587/transposing-a-2d-array-in-javascript
     const transpose = m => m[0].map((x, i) => m.map(x => x[i]));
-    console.table(transpose(currentSlice));
+    console.table(transpose(topoSlice));
 
-    this.view.drawCurrentView(this.camera, currentSlice, backgroundSlice);
+    this.view.drawCurrentView(this.camera, topoSlice, currentSlice, backgroundSlice);
   };
 
   /**
@@ -200,5 +201,4 @@ export default class DesignController {
 
     return { x: modelX, y: modelY, z: modelZ };
   };
-
 }

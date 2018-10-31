@@ -92,7 +92,16 @@ export default class DesignModel {
    * @param {int} height - The y value of the topo at the position
    */
   setTopoHeight = (position, height) => {
-    this.topo[position.x][position.z] = height;
+    const i = this._getIndexFromPosition({ x: position.x, y: height, z: position.z });
+    for (let y = height; y >= 0; y -= 1) {
+      const clearIndex = this._getIndexFromPosition({ x: position.x, y: y, z: position.z });
+      this.topo[clearIndex] = null;
+    }
+    this.topo[i] = ObjectsEnum.GROUND;
+  };
+
+  getTopoSlice = (camera, slice) => {
+    return this._getSlice(this.topo, camera, slice);
   };
 
   /**
@@ -101,9 +110,19 @@ export default class DesignModel {
    * @param {int} slice - The current slice being viewed from that camera view
    */
   getSlice = (camera, slice) => {
+    return this._getSlice(this.objects, camera, slice);
+  };
+
+  /**
+   * Returns 2D array of objects in the given slice
+   * @param {int} objects - The 3D model to get a slice of
+   * @param {int} camera - The CamerasEnum camera view
+   * @param {int} slice - The current slice being viewed from that camera view
+   */
+  _getSlice = (objects, camera, slice) => {
     const sliceObjects = this._getEmptySliceArray(camera, slice);
 
-    this.objects.forEach((object, i) => {
+    objects.forEach((object, i) => {
       const position = this._getPosition(i);
 
       switch (camera) {
@@ -157,7 +176,7 @@ export default class DesignModel {
     this.objects.forEach((object, i) => {
       const position = this._getPosition(i);
 
-      if (object === ObjectsEnum.CUBE) {
+      if ([ObjectsEnum.CUBE, ObjectsEnum.ROOFLEFT, ObjectsEnum.ROOFRGHT].includes(object)) {
         switch (camera) {
           case CamerasEnum.SOUTH:
             if (position.z > slice) {
@@ -273,12 +292,15 @@ export default class DesignModel {
     return objects;
   };
 
-  /** Create a flat topography */
+  /** Create a flat topography with ground at the bottom */
   _initTopo = () => {
-    let topo = new Array(this.xMax*this.zMax);
+    const topo = this._initObjects();
 
-    for (let i = 0; i < topo.length; i++) {
-      topo[i] = 0;
+    for (let x = 0; x < this.xMax; x += 1) {
+      for (let z = 0; z < this.zMax; z += 1) {
+        const i = this._getIndexFromPosition({ x, y: 0, z });
+        topo[i] = ObjectsEnum.GROUND;
+      }
     }
 
     return topo;
@@ -308,8 +330,10 @@ export default class DesignModel {
     this.addObject({x:1, y:2, z:1}, ObjectsEnum.CUBE);
     this.addObject({x:0, y:1, z:0}, ObjectsEnum.ROOFLEFT);
     this.addObject({x:1, y:1, z:0}, ObjectsEnum.ROOFRGHT);
-    this.addObject({x:7, y:1, z:0}, ObjectsEnum.ROOFLEFT);
-    this.addObject({x:8, y:1, z:0}, ObjectsEnum.ROOFRGHT);
+    this.addObject({x:6, y:1, z:0}, ObjectsEnum.ROOFLEFT);
+    this.addObject({x:5, y:1, z:0}, ObjectsEnum.ROOFRGHT);
+    this.addObject({x:7, y:1, z:1}, ObjectsEnum.ROOFLEFT);
+    this.addObject({x:8, y:1, z:1}, ObjectsEnum.ROOFRGHT);
     this.addObject({x:3, y:0, z:0}, ObjectsEnum.CUBE);
     this.addObject({x:3, y:1, z:0}, ObjectsEnum.ROOFRGHT);
 
@@ -328,9 +352,12 @@ export default class DesignModel {
     this.addObject({x:7, y:0, z:2}, ObjectsEnum.CUBE);
     this.addObject({x:8, y:0, z:2}, ObjectsEnum.CUBE);
     this.addObject({x:9, y:0, z:2}, ObjectsEnum.CUBE);
-    this.addObject({x:11, y:0, z:0}, ObjectsEnum.TREE);
+    this.addObject({x:11, y:1, z:0}, ObjectsEnum.TREE);
 
     // this.addObject({x:3, y:0, z:0}, ObjectsEnum.TRUNK);
     // this.addObject({x:3, y:1, z:0}, ObjectsEnum.FOLIAGE);
+
+    this.setTopoHeight({x: 12, z: 0}, 1);
+    this.setTopoHeight({x: 11, z: 0}, 1);
   };
 }

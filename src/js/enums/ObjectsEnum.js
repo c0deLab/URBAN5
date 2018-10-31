@@ -5,6 +5,7 @@ const ObjectsEnum = {
   TREE: 3,
   FOLIAGE: 4,
   PERSON: 5,
+  GROUND: 6,
 };
 
 export default ObjectsEnum;
