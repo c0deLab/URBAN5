@@ -1,7 +1,7 @@
 import React from 'react';
 import * as THREE from 'three';
 
-export default class ThreeViewer extends React.Component {
+export default class Three extends React.Component {
   componentDidMount() {
     this.container = document.getElementById('three_viewer');
     this.renderer = new THREE.WebGLRenderer({ antialias: true });

@@ -1,20 +1,24 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
-import DesignViewer from '../parts/DesignViewer';
+import Design from '../parts/Design';
 import Menu from '../parts/Menu';
 import Conversation from '../parts/Conversation';
-import ButtonsEnum from '../../js/ButtonsEnum';
+import ButtonsEnum from '../../js/enums/ButtonsEnum';
+import ActionsEnum from '../../js/enums/ActionsEnum';
 
 export default class MainPage extends React.Component {
-  propTypes = {
+  static propTypes = {
     user: PropTypes.object.isRequired,
-    action: PropTypes.number.isRequired,
   }
 
   state = {
-    action: 2,
+    action: 3,
   };
+
+  componentDidMount() {
+    document.addEventListener('keydown', this.handleKeyDown);
+  }
 
   onMenuClick = button => {
     this.setState({
@@ -22,10 +26,52 @@ export default class MainPage extends React.Component {
     });
   }
 
-  render() {
-    const buttons = [ButtonsEnum.STEPOUT, ButtonsEnum.STEPIN, ButtonsEnum.ADDCUBE, ButtonsEnum.REMVCUBE, ButtonsEnum.ROTATELT];
+  handleKeyDown = event => {
+    console.log(event.keyCode);
 
-    const { user, action } = this.props;
+    let actionCode;
+    switch (event.keyCode) {
+      case 48: // 0
+        actionCode = ActionsEnum.STEPOUT;
+        break;
+      case 49: // 1
+        actionCode = ActionsEnum.STEPIN;
+        break;
+      case 50: // 2
+        actionCode = ActionsEnum.ADDCUBE;
+        break;
+      case 51: // 3
+        actionCode = ActionsEnum.REMOVE;
+        break;
+      case 52: // 4
+        actionCode = ActionsEnum.ROTATELT;
+        break;
+      case 53: // 5
+        actionCode = ActionsEnum.ROTATERT;
+        break;
+      case 54: // 6
+        actionCode = ActionsEnum.ADDTREE;
+        break;
+      case 55: // 7
+        actionCode = ActionsEnum.ADDRFLFT;
+        break;
+      case 56: // 8
+        actionCode = ActionsEnum.ADDRFRGT;
+        break;
+      default:
+        break;
+    }
+
+    this.setState({
+      action: actionCode,
+    });
+  }
+
+  render() {
+    const buttons = [ButtonsEnum.STEPOUT, ButtonsEnum.STEPIN, ButtonsEnum.ADDCUBE, ButtonsEnum.REMOVE, ButtonsEnum.ROTATELT, ButtonsEnum.ROTATERT, ButtonsEnum.ADDTREE, ButtonsEnum.ADDRFLFT, ButtonsEnum.ADDRFRGT];
+
+    const { user } = this.props;
+    const { action } = this.state;
     return (
       <div>
         <div style={{ width: '864px', height: '100%', float: 'left' }}>
@@ -33,7 +79,7 @@ export default class MainPage extends React.Component {
             <Conversation user={user} />
           </div>
           <div style={{ width: '852px', height: '852px', padding: '5px' }}>
-            <DesignViewer action={action} />
+            <Design action={action} />
           </div>
         </div>
         <div style={{ width: '160px', height: '100%', float: 'left' }}>

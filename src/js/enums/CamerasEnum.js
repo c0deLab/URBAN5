@@ -1,4 +1,4 @@
-const ViewsEnum = {
+const CamerasEnum = {
   NORTH: 0,
   EAST: 1,
   SOUTH: 2,
@@ -7,4 +7,4 @@ const ViewsEnum = {
   BOTTOM: 5,
 };
 
-export default ViewsEnum;
+export default CamerasEnum;

@@ -2,7 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 
 export default class Menu extends React.PureComponent {
-  propTypes = {
+  static propTypes = {
     buttons: PropTypes.array.isRequired
   }
 
