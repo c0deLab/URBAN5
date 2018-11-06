@@ -1,18 +1,25 @@
+import Array2D from 'array2d';
 import ObjectsEnum from './enums/ObjectsEnum';
 import CamerasEnum from './enums/CamerasEnum';
+import TopoModel from './TopoModel';
+import { getEmpty2DArray } from './ArrayHelpers';
 
 /**
  * Represents the data of a design world
+ *
+ * The world is similar to Google Sketchup. The standard view "North" (looking North) has x increasing from
+ * left to right, y, starting at 0 and increasing as it moves away from you, and z increasing as it goes up.
+ *
  */
 export default class DesignModel {
-  constructor(xMax, yMax, zMax) {
-    this.xMax = xMax;
-    this.yMax = yMax;
-    this.zMax = zMax;
+  constructor() {
+    this.xMax = 17;
+    this.yMax = 17;
+    this.zMax = 7;
 
     // init empty world
     this.objects = this._initObjects();
-    this.topo = this._initTopo();
+    this.topo = new TopoModel(this.xMax, this.yMax);
 
     // add some things to it to start
     this._populate();
@@ -25,29 +32,31 @@ export default class DesignModel {
    */
   addObject = (position, obj) => {
     console.log(`Add ${obj} at (${position.x}, ${position.y}, ${position.z})`);
-    let i;
+
     switch (obj) {
       case ObjectsEnum.TREE:
         if (position.y < (this.yMax - 1)) {
-          i = this._getIndexFromPosition(position);
-          const { x, z } = position;
-          let { y } = position;
-          y += 1;
-          const foliageIndex = this._getIndexFromPosition({ x, y, z });
+          const { x, y } = position;
+          let { z } = position;
+          z += 1;
+          const foliagePosition = { x, y, z };
           // Check placement spot and placement spot above
-          if (this.objects[i] === null && this.objects[foliageIndex] === null) {
-            this.objects[i] = obj;
-            this.objects[foliageIndex] = ObjectsEnum.FOLIAGE;
+          if (this._getCell(position) === null && this._getCell(foliagePosition) === null) {
+            this._setCell(position, ObjectsEnum.TREE);
+            this._setCell(foliagePosition, ObjectsEnum.FOLIAGE);
+            return true;
           }
         }
-        break;
+        return false;
       default:
-        i = this._getIndexFromPosition(position);
-        if (this.objects[i] === null) {
-          this.objects[i] = obj;
+        if (this._getCell(position) === null) {
+          this._setCell(position, obj);
+          return true;
         }
         break;
     }
+
+    return false;
   };
 
   /**
@@ -56,308 +65,193 @@ export default class DesignModel {
    */
   removeObject = position => {
     console.log(`Remove object at (${position.x}, ${position.y}, ${position.z})`);
-    const i = this._getIndexFromPosition(position);
-    const obj = this.objects[i];
+    const obj = this._getCell(position);
 
     switch (obj) {
       case ObjectsEnum.TREE:
-        if (position.y < (this.yMax - 1)) {
-          const { x, z } = position;
-          let { y } = position;
-          y += 1;
-          const foliageIndex = this._getIndexFromPosition({ x, y, z });
-          this.objects[i] = null;
-          this.objects[foliageIndex] = null;
+        if (position.z < (this.zMax - 1)) {
+          this._setCell(position, null);
+          const { x, y } = position;
+          let { z } = position;
+          z += 1;
+          this._setCell({ x, y, z }, null);
         }
         break;
       case ObjectsEnum.FOLIAGE:
-        if (position.y > 0) {
-          const { x, z } = position;
-          let { y } = position;
-          y -= 1;
-          const treeIndex = this._getIndexFromPosition({ x, y, z });
-          this.objects[i] = null;
-          this.objects[treeIndex] = null;
+        if (position.z > 0) {
+          this._setCell(position, null);
+          const { x, y } = position;
+          let { z } = position;
+          z -= 1;
+          this._setCell({ x, y, z }, null);
         }
         break;
       default:
-        this.objects[i] = null;
+        this._setCell(position, null);
         break;
     }
   };
 
   /**
-   * Set the topography height at a given position
-   * @param {object} position - 2D position in the form {x:x,z:z}
-   * @param {int} height - The y value of the topo at the position
+   * For a given slice, get the highest corners of the current
+   * cube and the cubes in front and back and left and right. Imagine a sheet hung
+   * over stacks of cubes. That is what we represent.
+   * @param {int} camera - The CamerasEnum camera view
+   * @param {int} slice - The current slice being viewed from that camera view
    */
-  setTopoHeight = (position, height) => {
-    const i = this._getIndexFromPosition({ x: position.x, y: height, z: position.z });
-    for (let y = height; y >= 0; y -= 1) {
-      const clearIndex = this._getIndexFromPosition({ x: position.x, y: y, z: position.z });
-      this.topo[clearIndex] = null;
-    }
-    this.topo[i] = ObjectsEnum.GROUND;
-  };
-
-  getTopoSlice = (camera, slice) => {
-    return this._getSlice(this.topo, camera, slice);
-  };
+  getTopoSlice = (camera, slice) => this.topo.getTopoSlice(camera, slice);
 
   /**
    * Returns 2D array of objects in the given slice
    * @param {int} camera - The CamerasEnum camera view
-   * @param {int} slice - The current slice being viewed from that camera view
+   * @param {int} sliceIndex - The current slice being viewed from that camera view
    */
-  getSlice = (camera, slice) => {
-    return this._getSlice(this.objects, camera, slice);
-  };
-
-  /**
-   * Returns 2D array of objects in the given slice
-   * @param {int} objects - The 3D model to get a slice of
-   * @param {int} camera - The CamerasEnum camera view
-   * @param {int} slice - The current slice being viewed from that camera view
-   */
-  _getSlice = (objects, camera, slice) => {
-    const sliceObjects = this._getEmptySliceArray(camera, slice);
-
-    objects.forEach((object, i) => {
-      const position = this._getPosition(i);
-
-      switch (camera) {
-        case CamerasEnum.SOUTH:
-          if (position.z === slice) {
-            sliceObjects[position.x][position.y] = object;
-          }
-          break;
-        case CamerasEnum.NORTH:
-          if (position.z === (this.zMax - 1 - slice)) {
-            sliceObjects[this.xMax - 1 - position.x][position.y] = object;
-          }
-          break;
-        case CamerasEnum.WEST:
-          if (position.x === slice) {
-            sliceObjects[position.z][position.y] = object;
-          }
-          break;
-        case CamerasEnum.EAST:
-          if (position.x === (this.xMax - 1 - slice)) {
-            sliceObjects[this.zMax - 1 - position.z][position.y] = object;
-          }
-          break;
-        case CamerasEnum.BOTTOM:
-          if (position.y === slice) {
-            sliceObjects[position.x][this.zMax - 1 - position.z] = object;
-          }
-          break;
-        case CamerasEnum.TOP:
-          if (position.y === (this.yMax - 1 - slice)) {
-            sliceObjects[position.x][position.z] = object;
-          }
-          break;
-        default:
-          throw new Error(`camera ${camera} is not recognized!`);
-      }
-    });
-
-    return sliceObjects;
-  };
-
-  /**
-   * Returns a union of all the slices behind the current slice from the current
-   * camera view with respect to cubes.
-   * @param {int} camera - The CamerasEnum camera view
-   * @param {int} slice - The current slice being viewed from that camera view
-   */
-  getBackgroundSlice = (camera, slice) => {
-    const sliceObjects = this._getEmptySliceArray(camera, slice);
-
-    this.objects.forEach((object, i) => {
-      const position = this._getPosition(i);
-
-      if ([ObjectsEnum.CUBE, ObjectsEnum.ROOFLEFT, ObjectsEnum.ROOFRGHT].includes(object)) {
-        switch (camera) {
-          case CamerasEnum.SOUTH:
-            if (position.z > slice) {
-              sliceObjects[position.x][position.y] = object;
-            }
-            break;
-          case CamerasEnum.NORTH:
-            if (position.z < (this.zMax - 1 - slice)) {
-              sliceObjects[this.xMax - 1 - position.x][position.y] = object;
-            }
-            break;
-          case CamerasEnum.WEST:
-            if (position.x > slice) {
-              sliceObjects[position.z][position.y] = object;
-            }
-            break;
-          case CamerasEnum.EAST:
-            if (position.x < (this.xMax - 1 - slice)) {
-              sliceObjects[this.zMax - 1 - position.z][position.y] = object;
-            }
-            break;
-          case CamerasEnum.BOTTOM:
-            if (position.y > slice) {
-              sliceObjects[position.x][this.zMax - 1 - position.z] = object;
-            }
-            break;
-          case CamerasEnum.TOP:
-            if (position.y < (this.yMax - 1 - slice)) {
-              sliceObjects[position.x][position.z] = object;
-            }
-            break;
-          default:
-            throw new Error(`camera ${camera} is not recognized!`);
-        }
-      }
-    });
-
-    return sliceObjects;
-  };
-
-  /**
-   * Returns the 3D position in the form {x:x,y:y,z:z} of the index i in a flattened array
-   * @param {int} i - Index in flattened array
-   */
-  _getPosition = i => {
-    const x = Math.floor(i / (this.zMax * this.yMax));
-    const xRemainder = i % (this.zMax * this.yMax);
-    const y = Math.floor(xRemainder / this.zMax);
-    const z = i % this.zMax;
-
-    return { x, y, z };
-  };
-
-  /**
-   * Returns the index in a flattened version of a 3D array
-   * @param {object} position - The 3D position in the form {x:x,y:y,z:z}
-   */
-  _getIndexFromPosition = position => (position.x * this.yMax * this.zMax) + (position.y * this.zMax) + position.z;
-
-  /**
-   * Returns an empty 2D array of the correct size for a slice from a given view
-   * @param {int} camera - The CamerasEnum camera view
-   */
-  _getEmptySliceArray = camera => {
-    let columns;
-    let rows;
-
+  getSlice = (camera, sliceIndex) => {
+    let ySlice;
+    let xSlice;
+    let zSlice;
     switch (camera) {
       case CamerasEnum.NORTH:
+        return this._getYSlice(sliceIndex);
       case CamerasEnum.SOUTH:
-        columns = this.xMax;
-        rows = this.yMax;
+        ySlice = this._getYSlice(sliceIndex);
+        return Array2D.hflip(ySlice);
+      case CamerasEnum.EAST:
+        xSlice = this._getXSlice(sliceIndex);
+        return Array2D.hflip(xSlice);
+      case CamerasEnum.WEST:
+        return this._getXSlice(sliceIndex);
+      case CamerasEnum.BOTTOM:
+        zSlice = this._getZSlice(sliceIndex);
+        return Array2D.vflip(zSlice);
+      case CamerasEnum.TOP:
+        return this._getZSlice(sliceIndex);
+      default:
+        throw new Error(`camera ${camera} is not recognized!`);
+    }
+  };
+
+  getBackgroundSlices = (camera, sliceIndex) => {
+    let backgroundSliceIndex = sliceIndex;
+    let backgroundSliceIndices = [];
+    switch (camera) {
+      case CamerasEnum.NORTH:
+        while (backgroundSliceIndex < (this.yMax - 1)) {
+          backgroundSliceIndex += 1;
+          backgroundSliceIndices.push(backgroundSliceIndex);
+        }
+        break;
+      case CamerasEnum.SOUTH:
+        while (backgroundSliceIndex > 0) {
+          backgroundSliceIndex -= 1;
+          backgroundSliceIndices.push(backgroundSliceIndex);
+        }
+        break;
+      case CamerasEnum.EAST:
+        while (backgroundSliceIndex < (this.xMax - 1)) {
+          backgroundSliceIndex += 1;
+          backgroundSliceIndices.push(backgroundSliceIndex);
+        }
         break;
       case CamerasEnum.WEST:
-      case CamerasEnum.EAST:
-        columns = this.zMax;
-        rows = this.yMax;
+        while (backgroundSliceIndex > 0) {
+          backgroundSliceIndex -= 1;
+          backgroundSliceIndices.push(backgroundSliceIndex);
+        }
+        break;
+      case CamerasEnum.BOTTOM:
+        while (backgroundSliceIndex < (this.zMax - 1)) {
+          backgroundSliceIndex += 1;
+          backgroundSliceIndices.push(backgroundSliceIndex);
+        }
         break;
       case CamerasEnum.TOP:
-      case CamerasEnum.BOTTOM:
-        columns = this.xMax;
-        rows = this.zMax;
+        while (backgroundSliceIndex > 0) {
+          backgroundSliceIndex -= 1;
+          backgroundSliceIndices.push(backgroundSliceIndex);
+        }
         break;
       default:
         throw new Error(`camera ${camera} is not recognized!`);
     }
-
-    const sliceArr = this._getEmpty2DArray(rows, columns);
-    return sliceArr;
+    const backgroundSlices = backgroundSliceIndices.map(i => this.getSlice(camera, i));
+    return backgroundSlices;
   };
 
-  /**
-   * Returns an empty 2D array
-   * @param {int} rows - Number of rows in the array
-   * @param {int} columns - Number of columns in the array
-   */
-  _getEmpty2DArray = (rows, columns) => {
-    const arr = new Array(columns);
-    for (let i = 0; i < columns; i += 1) {
-      arr[i] = new Array(rows);
+  _getZSlice = z => this.objects[z];
+
+  _getXSlice = x => {
+    const slice = getEmpty2DArray(this.zMax, this.yMax);
+    for (let z = 0; z < this.zMax; z += 1) {
+      for (let y = 0; y < this.yMax; y += 1) {
+        slice[z][y] = this.objects[z][y][x];
+      }
     }
-    return arr;
+    return slice;
+  };
+
+  _getYSlice = y => {
+    const slice = getEmpty2DArray(this.zMax, this.xMax);
+    for (let z = 0; z < this.zMax; z += 1) {
+      for (let x = 0; x < this.xMax; x += 1) {
+        slice[z][x] = this.objects[z][y][x];
+      }
+    }
+    return slice;
+  };
+
+  _getCell = position => {
+    const { x, y, z } = position;
+    if (x >= 0 && y >= 0 && z >= 0 && x < this.xMax && y < this.yMax && z < this.zMax) {
+      return this.objects[z][y][x];
+    }
+    return null;
+  };
+
+  _setCell = (position, object) => {
+    const { x, y, z } = position;
+    if (x >= 0 && y >= 0 && z >= 0 && x < this.xMax && y < this.yMax && z < this.zMax) {
+      this.objects[z][y][x] = object;
+    }
   };
 
   /** Create an empty version of the design model */
   _initObjects = () => {
-    const objects = new Array(this.xMax * this.yMax * this.zMax);
+    const objects = new Array(this.zMax);
 
     for (let i = 0; i < objects.length; i += 1) {
-      objects[i] = null;
+      objects[i] = getEmpty2DArray(this.yMax, this.xMax, null);
     }
 
     return objects;
   };
 
-  /** Create a flat topography with ground at the bottom */
-  _initTopo = () => {
-    const topo = this._initObjects();
-
-    for (let x = 0; x < this.xMax; x += 1) {
-      for (let z = 0; z < this.zMax; z += 1) {
-        const i = this._getIndexFromPosition({ x, y: 0, z });
-        topo[i] = ObjectsEnum.GROUND;
-      }
-    }
-
-    return topo;
-  };
-
   /** Populates the design world with some objects */
   _populate = () => {
-    // this.addObject({x:0, y:0, z:0}, ObjectsEnum.CUBE);
-    // this.addObject({x:16, y:0, z:0}, ObjectsEnum.CUBE);
-    // this.addObject({x:0, y:6, z:0}, ObjectsEnum.CUBE);
-    // this.addObject({x:16, y:6, z:0}, ObjectsEnum.CUBE);
-    // this.addObject({x:16, y:6, z:16}, ObjectsEnum.CUBE);
-    // this.addObject({x:0, y:6, z:16}, ObjectsEnum.CUBE);
-    // this.addObject({x:0, y:0, z:16}, ObjectsEnum.CUBE);
-    // this.addObject({x:16, y:0, z:16}, ObjectsEnum.CUBE);
-    // this.addObject({x:2, y:2, z:7}, ObjectsEnum.CUBE);
-    // this.addObject({x:3, y:3, z:5}, ObjectsEnum.CUBE);
 
-    this.addObject({x:0, y:0, z:0}, ObjectsEnum.CUBE);
-    this.addObject({x:1, y:0, z:0}, ObjectsEnum.CUBE);
-    this.addObject({x:2, y:0, z:0}, ObjectsEnum.CUBE);
-    this.addObject({x:2, y:1, z:0}, ObjectsEnum.CUBE);
-    this.addObject({x:1, y:0, z:1}, ObjectsEnum.CUBE);
-    this.addObject({x:2, y:0, z:1}, ObjectsEnum.CUBE);
-    this.addObject({x:1, y:1, z:1}, ObjectsEnum.CUBE);
-    this.addObject({x:2, y:1, z:1}, ObjectsEnum.CUBE);
-    this.addObject({x:1, y:2, z:1}, ObjectsEnum.CUBE);
-    this.addObject({x:0, y:1, z:0}, ObjectsEnum.ROOFLEFT);
-    this.addObject({x:1, y:1, z:0}, ObjectsEnum.ROOFRGHT);
-    this.addObject({x:6, y:1, z:0}, ObjectsEnum.ROOFLEFT);
-    this.addObject({x:5, y:1, z:0}, ObjectsEnum.ROOFRGHT);
-    this.addObject({x:7, y:1, z:1}, ObjectsEnum.ROOFLEFT);
-    this.addObject({x:8, y:1, z:1}, ObjectsEnum.ROOFRGHT);
-    this.addObject({x:3, y:0, z:0}, ObjectsEnum.CUBE);
-    this.addObject({x:3, y:1, z:0}, ObjectsEnum.ROOFRGHT);
+    this.addObject({x:3, y:2, z:0}, ObjectsEnum.CUBE);
+    this.addObject({x:4, y:2, z:0}, ObjectsEnum.CUBE);
 
-    this.addObject({x:5, y:0, z:0}, ObjectsEnum.CUBE);
+    this.addObject({x:8, y:1, z:0}, ObjectsEnum.CUBE);
+    this.addObject({x:9, y:1, z:0}, ObjectsEnum.CUBE);
+    this.addObject({x:8, y:1, z:1}, ObjectsEnum.ROOFLEFT);
+    this.addObject({x:9, y:1, z:1}, ObjectsEnum.ROOFRGHT);
+
+    this.addObject({x:9, y:0, z:0}, ObjectsEnum.CUBE);
+    this.addObject({x:10, y:0, z:0}, ObjectsEnum.CUBE);
+    this.addObject({x:9, y:0, z:1}, ObjectsEnum.ROOFLEFT);
+    this.addObject({x:10, y:0, z:1}, ObjectsEnum.ROOFRGHT);
+
+    this.addObject({x:5, y:0, z:0}, ObjectsEnum.ROOFRGHT);
     this.addObject({x:6, y:0, z:0}, ObjectsEnum.CUBE);
     this.addObject({x:7, y:0, z:0}, ObjectsEnum.CUBE);
-    this.addObject({x:8, y:0, z:0}, ObjectsEnum.CUBE);
-    this.addObject({x:5, y:0, z:1}, ObjectsEnum.CUBE);
-    this.addObject({x:6, y:0, z:1}, ObjectsEnum.CUBE);
-    this.addObject({x:7, y:0, z:1}, ObjectsEnum.CUBE);
-    this.addObject({x:8, y:0, z:1}, ObjectsEnum.CUBE);
-    this.addObject({x:5, y:1, z:1}, ObjectsEnum.CUBE);
-    this.addObject({x:6, y:1, z:1}, ObjectsEnum.CUBE);
-    this.addObject({x:8, y:1, z:1}, ObjectsEnum.CUBE);
-    this.addObject({x:6, y:0, z:2}, ObjectsEnum.CUBE);
-    this.addObject({x:7, y:0, z:2}, ObjectsEnum.CUBE);
-    this.addObject({x:8, y:0, z:2}, ObjectsEnum.CUBE);
-    this.addObject({x:9, y:0, z:2}, ObjectsEnum.CUBE);
-    this.addObject({x:11, y:1, z:0}, ObjectsEnum.TREE);
+    this.addObject({x:6, y:0, z:1}, ObjectsEnum.ROOFRGHT);
+    this.addObject({x:7, y:0, z:1}, ObjectsEnum.ROOFLEFT);
 
-    // this.addObject({x:3, y:0, z:0}, ObjectsEnum.TRUNK);
-    // this.addObject({x:3, y:1, z:0}, ObjectsEnum.FOLIAGE);
+    this.addObject({x:0, y:0, z:3}, ObjectsEnum.CUBE);
+    this.addObject({x:12, y:0, z:5}, ObjectsEnum.CUBE);
 
-    this.setTopoHeight({x: 12, z: 0}, 1);
-    this.setTopoHeight({x: 11, z: 0}, 1);
+    this.topo.setTopoHeight({x: 0, y: 0}, 3);
+    this.topo.setTopoHeight({x: 12, y: 0}, 5);
   };
 }

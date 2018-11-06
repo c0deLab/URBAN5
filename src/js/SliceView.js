@@ -1,25 +1,67 @@
 import { createjs } from '@createjs/easeljs';
 import ObjectsEnum from './enums/ObjectsEnum';
 import CamerasEnum from './enums/CamerasEnum';
+import { getCellContext3x3 } from './ArrayHelpers';
 
 /**
  * Responsible for drawing a 2D slice
  */
 export default class SliceView {
-  constructor(stage, resolution) {
-    this.stage = stage;
-    this.r = resolution;
+  constructor(canvas, model) {
+    this.stage = new createjs.Stage(canvas);
     this.gridSize = 17;
-    this.height = 852;
+    this.height = canvas.height;
+    this.r = (this.height - 2) / this.gridSize;
+    this.model = model;
+    this.color = '#ffffff';
+    this.drawBackground = true;
   }
 
-  /** Add the background and current slice objects to the scene based on the current camera angle and slice */
-  drawCurrentView = (camera, topoSlice, currentSlice, backgroundSlice) => {
+  draw = (camera, sliceIndex) => {
     this.stage.removeAllChildren();
-    this._drawSlice(camera, topoSlice);
-    this._drawSlice(camera, backgroundSlice, true);
+    const topoSlice = this.model.getTopoSlice(camera, sliceIndex);
+    if (topoSlice) {
+      this._drawTopoSlice(topoSlice);
+    }
+
+    if (this.drawBackground) {
+      const backgroundSlices = this.model.getBackgroundSlices(camera, sliceIndex);
+      for (const slice of backgroundSlices) {
+        this._drawSlice(camera, slice, true);
+      //console.table(currentSlice);
+      }
+    }
+
+    const currentSlice = this.model.getSlice(camera, sliceIndex);
     this._drawSlice(camera, currentSlice);
+
+    this._drawGridPoints(currentSlice);
     this.stage.update();
+  };
+
+  clear = () => {
+    this.stage.removeAllChildren();
+    this.stage.update();
+  };
+
+  _drawTopoSlice = topoSlice => {
+    const line = new createjs.Shape();
+    let cornerX = 1;
+    let cornerY;
+    line.graphics.beginStroke(this.color).setStrokeStyle(3);
+
+    for (let i = 0; i < topoSlice.length; i += 1) {
+      const { startHeight, endHeight } = topoSlice[i];
+      cornerY = this.height - 1 - (startHeight * this.r);
+      line.graphics.moveTo(cornerX, cornerY);
+      cornerX += this.r;
+      cornerY = this.height - 1 - (endHeight * this.r);
+      line.graphics.lineTo(cornerX, cornerY);
+    }
+
+    line.graphics.endStroke();
+
+    this.stage.addChild(line);
   };
 
   /**
@@ -29,18 +71,12 @@ export default class SliceView {
    */
   _drawSlice = (camera, slice, isDashed = false) => {
     this.camera = camera;
-    for (let x = 0; x < slice.length; x += 1) {
-      const col = slice[x];
-      for (let y = 0; y < col.length; y += 1) {
-        const cell = col[y];
+    for (let y = 0; y < slice.length; y += 1) {
+      const row = slice[y];
+      for (let x = 0; x < row.length; x += 1) {
+        const cell = row[x];
 
-        const left = (x - 1) >= 0 ? slice[x - 1][y] : null;
-        const top = (y + 1) < col.length ? col[y + 1] : null;
-        const right = (x + 1) < slice.length ? slice[x + 1][y] : null;
-        const bottom = (y - 1) >= 0 ? col[y - 1] : null;
-        const context = [left, top, right, bottom];
-
-        // bug with how roofs are drawn... they should connect down
+        const context = getCellContext3x3(slice, x, y);
 
         // draw object
         switch (cell) {
@@ -59,33 +95,31 @@ export default class SliceView {
           case ObjectsEnum.ROOFRGHT:
             this._drawRoofRight(x, y, isDashed, context);
             break;
-          case ObjectsEnum.GROUND:
-            if (camera !== CamerasEnum.TOP && camera !== CamerasEnum.BOTTOM) {
-              this._drawGround(x, y, isDashed, context);
-            }
-            break;
           default:
             // Draw nothing
             break;
         }
-
-        this._drawGridPoint(x, y);
       }
     }
   };
 
   /**
-   * Draw a point at x, y.
-   * @param {int} x
-   * @param {int} y
+   * Add a slice to the view
+   * @param {int[][]} slice - 2D array representing slice to add
+   * @param {boolean} isDashed - whether the lines should be dashed or not
    */
-  _drawGridPoint = (x, y) => {
-    const point = new createjs.Shape();
-    const contextX = (x + 0.5) * this.r;
-    const contextY = this.height - ((y + 0.5) * this.r);
+  _drawGridPoints = slice => {
+    for (let y = 0; y < slice.length; y += 1) {
+      const row = slice[y];
+      for (let x = 0; x < row.length; x += 1) {
+        const point = new createjs.Shape();
+        const contextX = (x + 0.5) * this.r;
+        const contextY = this.height - ((y + 0.5) * this.r);
 
-    point.graphics.beginStroke('#ffffff').setStrokeStyle(2).drawRect(contextX, contextY, 2, -2);
-    this.stage.addChild(point);
+        point.graphics.beginStroke(this.color).setStrokeStyle(2).drawRect(contextX, contextY, 2, -2);
+        this.stage.addChild(point);
+      }
+    }
   };
 
   /**
@@ -99,21 +133,22 @@ export default class SliceView {
   _drawCube = (x, y, isDashed = false, context) => {
     let drawLeft;
     let drawRight;
-    const drawTop = ![ObjectsEnum.CUBE, ObjectsEnum.ROOFLEFT, ObjectsEnum.ROOFRGHT].includes(context[1]);
-    const drawBottom = ![ObjectsEnum.CUBE, ObjectsEnum.ROOFLEFT, ObjectsEnum.ROOFRGHT].includes(context[3]);
+
+    const {
+      top, left, right, bottom
+    } = context;
+    const drawTop = ![ObjectsEnum.CUBE, ObjectsEnum.ROOFLEFT, ObjectsEnum.ROOFRGHT].includes(top);
+    const drawBottom = ![ObjectsEnum.CUBE, ObjectsEnum.ROOFLEFT, ObjectsEnum.ROOFRGHT].includes(bottom);
 
     switch (this.camera) {
       case CamerasEnum.NORTH:
-        drawLeft = ![ObjectsEnum.CUBE, ObjectsEnum.ROOFRGHT].includes(context[0]);
-        drawRight = ![ObjectsEnum.CUBE, ObjectsEnum.ROOFLEFT].includes(context[2]);
-        break;
       case CamerasEnum.SOUTH:
-        drawLeft = ![ObjectsEnum.CUBE, ObjectsEnum.ROOFLEFT].includes(context[0]);
-        drawRight = ![ObjectsEnum.CUBE, ObjectsEnum.ROOFRGHT].includes(context[2]);
+        drawLeft = ![ObjectsEnum.CUBE, ObjectsEnum.ROOFLEFT].includes(left);
+        drawRight = ![ObjectsEnum.CUBE, ObjectsEnum.ROOFRGHT1].includes(right);
         break;
       default:
-        drawLeft = ![ObjectsEnum.CUBE].includes(context[0]);
-        drawRight = ![ObjectsEnum.CUBE].includes(context[2]);
+        drawLeft = ![ObjectsEnum.CUBE].includes(left);
+        drawRight = ![ObjectsEnum.CUBE].includes(right);
         break;
     }
 
@@ -127,7 +162,7 @@ export default class SliceView {
    */
   _drawTrunk = (x, y) => {
     const trunk = new createjs.Shape();
-    trunk.graphics.beginStroke('#ffffff').setStrokeStyle(3);
+    trunk.graphics.beginStroke(this.color).setStrokeStyle(3);
     let cornerX = ((x + 0.5) * this.r) + 1;
     let cornerY = this.height - (y * this.r) - 1;
 
@@ -160,7 +195,7 @@ export default class SliceView {
    */
   _drawFoliage = (x, y) => {
     const foliage = new createjs.Shape();
-    foliage.graphics.beginStroke('#ffffff').setStrokeStyle(3);
+    foliage.graphics.beginStroke(this.color).setStrokeStyle(3);
     const cornerX = ((x + 0.5) * this.r) + 1;
     const cornerY = this.height - ((y + 0.45) * this.r) - 1;
     foliage.graphics.drawCircle(cornerX, cornerY, this.r * 0.40);
@@ -173,13 +208,17 @@ export default class SliceView {
    * @param {int} x
    * @param {int} y
    */
-  _drawRoofLeft = (x, y, isDashed) => {
+  _drawRoofLeft = (x, y, isDashed, context) => {
+    let withLine;
+    const { left, right } = context;
     switch (this.camera) {
-      case CamerasEnum.SOUTH:
-        this._drawLineSlantLeft(x, y, isDashed);
-        break;
       case CamerasEnum.NORTH:
-        this._drawLineSlantRight(x, y, isDashed);
+        withLine = ![ObjectsEnum.CUBE, ObjectsEnum.ROOFRGHT].includes(right);
+        this._drawLineSlantLeft(x, y, isDashed, withLine);
+        break;
+      case CamerasEnum.SOUTH:
+        withLine = ![ObjectsEnum.CUBE, ObjectsEnum.ROOFRGHT].includes(left);
+        this._drawLineSlantRight(x, y, isDashed, withLine);
         break;
       case CamerasEnum.WEST:
       case CamerasEnum.EAST:
@@ -197,13 +236,17 @@ export default class SliceView {
    * @param {int} x
    * @param {int} y
    */
-  _drawRoofRight = (x, y, isDashed) => {
+  _drawRoofRight = (x, y, isDashed, context) => {
+    let withLine;
+    const { left, right } = context;
     switch (this.camera) {
-      case CamerasEnum.SOUTH:
-        this._drawLineSlantRight(x, y, isDashed);
-        break;
       case CamerasEnum.NORTH:
-        this._drawLineSlantLeft(x, y, isDashed);
+        withLine = ![ObjectsEnum.CUBE, ObjectsEnum.ROOFLEFT].includes(left);
+        this._drawLineSlantRight(x, y, isDashed, withLine);
+        break;
+      case CamerasEnum.SOUTH:
+        withLine = ![ObjectsEnum.CUBE, ObjectsEnum.ROOFLEFT].includes(right);
+        this._drawLineSlantLeft(x, y, isDashed, withLine);
         break;
       case CamerasEnum.WEST:
       case CamerasEnum.EAST:
@@ -228,7 +271,7 @@ export default class SliceView {
    */
   _drawSquare = (x, y, isDashed = false, drawLeft = true, drawTop = true, drawRight = true, drawBottom = true) => {
     const shape = new createjs.Shape();
-    shape.graphics.beginStroke('#ffffff').setStrokeStyle(3);
+    shape.graphics.beginStroke(this.color).setStrokeStyle(3);
 
     const sx = (x * this.r) + 1;
     const dx = this.r;
@@ -260,7 +303,7 @@ export default class SliceView {
    * @param {int} x
    * @param {int} y
    */
-  _drawLineSlantLeft = (x, y, isDashed) => {
+  _drawLineSlantLeft = (x, y, isDashed = false, withLine = false) => {
     const roof = new createjs.Shape();
 
     if (isDashed) {
@@ -269,11 +312,17 @@ export default class SliceView {
 
     let cornerX = (x * this.r) + 1;
     let cornerY = this.height - (y * this.r) - 1;
-    roof.graphics.beginStroke('#ffffff').setStrokeStyle(3);
+    roof.graphics.beginStroke(this.color).setStrokeStyle(3);
     roof.graphics.moveTo(cornerX, cornerY);
     cornerX += this.r;
     cornerY -= this.r;
     roof.graphics.lineTo(cornerX, cornerY);
+
+    if (withLine) {
+      roof.graphics.moveTo(cornerX, cornerY);
+      cornerY += this.r;
+      roof.graphics.lineTo(cornerX, cornerY);
+    }
     roof.graphics.endStroke();
 
     this.stage.addChild(roof);
@@ -284,7 +333,7 @@ export default class SliceView {
    * @param {int} x
    * @param {int} y
    */
-  _drawLineSlantRight = (x, y, isDashed) => {
+  _drawLineSlantRight = (x, y, isDashed = false, withLine = false) => {
     const roof = new createjs.Shape();
 
     if (isDashed) {
@@ -293,36 +342,21 @@ export default class SliceView {
 
     let cornerX = (x * this.r) + 1;
     let cornerY = this.height - ((y + 1) * this.r) - 1;
-    roof.graphics.beginStroke('#ffffff').setStrokeStyle(3);
+    roof.graphics.beginStroke(this.color).setStrokeStyle(3);
     roof.graphics.moveTo(cornerX, cornerY);
     cornerX += this.r;
     cornerY += this.r;
     roof.graphics.lineTo(cornerX, cornerY);
+
+    if (withLine) {
+      cornerX -= this.r;
+      cornerY -= this.r;
+      roof.graphics.moveTo(cornerX, cornerY);
+      cornerY += this.r;
+      roof.graphics.lineTo(cornerX, cornerY);
+    }
     roof.graphics.endStroke();
 
     this.stage.addChild(roof);
-  };
-
-  /**
-   * Draw a line at the top of the square
-   * @param {int} x
-   * @param {int} y
-   */
-  _drawGround = (x, y, isDashed) => {
-    const ground = new createjs.Shape();
-
-    if (isDashed) {
-      ground.graphics.setStrokeDash([3, 8.5], 0);
-    }
-
-    let cornerX = (x * this.r) + 1;
-    let cornerY = this.height - (y * this.r) - 1;
-    ground.graphics.beginStroke('#ffffff').setStrokeStyle(3);
-    ground.graphics.moveTo(cornerX, cornerY);
-    cornerX += this.r;
-    ground.graphics.lineTo(cornerX, cornerY);
-    ground.graphics.endStroke();
-
-    this.stage.addChild(ground);
   };
 }

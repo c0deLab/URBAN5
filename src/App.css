@@ -18,15 +18,14 @@ body{
   background: #000;
   color: #ffffff;
   font-size: 17px;
-  color: #ffffff;
   line-height: 24px;
   text-align: 'left';
   font-family: "Courier New", Courier, monospace;
 }
 
 canvas {
-   width: 100%;
-   height: 100%;
+  background: #000;
+  cursor: pointer;
 }
 
 button {

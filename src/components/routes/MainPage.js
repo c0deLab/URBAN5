@@ -13,7 +13,7 @@ export default class MainPage extends React.Component {
   }
 
   state = {
-    action: 3,
+    action: 2,
   };
 
   componentDidMount() {
@@ -32,25 +32,25 @@ export default class MainPage extends React.Component {
     let actionCode;
     switch (event.keyCode) {
       case 48: // 0
-        actionCode = ActionsEnum.STEPOUT;
-        break;
-      case 49: // 1
-        actionCode = ActionsEnum.STEPIN;
-        break;
-      case 50: // 2
-        actionCode = ActionsEnum.ADDCUBE;
-        break;
-      case 51: // 3
         actionCode = ActionsEnum.REMOVE;
         break;
+      case 49: // 1
+        actionCode = ActionsEnum.ADDCUBE;
+        break;
+      case 50: // 2
+        actionCode = ActionsEnum.ADDTREE;
+        break;
+      case 51: // 3
+        actionCode = ActionsEnum.ADDRFLFT;
+        break;
       case 52: // 4
-        actionCode = ActionsEnum.ROTATELT;
+        actionCode = ActionsEnum.ADDRFRGT;
         break;
       case 53: // 5
-        actionCode = ActionsEnum.ROTATERT;
+        actionCode = ActionsEnum.REMOVE;
         break;
       case 54: // 6
-        actionCode = ActionsEnum.ADDTREE;
+        actionCode = ActionsEnum.ADDCUBE;
         break;
       case 55: // 7
         actionCode = ActionsEnum.ADDRFLFT;
@@ -62,9 +62,11 @@ export default class MainPage extends React.Component {
         break;
     }
 
-    this.setState({
-      action: actionCode,
-    });
+    if (actionCode) {
+      this.setState({
+        action: actionCode,
+      });
+    }
   }
 
   render() {
