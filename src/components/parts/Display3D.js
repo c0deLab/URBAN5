@@ -1,7 +1,14 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 import * as THREE from 'three';
 
-export default class Three extends React.Component {
+export default class Display3D extends React.Component {
+  static propTypes = {
+    action: PropTypes.number,
+    controller: PropTypes.object,
+    model: PropTypes.object
+  }
+
   componentDidMount() {
     this.container = document.getElementById('three_viewer');
     this.renderer = new THREE.WebGLRenderer({ antialias: true });

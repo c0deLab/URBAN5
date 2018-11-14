@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
-export default class Conversation extends React.PureComponent {
+export default class Top extends React.PureComponent {
   static propTypes = {
     user: PropTypes.object.isRequired
   }

@@ -1,43 +1,23 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
-import DesignController from '../../js/DesignController';
 import ActionsEnum from '../../js/enums/ActionsEnum';
 import ObjectsEnum from '../../js/enums/ObjectsEnum';
-import DesignModel from '../../js/DesignModel';
 import SliceView from '../../js/SliceView';
-import DesignTest from './DesignTest';
 
-export default class Design extends React.Component {
+export default class Display2D extends React.Component {
   static propTypes = {
-    action: PropTypes.number.isRequired
+    action: PropTypes.number,
+    controller: PropTypes.object,
+    model: PropTypes.object
   }
 
-  state = {
-    controller: null,
-    model: null
-  };
-
   componentDidMount() {
-    this.width = 852;
-    this.height = 852;
+    this.isWired = false;
+  }
 
-    const model = new DesignModel();
-    const controller = new DesignController(model);
-
-    this.canvas = document.getElementById('canvas');
-    const view = new SliceView(this.canvas, model);
-    controller.addListener(view);
-
-    document.addEventListener('keydown', this.handleKeyDown);
-    this.canvas.addEventListener('click', this.handleClick);
-
-    controller.updateViews();
-
-    this.setState({
-      controller,
-      model
-    });
+  componentDidUpdate() {
+    this.wire();
   }
 
   componentWillUnmount() {
@@ -45,8 +25,32 @@ export default class Design extends React.Component {
     this.canvas.removeEventListener('click', this.handleClick);
   }
 
+  wire = () => {
+    if (this.isWired) {
+      return;
+    }
+
+    this.width = 852;
+    this.height = 852;
+
+    const { model, controller } = this.props;
+    if (!model || !controller) {
+      return;
+    }
+
+    this.canvas = document.getElementById('canvas');
+
+    const view = new SliceView(this.canvas, model);
+    controller.addListener(view);
+
+    document.addEventListener('keydown', this.handleKeyDown);
+    this.canvas.addEventListener('click', this.handleClick);
+
+    controller.updateViews();
+  };
+
   handleKeyDown = event => {
-    const { controller } = this.state;
+    const { controller } = this.props;
 
     switch (event.keyCode) {
       case 87: // w
@@ -79,7 +83,7 @@ export default class Design extends React.Component {
   }
 
   handleClick = event => {
-    const { controller } = this.state;
+    const { controller } = this.props;
     // There is a 1px padding around the edges to not get cut off
     if (event.offsetX === 0 || event.offsetX === 851) {
       return;
@@ -120,12 +124,8 @@ export default class Design extends React.Component {
   }
 
   render() {
-    const { controller, model } = this.state;
     return (
-      <div>
-        <canvas id="canvas" width={852} height={852} />
-        <DesignTest controller={controller} model={model} />
-      </div>
+      <canvas id="canvas" width={852} height={852} />
     );
   }
 }

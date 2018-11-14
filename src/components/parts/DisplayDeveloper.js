@@ -5,10 +5,10 @@ import '../../Test.css';
 import CamerasEnum from '../../js/enums/CamerasEnum';
 import { TestViewCameraSlice, TestViewCamera } from '../../js/TestView';
 
-export default class DesignTest extends React.Component {
+export default class DisplayDeveloper extends React.Component {
   static propTypes = {
-    controller: PropTypes.object.isRequired,
-    model: PropTypes.object.isRequired
+    controller: PropTypes.object,
+    model: PropTypes.object
   }
 
   componentDidMount() {

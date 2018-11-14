@@ -1,9 +1,9 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
-import Design from '../parts/Design';
+import Center from '../parts/Center';
 import Menu from '../parts/Menu';
-import Conversation from '../parts/Conversation';
+import Top from '../parts/Top';
 import ButtonsEnum from '../../js/enums/ButtonsEnum';
 import ActionsEnum from '../../js/enums/ActionsEnum';
 
@@ -70,7 +70,7 @@ export default class MainPage extends React.Component {
   }
 
   render() {
-    const buttons = [ButtonsEnum.STEPOUT, ButtonsEnum.STEPIN, ButtonsEnum.ADDCUBE, ButtonsEnum.REMOVE, ButtonsEnum.ROTATELT, ButtonsEnum.ROTATERT, ButtonsEnum.ADDTREE, ButtonsEnum.ADDRFLFT, ButtonsEnum.ADDRFRGT];
+    const buttons = [ButtonsEnum.ADDCUBE, ButtonsEnum.ADDTREE, ButtonsEnum.ADDRFLFT, ButtonsEnum.ADDRFRGT, ButtonsEnum.REMOVE];
 
     const { user } = this.props;
     const { action } = this.state;
@@ -78,10 +78,10 @@ export default class MainPage extends React.Component {
       <div>
         <div style={{ width: '864px', height: '100%', float: 'left' }}>
           <div style={{ width: '864px', height: '160px' }}>
-            <Conversation user={user} />
+            <Top user={user} />
           </div>
           <div style={{ width: '852px', height: '852px', padding: '5px' }}>
-            <Design action={action} />
+            <Center action={action} />
           </div>
         </div>
         <div style={{ width: '160px', height: '100%', float: 'left' }}>
