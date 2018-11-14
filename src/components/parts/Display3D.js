@@ -218,7 +218,7 @@ export default class Display3D extends React.Component {
     requestAnimationFrame(this.animate);
     this.renderer.render(this.scene, this.camera);
     this.t += 1;
-    if (this.t > 40 && this.currentIndex < this.positions.length - 1) {
+    if (this.t > 20 && this.currentIndex < this.positions.length - 1) {
       this.currentIndex += 1;
       const currentPosition = this.positions[this.currentIndex];
       this.setCameraPosition(currentPosition[0], currentPosition[1]);

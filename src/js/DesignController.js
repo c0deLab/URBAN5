@@ -22,6 +22,8 @@ export default class DesignController {
 
   addListener = view => this.views.push(view);
 
+  removeListener = toRemove => this.views.filter(view => view !== toRemove);
+
   /**
    * Add the object at the normalized position. Remove any object that is there.
    * @param {int} clickX - Normalized x value [0,1]
@@ -29,7 +31,7 @@ export default class DesignController {
    * @param {int} object - ObjectsEnum object
    */
   addObject = (clickX, clickY, object) => {
-    const modelPosition = this._getRelativePosition(clickX, clickY);
+    const modelPosition = this.getRelativePosition(clickX, clickY);
     if (modelPosition) {
       this.model.addObject(modelPosition, object);
       this.updateViews();
@@ -42,7 +44,7 @@ export default class DesignController {
    * @param {int} clickY - Normalized y value [0,1]
    */
   removeObject = (clickX, clickY) => {
-    const modelPosition = this._getRelativePosition(clickX, clickY);
+    const modelPosition = this.getRelativePosition(clickX, clickY);
     if (modelPosition) {
       this.model.removeObject(modelPosition);
       this.updateViews();
@@ -233,7 +235,7 @@ export default class DesignController {
    * @param {float} x - Normalized x between 0 and 1
    * @param {float} y - Normalized y between 0 and 1
    */
-  _getRelativePosition = (clickX, clickY) => {
+  getRelativePosition = (clickX, clickY) => {
     // get the x, y position in the scale of the model
     const x = Math.floor(clickX * this.gridSize);
     const y = this.gridSize - 1 - Math.floor(clickY * this.gridSize);

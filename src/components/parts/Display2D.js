@@ -28,6 +28,10 @@ export default class Display2D extends React.Component {
   componentWillUnmount() {
     document.removeEventListener('keydown', this.handleKeyDown);
     this.canvas.removeEventListener('click', this.handleClick);
+    const { controller } = this.props;
+    if (controller) {
+      controller.removeListener(this.view);
+    }
   }
 
   wire = () => {
@@ -44,8 +48,8 @@ export default class Display2D extends React.Component {
       return;
     }
 
-    const view = new SliceView(this.canvas, model);
-    controller.addListener(view);
+    this.view = new SliceView(this.canvas, model);
+    controller.addListener(this.view);
 
     controller.updateViews();
   };

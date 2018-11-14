@@ -28,7 +28,6 @@ export default class SliceView {
       const backgroundSlices = this.model.getBackgroundSlices(camera, sliceIndex);
       for (const slice of backgroundSlices) {
         this._drawSlice(camera, slice, true);
-      //console.table(currentSlice);
       }
     }
 
@@ -84,10 +83,10 @@ export default class SliceView {
             this._drawCube(x, y, isDashed, context);
             break;
           case ObjectsEnum.TREE:
-            this._drawTrunk(x, y);
+            this._drawTrunk(x, y, isDashed);
             break;
           case ObjectsEnum.FOLIAGE:
-            this._drawFoliage(x, y);
+            this._drawFoliage(x, y, isDashed);
             break;
           case ObjectsEnum.ROOFLEFT:
             this._drawRoofLeft(x, y, isDashed, context);
@@ -160,8 +159,13 @@ export default class SliceView {
    * @param {int} x
    * @param {int} y
    */
-  _drawTrunk = (x, y) => {
+  _drawTrunk = (x, y, isDashed = false) => {
     const trunk = new createjs.Shape();
+
+    if (isDashed) {
+      trunk.graphics.setStrokeDash([3, 7], 0);
+    }
+
     trunk.graphics.beginStroke(this.color).setStrokeStyle(3);
     let cornerX = ((x + 0.5) * this.r) + 1;
     let cornerY = this.height - (y * this.r) - 1;
@@ -193,8 +197,13 @@ export default class SliceView {
    * @param {int} x
    * @param {int} y
    */
-  _drawFoliage = (x, y) => {
+  _drawFoliage = (x, y, isDashed = false) => {
     const foliage = new createjs.Shape();
+
+    if (isDashed) {
+      foliage.graphics.setStrokeDash([3, 7], 0);
+    }
+
     foliage.graphics.beginStroke(this.color).setStrokeStyle(3);
     const cornerX = ((x + 0.5) * this.r) + 1;
     const cornerY = this.height - ((y + 0.45) * this.r) - 1;

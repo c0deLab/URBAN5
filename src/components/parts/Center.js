@@ -6,6 +6,7 @@ import DesignModel from '../../js/DesignModel';
 import DisplayDeveloper from './DisplayDeveloper';
 import Display2D from './Display2D';
 import Display3D from './Display3D';
+import DisplaySelectPath from './DisplaySelectPath';
 
 export default class Center extends React.Component {
   static propTypes = {
@@ -35,12 +36,20 @@ export default class Center extends React.Component {
   }
 
   handleKeyDown = event => {
-    const { controller } = this.props;
-
     switch (event.keyCode) {
       case 86: // v
         this.setState({
-          displayType: this.state.displayType === '3D' ? '2D' : '3D'
+          displayType: '2D'
+        });
+        break;
+      case 66: // b
+        this.setState({
+          displayType: '3D'
+        });
+        break;
+      case 78: // n
+        this.setState({
+          displayType: 'SELECT_PATH'
         });
         break;
       default:
@@ -48,19 +57,34 @@ export default class Center extends React.Component {
     }
   }
 
-  render() {
+  getDisplay = () => {
     const { action } = this.props;
     const {
-      controller, model, displayType, showDeveloperView
+      controller, model, displayType
+    } = this.state;
+
+    switch (displayType) {
+      case '2D':
+        return (<Display2D action={action} controller={controller} model={model} />);
+      case '3D':
+        return (<Display3D action={action} controller={controller} model={model} />);
+      case 'SELECT_PATH':
+        return (<DisplaySelectPath action={action} controller={controller} model={model} />);
+      default:
+        break;
+    }
+
+    return null;
+  }
+
+  render() {
+    const {
+      controller, model, showDeveloperView
     } = this.state;
 
     return (
       <div>
-        {displayType === '3D' ? (
-          <Display3D action={action} controller={controller} model={model} />
-        ) : (
-          <Display2D action={action} controller={controller} model={model} />
-        )}
+        {this.getDisplay()}
         {showDeveloperView && <DisplayDeveloper controller={controller} model={model} />}
       </div>
     );

@@ -20,6 +20,10 @@ export default class DisplayDeveloper extends React.Component {
     this.wire();
   }
 
+  componentWillUnmount() {
+    // Implement controller.removeListener()'s'
+  }
+
   wire = () => {
     if (this.isWired) {
       return;
