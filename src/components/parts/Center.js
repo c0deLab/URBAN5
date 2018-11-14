@@ -26,10 +26,26 @@ export default class Center extends React.Component {
     const model = new DesignModel();
     const controller = new DesignController(model);
 
+    document.addEventListener('keydown', this.handleKeyDown);
+
     this.setState({
       controller,
       model
     });
+  }
+
+  handleKeyDown = event => {
+    const { controller } = this.props;
+
+    switch (event.keyCode) {
+      case 86: // v
+        this.setState({
+          displayType: this.state.displayType === '3D' ? '2D' : '3D'
+        });
+        break;
+      default:
+        break;
+    }
   }
 
   render() {

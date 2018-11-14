@@ -14,6 +14,11 @@ export default class Display2D extends React.Component {
 
   componentDidMount() {
     this.isWired = false;
+
+    this.canvas = document.getElementById('canvas');
+    document.addEventListener('keydown', this.handleKeyDown);
+    this.canvas.addEventListener('click', this.handleClick);
+    this.wire();
   }
 
   componentDidUpdate() {
@@ -26,31 +31,28 @@ export default class Display2D extends React.Component {
   }
 
   wire = () => {
-    if (this.isWired) {
+    const { model, controller } = this.props;
+    if (this.isWired || !model) {
       return;
     }
+    this.isWired = true;
 
     this.width = 852;
     this.height = 852;
 
-    const { model, controller } = this.props;
     if (!model || !controller) {
       return;
     }
 
-    this.canvas = document.getElementById('canvas');
-
     const view = new SliceView(this.canvas, model);
     controller.addListener(view);
-
-    document.addEventListener('keydown', this.handleKeyDown);
-    this.canvas.addEventListener('click', this.handleClick);
 
     controller.updateViews();
   };
 
   handleKeyDown = event => {
     const { controller } = this.props;
+    console.log(event.keyCode);
 
     switch (event.keyCode) {
       case 87: // w

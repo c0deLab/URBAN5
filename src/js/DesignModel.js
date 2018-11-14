@@ -229,27 +229,37 @@ export default class DesignModel {
   /** Populates the design world with some objects */
   _populate = () => {
 
-    this.addObject({x:3, y:2, z:0}, ObjectsEnum.CUBE);
-    this.addObject({x:4, y:2, z:0}, ObjectsEnum.CUBE);
+    const getRandomInt = (max) => Math.floor(Math.random() * Math.floor(max));
 
-    this.addObject({x:8, y:1, z:0}, ObjectsEnum.CUBE);
-    this.addObject({x:9, y:1, z:0}, ObjectsEnum.CUBE);
-    this.addObject({x:8, y:1, z:1}, ObjectsEnum.ROOFLEFT);
-    this.addObject({x:9, y:1, z:1}, ObjectsEnum.ROOFRGHT);
+    // for (let i = 0; i < 100; i += 1) {
+    //   this.addObject({x:getRandomInt(17), y:getRandomInt(17), z:getRandomInt(7)}, ObjectsEnum.CUBE);
+    // }
 
-    this.addObject({x:9, y:0, z:0}, ObjectsEnum.CUBE);
-    this.addObject({x:10, y:0, z:0}, ObjectsEnum.CUBE);
-    this.addObject({x:9, y:0, z:1}, ObjectsEnum.ROOFLEFT);
-    this.addObject({x:10, y:0, z:1}, ObjectsEnum.ROOFRGHT);
+    this.addObject({x:9, y:16, z:0}, ObjectsEnum.CUBE);
+    this.addObject({x:10, y:16, z:0}, ObjectsEnum.CUBE);
+    this.addObject({x:9, y:16, z:1}, ObjectsEnum.ROOFLEFT);
+    this.addObject({x:10, y:16, z:1}, ObjectsEnum.ROOFRGHT);
+    this.addObject({x:11, y:15, z:0}, ObjectsEnum.TREE);
+    this.addObject({x:11, y:15, z:1}, ObjectsEnum.FOLIAGE);
 
-    this.addObject({x:5, y:0, z:0}, ObjectsEnum.ROOFRGHT);
-    this.addObject({x:6, y:0, z:0}, ObjectsEnum.CUBE);
-    this.addObject({x:7, y:0, z:0}, ObjectsEnum.CUBE);
-    this.addObject({x:6, y:0, z:1}, ObjectsEnum.ROOFRGHT);
-    this.addObject({x:7, y:0, z:1}, ObjectsEnum.ROOFLEFT);
+    // this.addObject({x:8, y:4, z:0}, ObjectsEnum.CUBE);
+    // this.addObject({x:9, y:4, z:0}, ObjectsEnum.CUBE);
+    // this.addObject({x:8, y:4, z:1}, ObjectsEnum.ROOFLEFT);
+    // this.addObject({x:9, y:4, z:1}, ObjectsEnum.ROOFRGHT);
 
-    this.addObject({x:0, y:0, z:3}, ObjectsEnum.CUBE);
-    this.addObject({x:12, y:0, z:5}, ObjectsEnum.CUBE);
+    // this.addObject({x:9, y:3, z:0}, ObjectsEnum.CUBE);
+    // this.addObject({x:10, y:3, z:0}, ObjectsEnum.CUBE);
+    // this.addObject({x:9, y:3, z:1}, ObjectsEnum.ROOFLEFT);
+    // this.addObject({x:10, y:3, z:1}, ObjectsEnum.ROOFRGHT);
+
+    // this.addObject({x:5, y:3, z:0}, ObjectsEnum.ROOFRGHT);
+    // this.addObject({x:6, y:3, z:0}, ObjectsEnum.CUBE);
+    // this.addObject({x:7, y:3, z:0}, ObjectsEnum.CUBE);
+    // this.addObject({x:6, y:3, z:1}, ObjectsEnum.ROOFRGHT);
+    // this.addObject({x:7, y:3, z:1}, ObjectsEnum.ROOFLEFT);
+
+    // this.addObject({x:0, y:3, z:3}, ObjectsEnum.CUBE);
+    // this.addObject({x:12, y:3, z:5}, ObjectsEnum.CUBE);
 
     this.topo.setTopoHeight({x: 0, y: 0}, 3);
     this.topo.setTopoHeight({x: 12, y: 0}, 5);
