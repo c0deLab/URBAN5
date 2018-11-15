@@ -57,7 +57,7 @@ export default class Center extends React.Component {
 
     // Test camera path, TODO: should be set by user selection
     const cameraPath = [];
-    for (let i = 0; i < 2; i += 1) {
+    for (let i = 0; i < 10; i += 1) {
       cameraPath.push({ x: 10, y: i, z: 0 });
     }
 
