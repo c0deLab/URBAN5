@@ -241,46 +241,46 @@ export default class DesignModel {
     // this.addObject({ x: 11, y: 10 + 15, z: 0 }, ObjectsEnum.TREE);
     // this.addObject({ x: 11, y: 10 + 15, z: 1 }, ObjectsEnum.FOLIAGE);
 
-    // this.addObject({ x: 2, y: 10 + 0, z: 2 }, 0);
-    // this.addObject({ x: 2, y: 10 + 0, z: 3 }, 0);
-    // this.addObject({ x: 3, y: 10 + 0, z: 3 }, 0);
-    // this.addObject({ x: 4, y: 10 + 0, z: 3 }, 0);
-    // this.addObject({ x: 13, y: 10 + 0, z: 0 }, 0);
-    // this.addObject({ x: 12, y: 10 + 0, z: 0 }, 0);
-    // this.addObject({ x: 12, y: 10 + 0, z: 1 }, 0);
-    // this.addObject({ x: 11, y: 10 + 0, z: 1 }, 0);
-    // this.addObject({ x: 10, y: 10 + 0, z: 1 }, 0);
-    // this.addObject({ x: 11, y: 10 + 0, z: 2 }, 2);
-    // this.addObject({ x: 14, y: 10 + 0, z: 0 }, 3);
-    // this.addObject({ x: 15, y: 10 + 0, z: 0 }, 3);
-    // this.addObject({ x: 8, y: 10 + 0, z: 0 }, 3);
-    // this.addObject({ x: 4, y: 10 + 1, z: 1 }, 0);
-    // this.addObject({ x: 4, y: 10 + 1, z: 2 }, 0);
-    // this.addObject({ x: 3, y: 10 + 1, z: 2 }, 0);
-    // this.addObject({ x: 5, y: 10 + 1, z: 2 }, 0);
-    // this.addObject({ x: 6, y: 10 + 1, z: 2 }, 0);
-    // this.addObject({ x: 6, y: 10 + 1, z: 3 }, 0);
-    // this.addObject({ x: 7, y: 10 + 1, z: 3 }, 0);
-    // this.addObject({ x: 8, y: 10 + 1, z: 0 }, 0);
-    // this.addObject({ x: 9, y: 10 + 1, z: 0 }, 0);
-    // this.addObject({ x: 9, y: 10 + 1, z: 1 }, 0);
-    // this.addObject({ x: 11, y: 10 + 1, z: 0 }, 0);
-    // this.addObject({ x: 9, y: 10 + 2, z: 2 }, 0);
-    // this.addObject({ x: 9, y: 10 + 2, z: 3 }, 1);
+    this.addObject({ x: 2, y: 10 + 0, z: 2 }, 0);
+    this.addObject({ x: 2, y: 10 + 0, z: 3 }, 0);
+    this.addObject({ x: 3, y: 10 + 0, z: 3 }, 0);
+    this.addObject({ x: 4, y: 10 + 0, z: 3 }, 0);
+    this.addObject({ x: 13, y: 10 + 0, z: 0 }, 0);
+    this.addObject({ x: 12, y: 10 + 0, z: 0 }, 0);
+    this.addObject({ x: 12, y: 10 + 0, z: 1 }, 0);
+    this.addObject({ x: 11, y: 10 + 0, z: 1 }, 0);
+    this.addObject({ x: 10, y: 10 + 0, z: 1 }, 0);
+    this.addObject({ x: 11, y: 10 + 0, z: 2 }, 2);
+    this.addObject({ x: 14, y: 10 + 0, z: 0 }, 3);
+    this.addObject({ x: 15, y: 10 + 0, z: 0 }, 3);
+    this.addObject({ x: 8, y: 10 + 0, z: 0 }, 3);
+    this.addObject({ x: 4, y: 10 + 1, z: 1 }, 0);
+    this.addObject({ x: 4, y: 10 + 1, z: 2 }, 0);
+    this.addObject({ x: 3, y: 10 + 1, z: 2 }, 0);
+    this.addObject({ x: 5, y: 10 + 1, z: 2 }, 0);
+    this.addObject({ x: 6, y: 10 + 1, z: 2 }, 0);
+    this.addObject({ x: 6, y: 10 + 1, z: 3 }, 0);
+    this.addObject({ x: 7, y: 10 + 1, z: 3 }, 0);
+    this.addObject({ x: 8, y: 10 + 1, z: 0 }, 0);
+    this.addObject({ x: 9, y: 10 + 1, z: 0 }, 0);
+    this.addObject({ x: 9, y: 10 + 1, z: 1 }, 0);
+    this.addObject({ x: 11, y: 10 + 1, z: 0 }, 0);
+    this.addObject({ x: 9, y: 10 + 2, z: 2 }, 0);
+    this.addObject({ x: 9, y: 10 + 2, z: 3 }, 1);
 
-    // for (let y = 0; y < 17; y += 1) {
-    //   this.topo.setTopoHeight({ x: 0, y }, 2);
-    //   this.topo.setTopoHeight({ x: 1, y }, 2);
-    //   this.topo.setTopoHeight({ x: 2, y }, 2);
-    //   this.topo.setTopoHeight({ x: 3, y }, 1);
-    //   this.topo.setTopoHeight({ x: 4, y }, 1);
-    //   this.topo.setTopoHeight({ x: 5, y }, 1);
-    //   this.topo.setTopoHeight({ x: 0, y }, 2);
-    //   this.topo.setTopoHeight({ x: 1, y }, 2);
-    //   this.topo.setTopoHeight({ x: 2, y }, 2);
-    //   this.topo.setTopoHeight({ x: 3, y }, 1);
-    //   this.topo.setTopoHeight({ x: 4, y }, 1);
-    //   this.topo.setTopoHeight({ x: 5, y }, 1);
-    // }
+    for (let y = 0; y < 17; y += 1) {
+      this.topo.setTopoHeight({ x: 0, y }, 2);
+      this.topo.setTopoHeight({ x: 1, y }, 2);
+      this.topo.setTopoHeight({ x: 2, y }, 2);
+      this.topo.setTopoHeight({ x: 3, y }, 1);
+      this.topo.setTopoHeight({ x: 4, y }, 1);
+      this.topo.setTopoHeight({ x: 5, y }, 1);
+      this.topo.setTopoHeight({ x: 0, y }, 2);
+      this.topo.setTopoHeight({ x: 1, y }, 2);
+      this.topo.setTopoHeight({ x: 2, y }, 2);
+      this.topo.setTopoHeight({ x: 3, y }, 1);
+      this.topo.setTopoHeight({ x: 4, y }, 1);
+      this.topo.setTopoHeight({ x: 5, y }, 1);
+    }
   }
 }
