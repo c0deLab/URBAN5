@@ -1,14 +1,17 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import '../../Test.css';
+import './DebuggingDisplays.css';
 
 import CamerasEnum from '../../js/enums/CamerasEnum';
-import { TestViewCameraSlice, TestViewCamera } from '../../js/TestView';
+import { TestViewCameraSlice, TestViewCamera } from '../../js/DeveloperViews';
 
-export default class DisplayDeveloper extends React.Component {
+/* global document */
+
+/** Class that renders various views helpful for debugging. */
+export default class DebuggingDisplays extends React.Component {
   static propTypes = {
-    controller: PropTypes.object,
-    model: PropTypes.object
+    controller: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
+    model: PropTypes.object.isRequired // eslint-disable-line react/forbid-prop-types
   }
 
   componentDidMount() {
@@ -21,7 +24,7 @@ export default class DisplayDeveloper extends React.Component {
   }
 
   componentWillUnmount() {
-    // Implement controller.removeListener()'s'
+    // Implement controller.removeListener()
   }
 
   wire = () => {
@@ -31,7 +34,6 @@ export default class DisplayDeveloper extends React.Component {
 
     const { controller, model } = this.props;
     if (!controller || !model) {
-      console.log('no controller/model');
       return;
     }
 
@@ -79,7 +81,7 @@ export default class DisplayDeveloper extends React.Component {
     }
 
     return (
-      <div className="test">
+      <div className="display-developer">
         <div>
           <div style={{ position: 'absolute', top: 0, left: 100 }} className="northsouth">
             <h3>NORTH/SOUTH</h3>
@@ -98,12 +100,12 @@ export default class DisplayDeveloper extends React.Component {
           <table>
             <tbody>
               <tr>
-                <td/>
+                <td />
                 <td>
                   <h2 style={{ color: camera === CamerasEnum.SOUTH ? 'red' : 'black' }}>SOUTH</h2>
                   <canvas id="testCanvas2" width={200} height={200} style={{ transform: 'rotateX(180deg) rotateY(180deg)' }} />
                 </td>
-                <td/>
+                <td />
               </tr>
               <tr>
                 <td>
@@ -120,7 +122,7 @@ export default class DisplayDeveloper extends React.Component {
                 </td>
               </tr>
               <tr>
-                <td/>
+                <td />
                 <td>
                   <h2 style={{ color: camera === CamerasEnum.NORTH ? 'red' : 'black' }}>NORTH</h2>
                   <canvas id="testCanvas3" width={200} height={200} />

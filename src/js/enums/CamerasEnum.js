@@ -1,3 +1,4 @@
+// These are the 2D slice views of the 3D model
 const CamerasEnum = {
   NORTH: 0,
   EAST: 1,

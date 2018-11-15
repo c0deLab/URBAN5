@@ -4,59 +4,70 @@ import PropTypes from 'prop-types';
 import ActionsEnum from '../../js/enums/ActionsEnum';
 import ObjectsEnum from '../../js/enums/ObjectsEnum';
 import SliceView from '../../js/SliceView';
+import SliceController from '../../js/SliceController';
+import DebuggingDisplays from './DebuggingDisplays';
 
+/* global document */
+
+/** Class for the 2D slice views */
 export default class Display2D extends React.Component {
   static propTypes = {
-    action: PropTypes.number,
-    controller: PropTypes.object,
-    model: PropTypes.object
+    action: PropTypes.number.isRequired, // eslint-disable-line react/forbid-prop-types
+    model: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
+  }
+
+  state = {
+    controller: null
   }
 
   componentDidMount() {
     this.isWired = false;
 
-    this.canvas = document.getElementById('canvas');
+    this.canvas = document.getElementById('display2D');
     document.addEventListener('keydown', this.handleKeyDown);
     this.canvas.addEventListener('click', this.handleClick);
+
+    // If the model had already been created, immediately wire
     this.wire();
   }
 
   componentDidUpdate() {
+    // When the model is created, we need to wire it
     this.wire();
   }
 
   componentWillUnmount() {
     document.removeEventListener('keydown', this.handleKeyDown);
     this.canvas.removeEventListener('click', this.handleClick);
-    const { controller } = this.props;
-    if (controller) {
-      controller.removeListener(this.view);
-    }
   }
 
+  /**
+   * This should be called one time once the HTML element and the model are ready.
+   * It sets up the rendering to the canvas.
+   */
   wire = () => {
-    const { model, controller } = this.props;
+    const { model } = this.props;
+    // Only wire once, and only do it once the model is ready
     if (this.isWired || !model) {
       return;
     }
     this.isWired = true;
 
-    this.width = 852;
-    this.height = 852;
-
-    if (!model || !controller) {
-      return;
-    }
-
+    // Create controller and 2D slice view
+    const controller = new SliceController(model);
     this.view = new SliceView(this.canvas, model);
     controller.addListener(this.view);
-
+    // Trigger initial render
     controller.updateViews();
-  };
 
+    this.setState({
+      controller
+    });
+  }
+
+  /** Add some hotkeys to make testing easier */
   handleKeyDown = event => {
-    const { controller } = this.props;
-    console.log(event.keyCode);
+    const { controller } = this.state;
 
     switch (event.keyCode) {
       case 87: // w
@@ -77,10 +88,10 @@ export default class Display2D extends React.Component {
       case 67: // f
         controller.bottom();
         break;
-      case 38: // up
+      case 38: // up arrow
         controller.nextSlice();
         break;
-      case 40: // down
+      case 40: // down arrow
         controller.previousSlice();
         break;
       default:
@@ -89,14 +100,19 @@ export default class Display2D extends React.Component {
   }
 
   handleClick = event => {
-    const { controller } = this.props;
-    // There is a 1px padding around the edges to not get cut off
-    if (event.offsetX === 0 || event.offsetX === 851) {
+    const { controller } = this.state;
+    // There is a 1px padding around the edges to not cut off the graphics awkwardly
+    // Ignore clicks in that range
+    if (event.offsetX === 0 || event.offsetX === (this.width - 1)
+        || event.offsetY === 0 || event.offsetY === (this.height - 1)) {
       return;
     }
-    const clickX = (event.offsetX - 1) / this.width;
-    const clickY = (event.offsetY - 1) / this.height;
 
+    // Offset click for 1px padding and find normalized position
+    const normalizedX = (event.offsetX - 1) / this.width;
+    const normalizedY = (event.offsetY - 1) / this.height;
+
+    // Execute the currently selected action from the light button at the click location
     const { action } = this.props;
     switch (action) {
       case ActionsEnum.STEPOUT:
@@ -106,22 +122,22 @@ export default class Display2D extends React.Component {
         controller.nextSlice();
         break;
       case ActionsEnum.ADDCUBE:
-        controller.addObject(clickX, clickY, ObjectsEnum.CUBE);
+        controller.addObject(normalizedX, normalizedY, ObjectsEnum.CUBE);
         break;
       case ActionsEnum.REMOVE:
-        controller.removeObject(clickX, clickY);
+        controller.removeObject(normalizedX, normalizedY);
         break;
       case ActionsEnum.ROTATELT:
         controller.rotateLeft();
         break;
       case ActionsEnum.ADDTREE:
-        controller.addObject(clickX, clickY, ObjectsEnum.TREE);
+        controller.addObject(normalizedX, normalizedY, ObjectsEnum.TREE);
         break;
       case ActionsEnum.ADDRFLFT:
-        controller.addObject(clickX, clickY, ObjectsEnum.ROOFLEFT);
+        controller.addObject(normalizedX, normalizedY, ObjectsEnum.ROOFLEFT);
         break;
       case ActionsEnum.ADDRFRGT:
-        controller.addObject(clickX, clickY, ObjectsEnum.ROOFRGHT);
+        controller.addObject(normalizedX, normalizedY, ObjectsEnum.ROOFRGHT);
         break;
       default:
         // nothing
@@ -130,8 +146,16 @@ export default class Display2D extends React.Component {
   }
 
   render() {
+    const { controller } = this.state;
+    const { model } = this.props;
+
+    this.width = 852;
+    this.height = 852;
     return (
-      <canvas id="canvas" width={852} height={852} />
+      <div>
+        <canvas id="display2D" width={this.width} height={this.height} />
+        {model && controller ? (<DebuggingDisplays controller={controller} model={model} />) : null}
+      </div>
     );
   }
 }

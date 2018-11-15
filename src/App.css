@@ -11,18 +11,6 @@ body{
     user-select: none;
 }
 
-.app {
-  width: 1024px;
-  height: 1024px;
-  margin: 0 auto;
-  background: #000;
-  color: #ffffff;
-  font-size: 17px;
-  line-height: 24px;
-  text-align: 'left';
-  font-family: "Courier New", Courier, monospace;
-}
-
 canvas {
   background: #000;
   cursor: pointer;
@@ -36,4 +24,16 @@ button {
   font: inherit;
   cursor: pointer;
   outline: inherit;
+}
+
+.app {
+  width: 1024px;
+  height: 1024px;
+  margin: 0 auto;
+  background: #000;
+  color: #ffffff;
+  font-size: 17px;
+  line-height: 24px;
+  text-align: 'left';
+  font-family: "Courier New", Courier, monospace;
 }

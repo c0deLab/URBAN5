@@ -1,3 +1,4 @@
+// Various objects that can occupy a single cube in space
 const ObjectsEnum = {
   CUBE: 0,
   ROOFLEFT: 1,

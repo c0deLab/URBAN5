@@ -1,3 +1,7 @@
+/**
+* Helper functions for dealing with arrays.
+*/
+
 function getSafe(arr, x, y) {
   if (x >= 0 && arr.length > 0 && arr[0].length && x < arr[0].length && y >= 0 && y < arr.length) {
     return arr[y][x];
@@ -5,7 +9,11 @@ function getSafe(arr, x, y) {
   return null;
 }
 
-//const { topLeft, top, topRight, left, center, right, bottomLeft, bottom, bottomRight } = context;
+/**
+* Given a 2D array 'arr' and a position, get the position and all cells around it as an object
+* This can be unpacked as follows:
+* const { topLeft, top, topRight, left, center, right, bottomLeft, bottom, bottomRight } = context;
+*/
 export function getCellContext3x3(arr, x, y) {
   return {
     topLeft: getSafe(arr, x - 1, y + 1),
@@ -17,7 +25,7 @@ export function getCellContext3x3(arr, x, y) {
     bottomLeft: getSafe(arr, x - 1, y - 1),
     bottom: getSafe(arr, x, y - 1),
     bottomRight: getSafe(arr, x + 1, y - 1)
-  }
+  };
 }
 
 /**

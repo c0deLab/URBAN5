@@ -7,8 +7,9 @@ import { getEmpty2DArray } from './ArrayHelpers';
 /**
  * Represents the data of a design world
  *
- * The world is similar to Google Sketchup. The standard view "North" (looking North) has x increasing from
- * left to right, y, starting at 0 and increasing as it moves away from you, and z increasing as it goes up.
+ * The world is similar to Google Sketchup. The standard view "North" (looking North)
+ * has x increasing from left to right, y, starting at 0 and increasing as it moves
+ * away from you, and z increasing as it goes up.
  *
  */
 export default class DesignModel {
@@ -31,8 +32,7 @@ export default class DesignModel {
    * @param {int} obj - int representing the ObjectsEnum object
    */
   addObject = (position, obj) => {
-    console.log(`Add ${obj} at (${position.x}, ${position.y}, ${position.z})`);
-
+    console.log(`this.addObject({ x: ${position.x}, y: 10 + ${position.y}, z: ${position.z} }, ${obj});`);
     switch (obj) {
       case ObjectsEnum.TREE:
         if (position.y < (this.yMax - 1)) {
@@ -57,14 +57,14 @@ export default class DesignModel {
     }
 
     return false;
-  };
+  }
 
   /**
    * Remove the object at a certain position
    * @param {object} position - 3D position in the form {x:x,y:y,z:z}
    */
   removeObject = position => {
-    console.log(`Remove object at (${position.x}, ${position.y}, ${position.z})`);
+    console.log(`this.removeObject({ x: ${position.x}, y: 10 + ${position.y}, z: ${position.z} });`);
     const obj = this._getCell(position);
 
     switch (obj) {
@@ -90,7 +90,7 @@ export default class DesignModel {
         this._setCell(position, null);
         break;
     }
-  };
+  }
 
   /**
    * For a given slice, get the highest corners of the current
@@ -99,7 +99,7 @@ export default class DesignModel {
    * @param {int} camera - The CamerasEnum camera view
    * @param {int} slice - The current slice being viewed from that camera view
    */
-  getTopoSlice = (camera, slice) => this.topo.getTopoSlice(camera, slice);
+  getTopoSlice = (camera, slice) => this.topo.getTopoSlice(camera, slice)
 
   /**
    * Returns 2D array of objects in the given slice
@@ -129,11 +129,11 @@ export default class DesignModel {
       default:
         throw new Error(`camera ${camera} is not recognized!`);
     }
-  };
+  }
 
   getBackgroundSlices = (camera, sliceIndex) => {
     let backgroundSliceIndex = sliceIndex;
-    let backgroundSliceIndices = [];
+    const backgroundSliceIndices = [];
     switch (camera) {
       case CamerasEnum.NORTH:
         while (backgroundSliceIndex < (this.yMax - 1)) {
@@ -176,9 +176,9 @@ export default class DesignModel {
     }
     const backgroundSlices = backgroundSliceIndices.map(i => this.getSlice(camera, i));
     return backgroundSlices;
-  };
+  }
 
-  _getZSlice = z => this.objects[z];
+  _getZSlice = z => this.objects[z]
 
   _getXSlice = x => {
     const slice = getEmpty2DArray(this.zMax, this.yMax);
@@ -188,7 +188,7 @@ export default class DesignModel {
       }
     }
     return slice;
-  };
+  }
 
   _getYSlice = y => {
     const slice = getEmpty2DArray(this.zMax, this.xMax);
@@ -198,7 +198,7 @@ export default class DesignModel {
       }
     }
     return slice;
-  };
+  }
 
   _getCell = position => {
     const { x, y, z } = position;
@@ -206,14 +206,14 @@ export default class DesignModel {
       return this.objects[z][y][x];
     }
     return null;
-  };
+  }
 
   _setCell = (position, object) => {
     const { x, y, z } = position;
     if (x >= 0 && y >= 0 && z >= 0 && x < this.xMax && y < this.yMax && z < this.zMax) {
       this.objects[z][y][x] = object;
     }
-  };
+  }
 
   /** Create an empty version of the design model */
   _initObjects = () => {
@@ -224,44 +224,63 @@ export default class DesignModel {
     }
 
     return objects;
-  };
+  }
 
   /** Populates the design world with some objects */
   _populate = () => {
-
-    const getRandomInt = (max) => Math.floor(Math.random() * Math.floor(max));
+    // const getRandomInt = (max) => Math.floor(Math.random() * Math.floor(max));
 
     // for (let i = 0; i < 100; i += 1) {
     //   this.addObject({x:getRandomInt(17), y:getRandomInt(17), z:getRandomInt(7)}, ObjectsEnum.CUBE);
     // }
 
-    this.addObject({x:9, y:16, z:0}, ObjectsEnum.CUBE);
-    this.addObject({x:10, y:16, z:0}, ObjectsEnum.CUBE);
-    this.addObject({x:9, y:16, z:1}, ObjectsEnum.ROOFLEFT);
-    this.addObject({x:10, y:16, z:1}, ObjectsEnum.ROOFRGHT);
-    this.addObject({x:11, y:15, z:0}, ObjectsEnum.TREE);
-    this.addObject({x:11, y:15, z:1}, ObjectsEnum.FOLIAGE);
+    // this.addObject({ x: 9, y: 10 + 16, z: 0 }, ObjectsEnum.CUBE);
+    // this.addObject({ x: 10, y: 10 + 16, z: 0 }, ObjectsEnum.CUBE);
+    // this.addObject({ x: 9, y: 10 + 16, z: 1 }, ObjectsEnum.ROOFLEFT);
+    // this.addObject({ x: 10, y: 10 + 16, z: 1 }, ObjectsEnum.ROOFRGHT);
+    // this.addObject({ x: 11, y: 10 + 15, z: 0 }, ObjectsEnum.TREE);
+    // this.addObject({ x: 11, y: 10 + 15, z: 1 }, ObjectsEnum.FOLIAGE);
 
-    // this.addObject({x:8, y:4, z:0}, ObjectsEnum.CUBE);
-    // this.addObject({x:9, y:4, z:0}, ObjectsEnum.CUBE);
-    // this.addObject({x:8, y:4, z:1}, ObjectsEnum.ROOFLEFT);
-    // this.addObject({x:9, y:4, z:1}, ObjectsEnum.ROOFRGHT);
+    // this.addObject({ x: 2, y: 10 + 0, z: 2 }, 0);
+    // this.addObject({ x: 2, y: 10 + 0, z: 3 }, 0);
+    // this.addObject({ x: 3, y: 10 + 0, z: 3 }, 0);
+    // this.addObject({ x: 4, y: 10 + 0, z: 3 }, 0);
+    // this.addObject({ x: 13, y: 10 + 0, z: 0 }, 0);
+    // this.addObject({ x: 12, y: 10 + 0, z: 0 }, 0);
+    // this.addObject({ x: 12, y: 10 + 0, z: 1 }, 0);
+    // this.addObject({ x: 11, y: 10 + 0, z: 1 }, 0);
+    // this.addObject({ x: 10, y: 10 + 0, z: 1 }, 0);
+    // this.addObject({ x: 11, y: 10 + 0, z: 2 }, 2);
+    // this.addObject({ x: 14, y: 10 + 0, z: 0 }, 3);
+    // this.addObject({ x: 15, y: 10 + 0, z: 0 }, 3);
+    // this.addObject({ x: 8, y: 10 + 0, z: 0 }, 3);
+    // this.addObject({ x: 4, y: 10 + 1, z: 1 }, 0);
+    // this.addObject({ x: 4, y: 10 + 1, z: 2 }, 0);
+    // this.addObject({ x: 3, y: 10 + 1, z: 2 }, 0);
+    // this.addObject({ x: 5, y: 10 + 1, z: 2 }, 0);
+    // this.addObject({ x: 6, y: 10 + 1, z: 2 }, 0);
+    // this.addObject({ x: 6, y: 10 + 1, z: 3 }, 0);
+    // this.addObject({ x: 7, y: 10 + 1, z: 3 }, 0);
+    // this.addObject({ x: 8, y: 10 + 1, z: 0 }, 0);
+    // this.addObject({ x: 9, y: 10 + 1, z: 0 }, 0);
+    // this.addObject({ x: 9, y: 10 + 1, z: 1 }, 0);
+    // this.addObject({ x: 11, y: 10 + 1, z: 0 }, 0);
+    // this.addObject({ x: 9, y: 10 + 2, z: 2 }, 0);
+    // this.addObject({ x: 9, y: 10 + 2, z: 3 }, 1);
 
-    // this.addObject({x:9, y:3, z:0}, ObjectsEnum.CUBE);
-    // this.addObject({x:10, y:3, z:0}, ObjectsEnum.CUBE);
-    // this.addObject({x:9, y:3, z:1}, ObjectsEnum.ROOFLEFT);
-    // this.addObject({x:10, y:3, z:1}, ObjectsEnum.ROOFRGHT);
-
-    // this.addObject({x:5, y:3, z:0}, ObjectsEnum.ROOFRGHT);
-    // this.addObject({x:6, y:3, z:0}, ObjectsEnum.CUBE);
-    // this.addObject({x:7, y:3, z:0}, ObjectsEnum.CUBE);
-    // this.addObject({x:6, y:3, z:1}, ObjectsEnum.ROOFRGHT);
-    // this.addObject({x:7, y:3, z:1}, ObjectsEnum.ROOFLEFT);
-
-    // this.addObject({x:0, y:3, z:3}, ObjectsEnum.CUBE);
-    // this.addObject({x:12, y:3, z:5}, ObjectsEnum.CUBE);
-
-    this.topo.setTopoHeight({x: 0, y: 0}, 3);
-    this.topo.setTopoHeight({x: 12, y: 0}, 5);
-  };
+    // for (let y = 0; y < 17; y += 1) {
+    //   this.topo.setTopoHeight({ x: 0, y }, 2);
+    //   this.topo.setTopoHeight({ x: 1, y }, 2);
+    //   this.topo.setTopoHeight({ x: 2, y }, 2);
+    //   this.topo.setTopoHeight({ x: 3, y }, 1);
+    //   this.topo.setTopoHeight({ x: 4, y }, 1);
+    //   this.topo.setTopoHeight({ x: 5, y }, 1);
+    //   this.topo.setTopoHeight({ x: 0, y }, 2);
+    //   this.topo.setTopoHeight({ x: 1, y }, 2);
+    //   this.topo.setTopoHeight({ x: 2, y }, 2);
+    //   this.topo.setTopoHeight({ x: 3, y }, 1);
+    //   this.topo.setTopoHeight({ x: 4, y }, 1);
+    //   this.topo.setTopoHeight({ x: 5, y }, 1);
+    // }
+  }
 }

@@ -1,9 +1,13 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
+/** Class for the side panel of 'light buttons' */
 export default class Menu extends React.PureComponent {
   static propTypes = {
-    buttons: PropTypes.array.isRequired
+    // Array of ButtonsEnum to show
+    buttons: PropTypes.array.isRequired, // eslint-disable-line react/forbid-prop-types
+    // Function to call when button is clicked
+    onClick: PropTypes.func.isRequired // eslint-disable-line react/forbid-prop-types
   }
 
   render() {
@@ -12,18 +16,20 @@ export default class Menu extends React.PureComponent {
     const { buttons, onClick } = this.props;
     if (buttons) {
       buttons.forEach(button => {
-        buttonElements.push((<button
-          type="button"
-          key={button.label}
-          button={button}
-          onClick={e => {
-            e.preventDefault();
-            onClick(button);
-          }}
-          style={{ display: 'block' }}
-        >
-          {button.label}
-        </button>));
+        buttonElements.push((
+          <button
+            type="button"
+            key={button.label}
+            button={button}
+            onClick={e => {
+              e.preventDefault();
+              onClick(button);
+            }}
+            style={{ display: 'block' }}
+          >
+            {button.label}
+          </button>
+        ));
       });
     }
 

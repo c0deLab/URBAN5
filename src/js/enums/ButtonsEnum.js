@@ -1,5 +1,6 @@
 import ActionsEnum from './ActionsEnum';
 
+// Buttons pair a label which is 8 chars of fixed-width to an action
 const ButtonsEnum = {
   STEPOUT: { label: 'STEP OUT', action: ActionsEnum.STEPOUT },
   STEPIN: { label: 'STEP  IN', action: ActionsEnum.STEPIN },

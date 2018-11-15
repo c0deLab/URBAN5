@@ -7,17 +7,24 @@ import Top from '../parts/Top';
 import ButtonsEnum from '../../js/enums/ButtonsEnum';
 import ActionsEnum from '../../js/enums/ActionsEnum';
 
+/* global document */
+
+/** Class for the rendering the main view with top, menu, and center panels */
 export default class MainPage extends React.Component {
   static propTypes = {
-    user: PropTypes.object.isRequired,
+    user: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
   }
 
   state = {
-    action: 2,
+    action: 2, // Default action is ADDCUBE
   };
 
   componentDidMount() {
     document.addEventListener('keydown', this.handleKeyDown);
+  }
+
+  componentWillUnmount() {
+    document.removeEventListener('keydown', this.handleKeyDown);
   }
 
   onMenuClick = button => {
@@ -26,9 +33,8 @@ export default class MainPage extends React.Component {
     });
   }
 
+  /** Add some hotkeys to make testing easier */
   handleKeyDown = event => {
-    console.log(event.keyCode);
-
     let actionCode;
     switch (event.keyCode) {
       case 48: // 0
@@ -70,7 +76,13 @@ export default class MainPage extends React.Component {
   }
 
   render() {
-    const buttons = [ButtonsEnum.ADDCUBE, ButtonsEnum.ADDTREE, ButtonsEnum.ADDRFLFT, ButtonsEnum.ADDRFRGT, ButtonsEnum.REMOVE];
+    const buttons = [
+      ButtonsEnum.ADDCUBE,
+      ButtonsEnum.ADDTREE,
+      ButtonsEnum.ADDRFLFT,
+      ButtonsEnum.ADDRFRGT,
+      ButtonsEnum.REMOVE
+    ];
 
     const { user } = this.props;
     const { action } = this.state;

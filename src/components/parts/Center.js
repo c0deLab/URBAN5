@@ -1,41 +1,34 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
-import DesignController from '../../js/DesignController';
 import DesignModel from '../../js/DesignModel';
-import DisplayDeveloper from './DisplayDeveloper';
 import Display2D from './Display2D';
-import Display3D from './Display3D';
-import DisplaySelectPath from './DisplaySelectPath';
+import CameraPath from './CameraPath';
 
+/* global document */
+
+/** Class for the main display of URBAN5 that can switch between various views */
 export default class Center extends React.Component {
   static propTypes = {
     action: PropTypes.number.isRequired
   }
 
   state = {
-    controller: null,
     model: null,
-    displayType: '2D',
-    showDeveloperView: true,
-  };
+    displayType: '2D'
+  }
 
   componentDidMount() {
-    this.width = 852;
-    this.height = 852;
-
-    const model = new DesignModel();
-    const controller = new DesignController(model);
-
     document.addEventListener('keydown', this.handleKeyDown);
 
+    const model = new DesignModel();
     this.setState({
-      controller,
       model
     });
   }
 
   handleKeyDown = event => {
+    // Switch between views
     switch (event.keyCode) {
       case 86: // v
         this.setState({
@@ -44,12 +37,7 @@ export default class Center extends React.Component {
         break;
       case 66: // b
         this.setState({
-          displayType: '3D'
-        });
-        break;
-      case 78: // n
-        this.setState({
-          displayType: 'SELECT_PATH'
+          displayType: 'PATH'
         });
         break;
       default:
@@ -60,16 +48,24 @@ export default class Center extends React.Component {
   getDisplay = () => {
     const { action } = this.props;
     const {
-      controller, model, displayType
+      model, displayType
     } = this.state;
+
+    if (!model || !action) {
+      return null;
+    }
+
+    // Test camera path, TODO: should be set by user selection
+    const cameraPath = [];
+    for (let i = 0; i < 2; i += 1) {
+      cameraPath.push({ x: 10, y: i, z: 0 });
+    }
 
     switch (displayType) {
       case '2D':
-        return (<Display2D action={action} controller={controller} model={model} />);
-      case '3D':
-        return (<Display3D action={action} controller={controller} model={model} />);
-      case 'SELECT_PATH':
-        return (<DisplaySelectPath action={action} controller={controller} model={model} />);
+        return (<Display2D action={action} model={model} />);
+      case 'PATH':
+        return (<CameraPath model={model} cameraPath={cameraPath} />);
       default:
         break;
     }
@@ -78,14 +74,9 @@ export default class Center extends React.Component {
   }
 
   render() {
-    const {
-      controller, model, showDeveloperView
-    } = this.state;
-
     return (
       <div>
         {this.getDisplay()}
-        {showDeveloperView && <DisplayDeveloper controller={controller} model={model} />}
       </div>
     );
   }

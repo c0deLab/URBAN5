@@ -3,61 +3,76 @@ import ObjectsEnum from './enums/ObjectsEnum';
 import CamerasEnum from './enums/CamerasEnum';
 import { getCellContext3x3 } from './ArrayHelpers';
 
-/**
- * Responsible for drawing a 2D slice
- */
+/** Class responsible for rednering a 2D slice */
 export default class SliceView {
   constructor(canvas, model) {
+    this.model = model;
     this.stage = new createjs.Stage(canvas);
+
     this.gridSize = 17;
     this.height = canvas.height;
     this.r = (this.height - 2) / this.gridSize;
-    this.model = model;
     this.color = '#ffffff';
-    this.drawBackground = true;
+    this.drawBackground = true; // Whether background slices should be rendered
   }
 
+  /**
+   * Draw the given sliceIndex for the camera angle to the screen
+   * @param {int} camera - CamerasEnum
+   * @param {int} sliceIndex - Index of slice of model from given camera view to draw
+   */
   draw = (camera, sliceIndex) => {
+    // Clear the screen
     this.stage.removeAllChildren();
+
+    // Draw the topography
     const topoSlice = this.model.getTopoSlice(camera, sliceIndex);
     if (topoSlice) {
       this._drawTopoSlice(topoSlice);
     }
 
+    // Draw the background slices
     if (this.drawBackground) {
       const backgroundSlices = this.model.getBackgroundSlices(camera, sliceIndex);
-      for (const slice of backgroundSlices) {
-        this._drawSlice(camera, slice, true);
-      }
+      backgroundSlices.forEach(s => this._drawSlice(camera, s, true));
     }
 
+    // Draw the given slice
     const currentSlice = this.model.getSlice(camera, sliceIndex);
     this._drawSlice(camera, currentSlice);
 
+    // Draw the grid of appropriate size for this slice
     this._drawGridPoints(currentSlice);
+
+    // Render to the screen
     this.stage.update();
   };
 
+  /** Clear the screen */
   clear = () => {
     this.stage.removeAllChildren();
     this.stage.update();
   };
 
+  /**
+   * Draw a line representing the 1D slice of topography
+   * @param {array} topoSlice - heights at given locations
+   */
   _drawTopoSlice = topoSlice => {
     const line = new createjs.Shape();
     let cornerX = 1;
     let cornerY;
     line.graphics.beginStroke(this.color).setStrokeStyle(3);
 
-    for (let i = 0; i < topoSlice.length; i += 1) {
-      const { startHeight, endHeight } = topoSlice[i];
+    // Draw the heights left to right as a connected line
+    topoSlice.forEach(s => {
+      const { startHeight, endHeight } = s;
       cornerY = this.height - 1 - (startHeight * this.r);
       line.graphics.moveTo(cornerX, cornerY);
       cornerX += this.r;
       cornerY = this.height - 1 - (endHeight * this.r);
       line.graphics.lineTo(cornerX, cornerY);
-    }
-
+    });
     line.graphics.endStroke();
 
     this.stage.addChild(line);
@@ -65,8 +80,9 @@ export default class SliceView {
 
   /**
    * Add a slice to the view
+   * @param {int} camera - CamerasEnum
    * @param {int[][]} slice - 2D array representing slice to add
-   * @param {boolean} isDashed - whether the lines should be dashed or not
+   * @param {boolean} isDashed - Whether the lines should be dashed or not
    */
   _drawSlice = (camera, slice, isDashed = false) => {
     this.camera = camera;
@@ -75,9 +91,9 @@ export default class SliceView {
       for (let x = 0; x < row.length; x += 1) {
         const cell = row[x];
 
+        // Get the context around the cell to determine which lines to join
         const context = getCellContext3x3(slice, x, y);
 
-        // draw object
         switch (cell) {
           case ObjectsEnum.CUBE:
             this._drawCube(x, y, isDashed, context);
@@ -103,9 +119,8 @@ export default class SliceView {
   };
 
   /**
-   * Add a slice to the view
+   * Draw points that match the size of the current slice
    * @param {int[][]} slice - 2D array representing slice to add
-   * @param {boolean} isDashed - whether the lines should be dashed or not
    */
   _drawGridPoints = slice => {
     for (let y = 0; y < slice.length; y += 1) {
@@ -136,14 +151,16 @@ export default class SliceView {
     const {
       top, left, right, bottom
     } = context;
+    // Determine which lines to remove representing joins
     const drawTop = ![ObjectsEnum.CUBE, ObjectsEnum.ROOFLEFT, ObjectsEnum.ROOFRGHT].includes(top);
     const drawBottom = ![ObjectsEnum.CUBE, ObjectsEnum.ROOFLEFT, ObjectsEnum.ROOFRGHT].includes(bottom);
 
+    // Lines on the sides require knowing the camera angle
     switch (this.camera) {
       case CamerasEnum.NORTH:
       case CamerasEnum.SOUTH:
         drawLeft = ![ObjectsEnum.CUBE, ObjectsEnum.ROOFLEFT].includes(left);
-        drawRight = ![ObjectsEnum.CUBE, ObjectsEnum.ROOFRGHT1].includes(right);
+        drawRight = ![ObjectsEnum.CUBE, ObjectsEnum.ROOFRGHT].includes(right);
         break;
       default:
         drawLeft = ![ObjectsEnum.CUBE].includes(left);
@@ -155,9 +172,10 @@ export default class SliceView {
   };
 
   /**
-   * Draws the trunk of a tree at the given x and y. It is a rectangle from the side and a dot from the ends
+   * Draws the trunk of a tree at the given x and y.
    * @param {int} x
    * @param {int} y
+   * @param {boolean} isDashed - Whether the lines should be dashed or not
    */
   _drawTrunk = (x, y, isDashed = false) => {
     const trunk = new createjs.Shape();
@@ -170,6 +188,7 @@ export default class SliceView {
     let cornerX = ((x + 0.5) * this.r) + 1;
     let cornerY = this.height - (y * this.r) - 1;
 
+    // The trunk is a rectangle from the side and a dot from the ends
     switch (this.camera) {
       case CamerasEnum.NORTH:
       case CamerasEnum.SOUTH:

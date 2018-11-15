@@ -1,28 +1,24 @@
 import CamerasEnum from './enums/CamerasEnum';
 
-/**
- *
- */
-export default class DesignController {
+/** Class to control rotating to different slice angles and elevations and moving through slices */
+export default class SliceController {
   constructor(model) {
     this.gridSize = 17;
     this.xMax = 17;
     this.yMax = 17;
     this.zMax = 7;
     this.model = model;
-
     this.sliceXAxis = 0; // for W/E view
     this.sliceYAxis = 0; // for N/S view
     this.sliceZAxis = 6; // for TOP/BOTTOM view
-
     this.views = [];
 
-    this.north(); // default this.camera = 'NORTH';
+    this.north(); // By default, set to view looking north
   }
 
-  addListener = view => this.views.push(view);
+  addListener = view => this.views.push(view)
 
-  removeListener = toRemove => this.views.filter(view => view !== toRemove);
+  removeListener = toRemove => this.views.filter(view => view !== toRemove)
 
   /**
    * Add the object at the normalized position. Remove any object that is there.
@@ -36,7 +32,7 @@ export default class DesignController {
       this.model.addObject(modelPosition, object);
       this.updateViews();
     }
-  };
+  }
 
   /**
    * Remove the object at the normalized position.
@@ -49,7 +45,7 @@ export default class DesignController {
       this.model.removeObject(modelPosition);
       this.updateViews();
     }
-  };
+  }
 
   /** Move the view to the next slice, without exceeding the last slice */
   nextSlice = () => {
@@ -75,7 +71,7 @@ export default class DesignController {
       default:
         throw new Error(`camera ${this.camera} is not recognized!`);
     }
-  };
+  }
 
   /** Move the view to the previous slice, without going past 0 */
   previousSlice = () => {
@@ -101,25 +97,25 @@ export default class DesignController {
       default:
         throw new Error(`camera ${this.camera} is not recognized!`);
     }
-  };
+  }
 
   /** Set the camera view to NORTH and reset the slice to 0 */
-  north = () => this._setCamera('NORTH');
+  north = () => this._setCamera('NORTH')
 
   /** Set the camera view to SOUTH and reset the slice to 0 */
-  south = () => this._setCamera('SOUTH');
+  south = () => this._setCamera('SOUTH')
 
   /** Set the camera view to EAST and reset the slice to 0 */
-  east = () => this._setCamera('EAST');
+  east = () => this._setCamera('EAST')
 
   /** Set the camera view to WEST and reset the slice to 0 */
-  west = () => this._setCamera('WEST');
+  west = () => this._setCamera('WEST')
 
   /** Set the camera view to TOP and reset the slice to 0 */
-  top = () => this._setCamera('TOP');
+  top = () => this._setCamera('TOP')
 
   /** Set the camera view to BOTTOM and reset the slice to 0 */
-  bottom = () => this._setCamera('BOTTOM');
+  bottom = () => this._setCamera('BOTTOM')
 
   rotateLeft = () => {
     switch (this.camera) {
@@ -138,7 +134,7 @@ export default class DesignController {
       default:
         // do nothing for top and bottom
     }
-  };
+  }
 
   rotateRight = () => {
     switch (this.camera) {
@@ -157,53 +153,49 @@ export default class DesignController {
       default:
         // do nothing for top and bottom
     }
-  };
+  }
 
   /**
    * Set the slice in view in the Z axis, only runs if a legal slice
    * @param {int} slice - number of slice
    */
   _setSliceZAxis = slice => {
-    console.log(`current sliceZAxis: ${this.sliceZAxis}`);
     if (slice >= 0 && slice < this.zMax) {
       this.sliceZAxis = slice;
       this.updateViews();
     }
-  };
+  }
 
   /**
    * Set the slice in view in the X axis, only runs if a legal slice
    * @param {int} slice - number of slice
    */
   _setSliceXAxis = slice => {
-    console.log(`current sliceXAxis: ${this.sliceXAxis}`);
     if (slice >= 0 && slice < this.xMax) {
       this.sliceXAxis = slice;
       this.updateViews();
     }
-  };
+  }
 
   /**
    * Set the slice in view in the Y axis, only runs if a legal slice
    * @param {int} slice - number of slice
    */
   _setSliceYAxis = slice => {
-    console.log(`current sliceYAxis: ${this.sliceYAxis}`);
     if (slice >= 0 && slice < this.yMax) {
       this.sliceYAxis = slice;
       this.updateViews();
     }
-  };
+  }
 
   /**
    * Set the camera view to the given view and reset the slice to 0
-   * @param {String} view - CamerasEnum name
+   * @param {String} camera - CamerasEnum name
    */
   _setCamera = camera => {
-    console.log(`Set camera to: ${camera}`);
     this.camera = CamerasEnum[camera];
     this.updateViews();
-  };
+  }
 
   /** Draw the current view from the current camera angle and sliceIndex */
   updateViews = () => {
@@ -224,16 +216,14 @@ export default class DesignController {
       default:
         throw new Error(`camera ${this.camera} is not recognized!`);
     }
-    for (let i = 0; i < this.views.length; i += 1) {
-      // console.log(`Draw ${i}`);
-      this.views[i].draw(this.camera, sliceIndex);
-    }
-  };
+
+    this.views.forEach(v => v.draw(this.camera, sliceIndex));
+  }
 
   /**
-   *
-   * @param {float} x - Normalized x between 0 and 1
-   * @param {float} y - Normalized y between 0 and 1
+   * Returns a 3D vector of the model position based on the normalized click
+   * @param {float} clickX - Normalized x between 0 and 1
+   * @param {float} clickY - Normalized y between 0 and 1
    */
   getRelativePosition = (clickX, clickY) => {
     // get the x, y position in the scale of the model
@@ -265,11 +255,11 @@ export default class DesignController {
       case CamerasEnum.WEST:
         return { x: this.sliceXAxis, y: x, z: y };
       case CamerasEnum.BOTTOM:
-        return { x, y, z: this.sliceZAxis };
-      case CamerasEnum.TOP:
         return { x, y: this.gridSize - 1 - y, z: this.sliceZAxis };
+      case CamerasEnum.TOP:
+        return { x, y, z: this.sliceZAxis };
       default:
         throw new Error(`camera ${this.camera} is not recognized!`);
     }
-  };
+  }
 }
