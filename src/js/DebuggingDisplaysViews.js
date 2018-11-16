@@ -1,9 +1,9 @@
-import SliceView from './SliceView';
+import Display2DView from './Display2DView';
 import CamerasEnum from './enums/CamerasEnum';
 
 export class TestViewSliceOffset {
   constructor(canvas, model, sliceOffset) {
-    this.view = new SliceView(canvas, model);
+    this.view = new Display2DView(canvas, model);
     this.sliceOffset = sliceOffset;
     this.canvas = canvas;
   }
@@ -41,7 +41,7 @@ export class TestViewSliceOffset {
 
 export class TestViewCameraSlice {
   constructor(canvas, model, controller, camera, sliceIndex) {
-    this.view = new SliceView(canvas, model);
+    this.view = new Display2DView(canvas, model);
     this.camera = camera;
     this.sliceIndex = sliceIndex;
     this.controller = controller;
@@ -77,7 +77,7 @@ export class TestViewCameraSlice {
 
 export class TestViewCamera {
   constructor(canvas, model, controller, camera, axisLabel) {
-    this.view = new SliceView(canvas, model);
+    this.view = new Display2DView(canvas, model);
     this.controller = controller;
     this.camera = camera;
     this.axisLabel = axisLabel;

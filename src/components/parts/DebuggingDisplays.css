@@ -30,3 +30,10 @@
 .display-developer .highlight canvas {
   border: 5px solid red;
 }
+
+ul {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  font-size: 24px;
+}

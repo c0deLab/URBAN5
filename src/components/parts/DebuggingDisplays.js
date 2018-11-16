@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import './DebuggingDisplays.css';
 
 import CamerasEnum from '../../js/enums/CamerasEnum';
-import { TestViewCameraSlice, TestViewCamera } from '../../js/DeveloperViews';
+import { TestViewCameraSlice, TestViewCamera } from '../../js/DebuggingDisplaysViews';
 
 /* global document */
 
@@ -90,6 +90,26 @@ export default class DebuggingDisplays extends React.Component {
           <div style={{ position: 'absolute', top: 0, left: 300 }}>
             <h3>TOP/BOTTOM</h3>
             {TBArray}
+          </div>
+          <div style={{ position: 'absolute', top: 50, left: 600 }}>
+            <h3>Key Controls</h3>
+            <ul>
+              <li>v: 2D slice view</li>
+              <li>b: 3D walk through</li>
+              <li>x: north slice view</li>
+              <li>a: east slice view</li>
+              <li>w: south slice view</li>
+              <li>d: west slice view</li>
+              <li>s: top plan view</li>
+              <li>c: bottom plan view</li>
+              <li>1: add cube</li>
+              <li>2: add tree</li>
+              <li>3: add roof left</li>
+              <li>4: add roof right</li>
+              <li>5: remove element</li>
+              <li>↑: move forward in 3D</li>
+              <li>↓: move backward in 3D</li>
+            </ul>
           </div>
         </div>
         <div style={{ position: 'absolute', top: 1000, left: 300 }} className="horizontal">
