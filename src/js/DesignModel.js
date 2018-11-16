@@ -32,7 +32,6 @@ export default class DesignModel {
    * @param {int} obj - int representing the ObjectsEnum object
    */
   addObject = (position, obj) => {
-    console.log(`this.addObject({ x: ${position.x}, y: 10 + ${position.y}, z: ${position.z} }, ${obj});`);
     switch (obj) {
       case ObjectsEnum.TREE:
         if (position.y < (this.yMax - 1)) {
@@ -64,7 +63,6 @@ export default class DesignModel {
    * @param {object} position - 3D position in the form {x:x,y:y,z:z}
    */
   removeObject = position => {
-    console.log(`this.removeObject({ x: ${position.x}, y: 10 + ${position.y}, z: ${position.z} });`);
     const obj = this._getCell(position);
 
     switch (obj) {

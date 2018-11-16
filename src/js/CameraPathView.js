@@ -4,7 +4,7 @@ import ObjectsEnum from './enums/ObjectsEnum';
 /* global requestAnimationFrame */
 
 /** Class responsible for drawing a 3D view of the model */
-export default class ThreeView {
+export default class CameraPathView {
   constructor(container, model) {
     this.container = container;
 

@@ -4,7 +4,7 @@ import CamerasEnum from './enums/CamerasEnum';
 import { getCellContext3x3 } from './ArrayHelpers';
 
 /** Class responsible for rednering a 2D slice */
-export default class SliceView {
+export default class Display2DView {
   constructor(canvas, model) {
     this.model = model;
     this.stage = new createjs.Stage(canvas);

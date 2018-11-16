@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import CameraPathController from '../../js/CameraPathController';
-import ThreeView from '../../js/ThreeView';
+import CameraPathView from '../../js/CameraPathView';
 
 /* global document */
 
@@ -57,7 +57,7 @@ export default class CameraPath extends React.Component {
     this.isWired = true;
 
     const controller = new CameraPathController(model, cameraPath);
-    this.view = new ThreeView(this.container, model);
+    this.view = new CameraPathView(this.container, model);
     controller.addListener(this.view);
   }
 

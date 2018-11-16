@@ -3,8 +3,8 @@ import PropTypes from 'prop-types';
 
 import ActionsEnum from '../../js/enums/ActionsEnum';
 import ObjectsEnum from '../../js/enums/ObjectsEnum';
-import SliceView from '../../js/SliceView';
-import SliceController from '../../js/SliceController';
+import Display2DView from '../../js/Display2DView';
+import Display2DController from '../../js/Display2DController';
 import DebuggingDisplays from './DebuggingDisplays';
 
 /* global document */
@@ -54,8 +54,8 @@ export default class Display2D extends React.Component {
     this.isWired = true;
 
     // Create controller and 2D slice view
-    const controller = new SliceController(model);
-    this.view = new SliceView(this.canvas, model);
+    const controller = new Display2DController(model);
+    this.view = new Display2DView(this.canvas, model);
     controller.addListener(this.view);
     // Trigger initial render
     controller.updateViews();

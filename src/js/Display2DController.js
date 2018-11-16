@@ -1,7 +1,7 @@
 import CamerasEnum from './enums/CamerasEnum';
 
 /** Class to control rotating to different slice angles and elevations and moving through slices */
-export default class SliceController {
+export default class Display2DController {
   constructor(model) {
     this.gridSize = 17;
     this.xMax = 17;
