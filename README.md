@@ -2,35 +2,31 @@
 
 ## Archaeology of CAD: URBAN 5
 
+<img style="float: right;" src="https://github.com/c0deLab/URBAN5/blob/master/docs/imgs/hardware.png?raw=true">
 URBAN5 (1970), a project by Nicholas Negroponte, was started with the goal to “study the desirability and feasibility of conversing with a machine about an environmental design project.” The purpose of this project is not an exact replica of the original with the same hardware and software, but rather an approximation using modern tools to enrich our understanding of the device. As foundational research in the field of computational design, URBAN5 helped shape the way we approach the topic today. By digging into this piece of our past, we can uncover the unconscious assumptions and practices built into our modern systems, thus allowing us to reimagine our methods and discover new ones.
 
-![Original](https://github.com/c0deLab/URBAN5/blob/master/docs/imgs/hardware.png?raw=true)
-
-
-# Demo
-
-[Open URBAN5](https://c0delab.github.io/URBAN5/)
+Demo: [Open URBAN5](https://c0delab.github.io/URBAN5/)
 
 ## Controls
 
 A user can select the light buttons on the right menu to choose what their action is, however, there are also hotkeys for quicker testing:
 
-v: 2D slice view
-b: 3D walk through
-x: north slice view
-a: east slice view
-w: south slice view
-d: west slice view
-s: top plan view
-c: bottom plan view
-1: add cube
-2: add tree
-3: add roof left
-4: add roof right
-5: remove element
-↑: move forward in 3D walk through
-↓: move backward in 3D walk through
-p: show debugging mode
+v: 2D slice view  
+b: 3D walk through  
+x: north slice view  
+a: east slice viewv
+w: south slice view  
+d: west slice view  
+s: top plan view  
+c: bottom plan view  
+1: add cube  
+2: add tree  
+3: add roof left  
+4: add roof right  
+5: remove element  
+↑: move forward in 3D walk through  
+↓: move backward in 3D walk through  
+p: show debugging mode  
 
 
 # Annotated Guide to URBAN5
