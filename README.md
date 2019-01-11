@@ -50,14 +50,25 @@ The current version has a text area at the top for text interaction, a menu on t
 
 The current version allows a user to add and remove cubes, roofs (slanted east and west), and trees. The cubes and roofs join automatically.
 
+![UI original](https://github.com/c0deLab/URBAN5/blob/master/docs/imgs/slice3.png?raw=true)
+![UI current](https://github.com/c0deLab/URBAN5/blob/master/docs/imgs/slice4.png?raw=true)
+
+
 ## Navigate Slices
 
 It allows travel through slices.
+
+![UI original](https://github.com/c0deLab/URBAN5/blob/master/docs/imgs/slice0.png?raw=true)
+![UI current](https://github.com/c0deLab/URBAN5/blob/master/docs/imgs/slice1.png?raw=true)
+![UI current](https://github.com/c0deLab/URBAN5/blob/master/docs/imgs/slice2.png?raw=true)
+
 
 ## Rotation
 
 In addition to rotating to north, east, south, and west slice views, the user can see plans from top or bottom.
 
+![UI original](https://github.com/c0deLab/URBAN5/blob/master/docs/imgs/plan.png?raw=true)
+![UI current](https://github.com/c0deLab/URBAN5/blob/master/docs/imgs/plan_scrn.png?raw=true)
 
 (Side-by-side screenshots of current version and original (Negroponte, 1970))
 
@@ -65,12 +76,16 @@ In addition to rotating to north, east, south, and west slice views, the user ca
 
 There is a 3D view to simulate a person walking around under construction. It currently takes a set of camera positions and animates the journey. However, it does not join cubes and roofs or render trees or topography correctly.
 
+![UI original](https://github.com/c0deLab/URBAN5/blob/master/docs/imgs/3d_walkthrough.png?raw=true)
+![UI current](https://github.com/c0deLab/URBAN5/blob/master/docs/imgs/3d_walkthrough_scrn.png?raw=true)
 
 (Side-by-side screenshots of current version and original (Negroponte, 1970))
 
 ## Debugging View
 
 For debugging purposes, there is a developer view wrapped around the current view that shows all slices from each of the 6 camera views and the current slice locations.
+
+![UI original](https://github.com/c0deLab/URBAN5/blob/master/docs/imgs/debug.png?raw=true)
 
 
 # Local Setup
