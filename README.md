@@ -43,6 +43,7 @@ The current version has a text area at the top for text interaction, a menu on t
 
 ![UI original](https://github.com/c0deLab/URBAN5/blob/master/docs/imgs/slice.png?raw=true)
 ![UI current](https://github.com/c0deLab/URBAN5/blob/master/docs/imgs/slice_scrn.png?raw=true)
+
 (Side-by-side screenshots of current version and original (Negroponte, 1970))
 
 ## Add/Remove
