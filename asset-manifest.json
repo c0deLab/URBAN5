@@ -1,13 +1,13 @@
 {
-  "main.css": "/static/css/main.03a43360.chunk.css",
-  "main.js": "/static/js/main.caf21467.chunk.js",
-  "main.js.map": "/static/js/main.caf21467.chunk.js.map",
-  "static/js/1.d3d5f5ec.chunk.js": "/static/js/1.d3d5f5ec.chunk.js",
-  "static/js/1.d3d5f5ec.chunk.js.map": "/static/js/1.d3d5f5ec.chunk.js.map",
-  "runtime~main.js": "/static/js/runtime~main.229c360f.js",
-  "runtime~main.js.map": "/static/js/runtime~main.229c360f.js.map",
-  "static/css/main.03a43360.chunk.css.map": "/static/css/main.03a43360.chunk.css.map",
-  "index.html": "/index.html",
-  "precache-manifest.0a79e5a48d87da332b28cb01dd9bb1fc.js": "/precache-manifest.0a79e5a48d87da332b28cb01dd9bb1fc.js",
-  "service-worker.js": "/service-worker.js"
+  "main.css": "URBAN5/static/css/main.03a43360.chunk.css",
+  "main.js": "URBAN5/static/js/main.caf21467.chunk.js",
+  "main.js.map": "URBAN5/static/js/main.caf21467.chunk.js.map",
+  "static/js/1.d3d5f5ec.chunk.js": "URBAN5/static/js/1.d3d5f5ec.chunk.js",
+  "static/js/1.d3d5f5ec.chunk.js.map": "URBAN5/static/js/1.d3d5f5ec.chunk.js.map",
+  "runtime~main.js": "URBAN5/static/js/runtime~main.4ba744af.js",
+  "runtime~main.js.map": "URBAN5/static/js/runtime~main.4ba744af.js.map",
+  "static/css/main.03a43360.chunk.css.map": "URBAN5/static/css/main.03a43360.chunk.css.map",
+  "index.html": "URBAN5/index.html",
+  "precache-manifest.65bebb6f2248a858f0216d200f929e2c.js": "URBAN5/precache-manifest.65bebb6f2248a858f0216d200f929e2c.js",
+  "service-worker.js": "URBAN5/service-worker.js"
 }
