@@ -93,6 +93,7 @@ For debugging purposes, there is a developer view wrapped around the current vie
 Download the source code, then run:
 
 yarn install
+
 yarn start
 
 To Deploy to gh-pages:
