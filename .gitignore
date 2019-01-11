@@ -6,8 +6,8 @@
 # testing
 /coverage
 
-# production - add it back for ghpages
-# /build
+# production
+/build
 
 # misc
 .DS_Store

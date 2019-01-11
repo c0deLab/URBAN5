@@ -17,7 +17,8 @@ export default class Display2D extends React.Component {
   }
 
   state = {
-    controller: null
+    controller: null,
+    showDebug: false
   }
 
   componentDidMount() {
@@ -67,7 +68,7 @@ export default class Display2D extends React.Component {
 
   /** Add some hotkeys to make testing easier */
   handleKeyDown = event => {
-    const { controller } = this.state;
+    const { controller, showDebug } = this.state;
 
     switch (event.keyCode) {
       case 87: // w
@@ -93,6 +94,11 @@ export default class Display2D extends React.Component {
         break;
       case 40: // down arrow
         controller.previousSlice();
+        break;
+      case 80: // p
+        this.setState({
+          showDebug: !showDebug
+        });
         break;
       default:
         break;
@@ -146,7 +152,7 @@ export default class Display2D extends React.Component {
   }
 
   render() {
-    const { controller } = this.state;
+    const { controller, showDebug } = this.state;
     const { model } = this.props;
 
     this.width = 852;
@@ -154,7 +160,7 @@ export default class Display2D extends React.Component {
     return (
       <div>
         <canvas id="display2D" width={this.width} height={this.height} />
-        {model && controller ? (<DebuggingDisplays controller={controller} model={model} />) : null}
+        {showDebug && model && controller ? (<DebuggingDisplays controller={controller} model={model} />) : null}
       </div>
     );
   }
