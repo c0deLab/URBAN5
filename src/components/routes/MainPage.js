@@ -90,14 +90,16 @@ export default class MainPage extends React.Component {
       <div>
         <div style={{ width: '864px', height: '100%', float: 'left' }}>
           <div style={{ width: '864px', height: '160px' }}>
-            <Top user={user} />
+            <div style={{ padding: '20px' }}>
+              <Top user={user} />
+            </div>
           </div>
           <div style={{ width: '852px', height: '852px', padding: '5px' }}>
             <Center action={action} />
           </div>
         </div>
         <div style={{ width: '160px', height: '100%', float: 'left' }}>
-          <div>
+          <div style={{ padding: '20px' }}>
             <Menu buttons={buttons} onClick={this.onMenuClick} />
           </div>
         </div>
