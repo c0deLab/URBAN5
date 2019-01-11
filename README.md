@@ -50,8 +50,8 @@ The current version has a text area at the top for text interaction, a menu on t
 
 The current version allows a user to add and remove cubes, roofs (slanted east and west), and trees. The cubes and roofs join automatically.
 
-![UI original](https://github.com/c0deLab/URBAN5/blob/master/docs/imgs/slice3.png?raw=true)
 ![UI current](https://github.com/c0deLab/URBAN5/blob/master/docs/imgs/slice4.png?raw=true)
+![UI original](https://github.com/c0deLab/URBAN5/blob/master/docs/imgs/slice3.png?raw=true)
 
 
 ## Navigate Slices
