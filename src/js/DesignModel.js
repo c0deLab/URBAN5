@@ -243,6 +243,12 @@ export default class DesignModel {
     this.addObject({ x: 2, y: 10 + 0, z: 3 }, 0);
     this.addObject({ x: 3, y: 10 + 0, z: 3 }, 0);
     this.addObject({ x: 4, y: 10 + 0, z: 3 }, 0);
+    this.addObject({ x: 2, y: 10 + 0, z: 4 }, 0);
+    this.addObject({ x: 3, y: 10 + 0, z: 4 }, 0);
+    this.addObject({ x: 4, y: 10 + 0, z: 4 }, 0);
+    this.addObject({ x: 2, y: 10 + 0, z: 5 }, 0);
+    this.addObject({ x: 3, y: 10 + 0, z: 5 }, 0);
+    this.addObject({ x: 4, y: 10 + 0, z: 5 }, 0);
     this.addObject({ x: 13, y: 10 + 0, z: 0 }, 0);
     this.addObject({ x: 12, y: 10 + 0, z: 0 }, 0);
     this.addObject({ x: 12, y: 10 + 0, z: 1 }, 0);

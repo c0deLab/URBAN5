@@ -1,6 +1,6 @@
 import Array2D from 'array2d';
 import CamerasEnum from './enums/CamerasEnum';
-import { getEmpty2DArray, getCellContext3x3 } from './ArrayHelpers';
+import { getEmpty2DArray, getCellContext3x3, getCornerContext2x2 } from './ArrayHelpers';
 
 /** Class represents the topograhy of a design world */
 export default class TopoModel {
@@ -18,6 +18,14 @@ export default class TopoModel {
    */
   setTopoHeight = (position, height) => {
     this.heights[position.y][position.x] = height;
+  };
+
+  /**
+   * Get the topography height at a given position
+   * @param {object} position - 2D position in the form {x:x,y:y}
+   */
+  getTopoHeight = (position) => {
+    return this.heights[position.y][position.x];
   };
 
   /**
@@ -72,5 +80,29 @@ export default class TopoModel {
     }
 
     return heightPairs;
+  };
+
+  /**
+   * Get 2D array of all the corner heights (at each corner use the highest adjacent tile)
+   */
+  getTopoCorners = () => {
+    const { length } = this.heights;
+    const cornersLength = length + 1;
+    // Create a 2D array 1 longer and wider than heights
+    const corners = getEmpty2DArray(cornersLength, cornersLength, 0);
+
+    for (let y = 0; y < cornersLength; y += 1) {
+      for (let x = 0; x < cornersLength; x += 1) {
+        const context = getCornerContext2x2(this.heights, x, y);
+        const {
+          topLeft, topRight, bottomLeft, bottomRight
+        } = context;
+        console.log(topLeft, topRight, bottomLeft, bottomRight);
+        corners[y][x] = Math.max(topLeft, topRight, bottomLeft, bottomRight);
+      }
+    }
+
+    console.dir(corners);
+    return corners;
   };
 }

@@ -1,7 +1,10 @@
 import * as THREE from 'three';
 import ObjectsEnum from './enums/ObjectsEnum';
+import { getEmpty2DArray } from './ArrayHelpers';
 
 /* global requestAnimationFrame */
+/* global window */
+const material = new THREE.LineBasicMaterial({ color: 0xE8E8DA });
 
 /** Class responsible for drawing a 3D view of the model */
 export default class CameraPathView {
@@ -15,6 +18,7 @@ export default class CameraPathView {
     this.yMax = 17;
     this.zMax = 7;
     this.r = (this.width - 2) / this.gridSize;
+    this.target = null;
 
     // Set to true once the controller gives it a camera position
     this.hasPosition = false;
@@ -22,15 +26,15 @@ export default class CameraPathView {
     // Setup Three.js scene, camera, and renderer
     this.scene = new THREE.Scene();
     this.scene.background = new THREE.Color(0x000000);
-    this.camera = new THREE.PerspectiveCamera(45, this.width / this.height, 1, 1000);
+    this.camera = new THREE.PerspectiveCamera(75, this.width / this.height, 1, 1000);
     this.scene.add(this.camera);
     this.renderer = new THREE.WebGLRenderer({ antialias: true });
-    this.renderer.setPixelRatio(1);
+    this.renderer.setPixelRatio(0.6);
     this.renderer.setSize(this.width, this.height);
     this.container.appendChild(this.renderer.domElement);
 
     this.addModelToScene(model);
-    // TODO: Add topography to scene
+    this.addTopoToScene(model);
 
     this.animate();
   }
@@ -47,13 +51,27 @@ export default class CameraPathView {
   /**
    * Sets the camera position according to the given point
    * @param {object} p - A 3D point
+   * @param {object} nextP - The next 3D point for direction
    */
-  setCameraPosition = p => {
+  setCameraPosition = (p, nextP) => {
     this.hasPosition = true;
+    const { x, y, z } = this.getAdjustedPoint(p);
+    this.camera.position.x = x;
+    this.camera.position.y = y;
+    this.camera.position.z = z;
+
+    // Point camera at next point
+    const np = this.getAdjustedPoint(nextP);
+    this.camera.lookAt(np.x, np.y, np.z);
+  }
+
+  /**
+   * Returns the point adjusted for the 3D world
+   * @param {object} p - A 3D point
+   */
+  getAdjustedPoint = p => {
     const { x, y, z } = p;
-    this.camera.position.x = x * this.r;
-    this.camera.position.y = z * this.r + (this.r / 2);
-    this.camera.position.z = -y * this.r;
+    return { x: x * this.r, y: z * this.r + (this.r / 2), z: -y * this.r };
   }
 
   /**
@@ -75,6 +93,8 @@ export default class CameraPathView {
           switch (object) {
             case ObjectsEnum.CUBE:
               this._addCube(x, y, z);
+              // const context = getCellContext3D(objects, x, y, z);
+              // this._addCubeWithJoins(x, y, z, context);
               break;
             case ObjectsEnum.TREE:
               this._addTree(x, y, z);
@@ -97,10 +117,53 @@ export default class CameraPathView {
     }
   }
 
+  /**
+   * Add the topography to the scene
+   * @param {object} model - DesignModel
+   */
+  addTopoToScene = model => {
+    if (!model || !model.topo) {
+      return;
+    }
+
+    const { topo } = model;
+    // Get 2D array of all the corners (at each corner use the highest adjacent tile)
+    const corners = topo.getTopoCorners();
+
+    // calculate the corners of all the topography and connect them
+    const adjustedCorners = getEmpty2DArray(this.xMax + 1, this.yMax + 1, null);
+    for (let y = 0; y <= this.yMax; y += 1) {
+      for (let x = 0; x <= this.xMax; x += 1) {
+        const cornerPoint = { x, y, z: corners[y][x] - 0.5 };
+        const adjustedCornerPoint = this.getAdjustedPoint(cornerPoint);
+        // Drop the height by half a block
+        adjustedCornerPoint.z = adjustedCornerPoint.z - 0.5;
+        adjustedCorners[y][x] = adjustedCornerPoint;
+
+        // Connect down and right
+        if (y > 0) {
+          const downPoint = adjustedCorners[y - 1][x];
+          this._addLine(adjustedCornerPoint, downPoint);
+        }
+        if (x > 0) {
+          const leftPoint = adjustedCorners[y][x - 1];
+          this._addLine(adjustedCornerPoint, leftPoint);
+        }
+      }
+    }
+  }
+
+  _addLine = (p0, p1) => {
+    const geometry = new THREE.Geometry();
+    geometry.vertices.push(new THREE.Vector3(p0.x, p0.y, p0.z));
+    geometry.vertices.push(new THREE.Vector3(p1.x, p1.y, p1.z));
+    const line = new THREE.Line(geometry, material);
+    this.scene.add(line);
+  }
+
   _addCube = (x, y, z) => {
     const geometry = new THREE.BoxGeometry(this.r, this.r, this.r);
     const wireframe = new THREE.EdgesGeometry(geometry);
-    const material = new THREE.LineBasicMaterial({ color: 0xffffff, linewidth: 10 });
     const lines = new THREE.LineSegments(wireframe, material);
     const position = { x: x * this.r, y: z * this.r, z: -y * this.r };
     lines.position.x = position.x + (this.r / 2);
@@ -109,23 +172,44 @@ export default class CameraPathView {
     this.scene.add(lines);
   }
 
+  // _addCubeWithJoins = (x, y, z, context) => {
+  //   // Do not draw interior lines, check context
+  //   //const { left, front, right, back, top, bottom } = context;
+
+  //   // // Bottom
+  //   // const p0 = new THREE.Vector3(x * this.r, z * this.r, -y * this.r);
+  //   // const p1 = new THREE.Vector3(x * this.r, (z + 1) * this.r, -y * this.r);
+  //   // const p2 = new THREE.Vector3((x + 1) * this.r, (z + 1) * this.r, -y * this.r);
+  //   // const p3 = new THREE.Vector3((x + 1) * this.r, z * this.r, -y * this.r);
+
+  //   // // Top
+  //   // const p4 = new THREE.Vector3(x * this.r, z * this.r, -(y + 1) * this.r);
+  //   // const p5 = new THREE.Vector3(x * this.r, (z + 1) * this.r, -(y + 1) * this.r);
+  //   // const p6 = new THREE.Vector3((x + 1) * this.r, (z + 1) * this.r, -(y + 1) * this.r);
+  //   // const p7 = new THREE.Vector3((x + 1) * this.r, z * this.r, -(y + 1) * this.r);
+
+  //   // geometry = new THREE.Geometry();
+  //   // geometry.vertices.push( v1, v2, v2, v3, v3, v4 );
+
+  //   const geometry = new THREE.BoxGeometry(this.r, this.r, this.r);
+  //   const wireframe = new THREE.EdgesGeometry(geometry);
+  //   const lines = new THREE.LineSegments(wireframe, material);
+  //   const position = { x: x * this.r, y: z * this.r, z: -y * this.r };
+  //   lines.position.x = position.x + (this.r / 2);
+  //   lines.position.y = position.y + (this.r / 2);
+  //   lines.position.z = position.z - (this.r / 2);
+  //   this.scene.add(lines);
+  // }
+
   _addTree = (x, y, z) => {
-    const radius = this.r / 10;
-    const geometry = new THREE.CylinderGeometry(radius, radius, this.r, 6);
-    const wireframe = new THREE.EdgesGeometry(geometry);
-    const material = new THREE.LineBasicMaterial({ color: 0xffffff, linewidth: 10 });
-    const lines = new THREE.LineSegments(wireframe, material);
-    const position = { x: x * this.r, y: z * this.r, z: -y * this.r };
-    lines.position.x = position.x + (this.r / 2);
-    lines.position.y = position.y + (this.r / 2);
-    lines.position.z = position.z - (this.r / 2);
-    this.scene.add(lines);
+    const position = { x: (x + 0.5) * this.r, y: z * this.r, z: (-y - 0.5) * this.r };
+    const position2 = { x: position.x, y: position.y + this.r, z: position.z };
+    this._addLine(position, position2);
   }
 
   _addFoliage = (x, y, z) => {
-    const geometry = new THREE.SphereGeometry(this.r / 2, 6, 6);
+    const geometry = new THREE.SphereGeometry(this.r / 2, 5, 5);
     const wireframe = new THREE.EdgesGeometry(geometry);
-    const material = new THREE.LineBasicMaterial({ color: 0xffffff, linewidth: 10 });
     const lines = new THREE.LineSegments(wireframe, material);
     const position = { x: x * this.r, y: z * this.r, z: -y * this.r };
     lines.position.x = position.x + (this.r / 2);
@@ -152,7 +236,6 @@ export default class CameraPathView {
       new THREE.Face3(0, 1, 4, 5)
     );
     const wireframe = new THREE.EdgesGeometry(geometry);
-    const material = new THREE.LineBasicMaterial({ color: 0xffffff, linewidth: 10 });
     const lines = new THREE.LineSegments(wireframe, material);
     const position = { x: x * this.r, y: z * this.r, z: -y * this.r };
     lines.position.x = position.x;
@@ -179,7 +262,6 @@ export default class CameraPathView {
       new THREE.Face3(0, 1, 4, 5)
     );
     const wireframe = new THREE.EdgesGeometry(geometry);
-    const material = new THREE.LineBasicMaterial({ color: 0xffffff, linewidth: 10 });
     const lines = new THREE.LineSegments(wireframe, material);
     const position = { x: x * this.r, y: z * this.r, z: -y * this.r };
     lines.position.x = position.x;

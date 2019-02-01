@@ -11,6 +11,8 @@ const ButtonsEnum = {
   ADDTREE: { label: 'ADD TREE', action: ActionsEnum.ADDTREE },
   ADDRFLFT: { label: 'ADDRFLFT', action: ActionsEnum.ADDRFLFT },
   ADDRFRGT: { label: 'ADDRFRGT', action: ActionsEnum.ADDRFRGT },
+  WALKTHRU: { label: 'WALKTHRU', action: ActionsEnum.WALKTHRU },
+  EDITTOPO: { label: 'EDITTOPO', action: ActionsEnum.EDITTOPO },
 };
 
 export default ButtonsEnum;

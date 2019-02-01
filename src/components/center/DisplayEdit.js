@@ -5,12 +5,12 @@ import ActionsEnum from '../../js/enums/ActionsEnum';
 import ObjectsEnum from '../../js/enums/ObjectsEnum';
 import Display2DView from '../../js/Display2DView';
 import Display2DController from '../../js/Display2DController';
-import DebuggingDisplays from './DebuggingDisplays';
+import DebuggingDisplays from '../debugging/DebuggingDisplays';
 
 /* global document */
 
 /** Class for the 2D slice views */
-export default class Display2D extends React.Component {
+export default class DisplayEdit extends React.Component {
   static propTypes = {
     action: PropTypes.number.isRequired, // eslint-disable-line react/forbid-prop-types
     model: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
@@ -144,6 +144,9 @@ export default class Display2D extends React.Component {
         break;
       case ActionsEnum.ADDRFRGT:
         controller.addObject(normalizedX, normalizedY, ObjectsEnum.ROOFRGHT);
+        break;
+      case ActionsEnum.EDITTOPO:
+        controller.setTopoHeight(normalizedX, normalizedY);
         break;
       default:
         // nothing

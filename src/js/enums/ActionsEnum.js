@@ -8,6 +8,8 @@ const ActionsEnum = {
   ADDTREE: 6, // Add a Tree (trunk and foliage)
   ADDRFLFT: 7, // Add Left Angle Roof
   ADDRFRGT: 8, // Add Right Angle Roof
+  WALKTHRU: 9, // Start walkthrough
+  EDITTOPO: 10, // Edit topo mode
 };
 
 export default ActionsEnum;

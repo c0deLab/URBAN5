@@ -1,7 +1,7 @@
 import { createjs } from '@createjs/easeljs';
 import ObjectsEnum from './enums/ObjectsEnum';
 import CamerasEnum from './enums/CamerasEnum';
-import { getCellContext3x3 } from './ArrayHelpers';
+import { getCellContext3x3, getEmpty2DArray } from './ArrayHelpers';
 
 /** Class responsible for rednering a 2D slice */
 export default class Display2DView {
@@ -12,7 +12,7 @@ export default class Display2DView {
     this.gridSize = 17;
     this.height = canvas.height;
     this.r = (this.height - 2) / this.gridSize;
-    this.color = '#ffffff';
+    this.color = '#E8E8DA';
     this.drawBackground = true; // Whether background slices should be rendered
   }
 
@@ -20,8 +20,9 @@ export default class Display2DView {
    * Draw the given sliceIndex for the camera angle to the screen
    * @param {int} camera - CamerasEnum
    * @param {int} sliceIndex - Index of slice of model from given camera view to draw
+   * @param {int} isBackgroundDashed - Draw objects in background slices as dashed lines
    */
-  draw = (camera, sliceIndex) => {
+  draw = (camera, sliceIndex, isBackgroundDashed=true) => {
     // Clear the screen
     this.stage.removeAllChildren();
 
@@ -34,7 +35,7 @@ export default class Display2DView {
     // Draw the background slices
     if (this.drawBackground) {
       const backgroundSlices = this.model.getBackgroundSlices(camera, sliceIndex);
-      backgroundSlices.forEach(s => this._drawSlice(camera, s, true));
+      backgroundSlices.forEach(s => this._drawSlice(camera, s, isBackgroundDashed));
     }
 
     // Draw the given slice
@@ -45,6 +46,45 @@ export default class Display2DView {
     this._drawGridPoints(currentSlice);
 
     // Render to the screen
+    this.stage.update();
+  };
+
+  /**
+   * Draw a version where all the layers are compressed into a single top view
+   */
+  drawTopCompressedView = () => {
+    // Clear the screen
+    this.stage.removeAllChildren();
+
+    const allSlices = this.model.getBackgroundSlices(CamerasEnum.TOP, this.model.zMax);
+    // Reverse to go from bottom up
+    allSlices.reverse();
+
+    // Create master slice from all slices
+    const masterSlice = getEmpty2DArray(this.model.xMax, this.model.yMax, null);
+    for (let y = 0; y < this.model.yMax; y += 1) {
+      for (let x = 0; x < this.model.xMax; x += 1) {
+        let topObj = null;
+        allSlices.forEach(slice => {
+          const obj = slice[y][x];
+          if ([ObjectsEnum.CUBE, ObjectsEnum.ROOFLEFT, ObjectsEnum.ROOFRGHT].includes(obj)) {
+            topObj = ObjectsEnum.CUBE; // Simplify view to be all cubes that merge
+          } else if ([ObjectsEnum.FOLIAGE, ObjectsEnum.TREE].includes(obj)) {
+            topObj = ObjectsEnum.FOLIAGE; // Simplify trees
+          }
+        });
+        masterSlice[y][x] = topObj;
+      }
+    }
+
+    this._drawSlice(CamerasEnum.TOP, masterSlice);
+
+    // Render to the screen
+    this.stage.update();
+  };
+
+  /** Update the screen */
+  update = () => {
     this.stage.update();
   };
 
@@ -147,13 +187,15 @@ export default class Display2DView {
   _drawCube = (x, y, isDashed = false, context) => {
     let drawLeft;
     let drawRight;
+    let drawTop;
+    let drawBottom;
 
     const {
       top, left, right, bottom
     } = context;
     // Determine which lines to remove representing joins
-    const drawTop = ![ObjectsEnum.CUBE, ObjectsEnum.ROOFLEFT, ObjectsEnum.ROOFRGHT].includes(top);
-    const drawBottom = ![ObjectsEnum.CUBE, ObjectsEnum.ROOFLEFT, ObjectsEnum.ROOFRGHT].includes(bottom);
+    drawTop = ![ObjectsEnum.CUBE, ObjectsEnum.ROOFLEFT, ObjectsEnum.ROOFRGHT].includes(top);
+    drawBottom = ![ObjectsEnum.CUBE, ObjectsEnum.ROOFLEFT, ObjectsEnum.ROOFRGHT].includes(bottom);
 
     // Lines on the sides require knowing the camera angle
     switch (this.camera) {
@@ -386,5 +428,21 @@ export default class Display2DView {
     roof.graphics.endStroke();
 
     this.stage.addChild(roof);
+  };
+
+  /**
+   * Draw a circle at the location
+   * @param {int} x
+   * @param {int} y
+   */
+  drawCircle = (x, y) => {
+    const circle = new createjs.Shape();
+
+    circle.graphics.beginStroke(this.color).setStrokeStyle(3);
+    const cornerX = ((x + 0.5) * this.r) + 1;
+    const cornerY = this.height - ((y + 0.45) * this.r) - 1;
+    circle.graphics.drawCircle(cornerX, cornerY, this.r * 0.40);
+
+    this.stage.addChild(circle);
   };
 }

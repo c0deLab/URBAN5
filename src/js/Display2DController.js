@@ -12,6 +12,7 @@ export default class Display2DController {
     this.sliceYAxis = 0; // for N/S view
     this.sliceZAxis = 6; // for TOP/BOTTOM view
     this.views = [];
+    this.isBackgroundDashed = true;
 
     this.north(); // By default, set to view looking north
   }
@@ -43,6 +44,33 @@ export default class Display2DController {
     const modelPosition = this.getRelativePosition(clickX, clickY);
     if (modelPosition) {
       this.model.removeObject(modelPosition);
+      this.updateViews();
+    }
+  }
+
+  /**
+   * Set the topo height at the normalized position. If there is no ground where you click, raise
+   * to fill that area. If there is ground there, remove down to the base of that point
+   * @param {int} clickX - Normalized x value [0,1]
+   * @param {int} clickY - Normalized y value [0,1]
+   */
+  setTopoHeight = (clickX, clickY) => {
+    const modelPosition = this.getRelativePosition(clickX, clickY);
+    if (modelPosition) {
+      const { x, y, z } = modelPosition;
+      const { topo } = this.model;
+
+      let height;
+
+      const currentHeight = topo.getTopoHeight({ x, y });
+      if (z < currentHeight) {
+        // If ground was previous full, Drop height down to base of click grid square
+        height = z;
+      } else {
+        // Raise height to fill up the grid square if it was empty
+        height = z + 1;
+      }
+      this.model.topo.setTopoHeight({ x, y }, height);
       this.updateViews();
     }
   }
@@ -217,7 +245,7 @@ export default class Display2DController {
         throw new Error(`camera ${this.camera} is not recognized!`);
     }
 
-    this.views.forEach(v => v.draw(this.camera, sliceIndex));
+    this.views.forEach(v => v.draw(this.camera, sliceIndex, this.isBackgroundDashed));
   }
 
   /**

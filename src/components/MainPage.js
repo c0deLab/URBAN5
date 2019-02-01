@@ -1,11 +1,16 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
-import Center from '../parts/Center';
-import Menu from '../parts/Menu';
-import Top from '../parts/Top';
-import ButtonsEnum from '../../js/enums/ButtonsEnum';
-import ActionsEnum from '../../js/enums/ActionsEnum';
+import Menu from './Menu';
+import Top from './Top';
+import ButtonsEnum from '../js/enums/ButtonsEnum';
+import ActionsEnum from '../js/enums/ActionsEnum';
+
+import DesignModel from '../js/DesignModel';
+
+import DisplayEdit from './center/DisplayEdit';
+import DisplayWalkthrough from './center/DisplayWalkthrough';
+import DisplaySetTopo from './center/DisplaySetTopo';
 
 /* global document */
 
@@ -16,10 +21,17 @@ export default class MainPage extends React.Component {
   }
 
   state = {
-    action: 2, // Default action is ADDCUBE
+    action: 10, // Default action is ADDCUBE
+    model: null,
+    displayType: 'EDIT'
   };
 
   componentDidMount() {
+    const model = new DesignModel();
+    this.setState({
+      model
+    });
+
     document.addEventListener('keydown', this.handleKeyDown);
   }
 
@@ -36,6 +48,7 @@ export default class MainPage extends React.Component {
   /** Add some hotkeys to make testing easier */
   handleKeyDown = event => {
     let actionCode;
+    console.log(event.keyCode);
     switch (event.keyCode) {
       case 48: // 0
         actionCode = ActionsEnum.REMOVE;
@@ -64,6 +77,23 @@ export default class MainPage extends React.Component {
       case 56: // 8
         actionCode = ActionsEnum.ADDRFRGT;
         break;
+
+      // Switch between views
+      case 66: // b
+        this.setState({
+          displayType: 'EDIT'
+        });
+        break;
+      case 86: // v
+        this.setState({
+          displayType: 'PATH'
+        });
+        break;
+      case 78: // v
+        this.setState({
+          displayType: 'TOPO'
+        });
+        break;
       default:
         break;
     }
@@ -75,17 +105,58 @@ export default class MainPage extends React.Component {
     }
   }
 
+  getDisplay = () => {
+    const { action } = this.state;
+    const {
+      model, displayType
+    } = this.state;
+
+    if (!model || !action) {
+      return null;
+    }
+
+    switch (displayType) {
+      case 'EDIT':
+        return (<DisplayEdit action={action} model={model} />);
+      case 'PATH':
+        return (<DisplayWalkthrough model={model} />);
+      case 'TOPO':
+        return (<DisplaySetTopo model={model} />);
+      default:
+        break;
+    }
+
+    return null;
+  }
+
+  getButtons = () => {
+    const { displayType } = this.state;
+
+    switch (displayType) {
+      case 'EDIT':
+        return [
+          ButtonsEnum.ADDCUBE,
+          ButtonsEnum.ADDTREE,
+          ButtonsEnum.ADDRFLFT,
+          ButtonsEnum.ADDRFRGT,
+          ButtonsEnum.REMOVE,
+          ButtonsEnum.EDITTOPO
+        ];
+      case 'PATH':
+        return [];
+      case 'TOPO':
+        return [];
+      default:
+        break;
+    }
+
+    return [];
+  }
+
   render() {
-    const buttons = [
-      ButtonsEnum.ADDCUBE,
-      ButtonsEnum.ADDTREE,
-      ButtonsEnum.ADDRFLFT,
-      ButtonsEnum.ADDRFRGT,
-      ButtonsEnum.REMOVE
-    ];
+    const buttons = this.getButtons();
 
     const { user } = this.props;
-    const { action } = this.state;
     return (
       <div>
         <div style={{ width: '864px', height: '100%', float: 'left' }}>
@@ -95,7 +166,7 @@ export default class MainPage extends React.Component {
             </div>
           </div>
           <div style={{ width: '852px', height: '852px', padding: '5px' }}>
-            <Center action={action} />
+            {this.getDisplay()}
           </div>
         </div>
         <div style={{ width: '160px', height: '100%', float: 'left' }}>

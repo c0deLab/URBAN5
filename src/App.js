@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import MainPage from './components/routes/MainPage';
+import MainPage from './components/MainPage';
 import './App.css';
 
 export default class App extends Component {

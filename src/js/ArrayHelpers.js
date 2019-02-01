@@ -9,6 +9,16 @@ function getSafe(arr, x, y) {
   return null;
 }
 
+function getSafe3D(arr, x, y, z) {
+  if (arr.length > 0 && arr[0].length && arr[0][0].length
+      && x >= 0 && x < arr[0][0].length
+      && y >= 0 && y < arr[0].length
+      && z >= 0 && z < arr.length) {
+    return arr[z][y][x];
+  }
+  return null;
+}
+
 /**
 * Given a 2D array 'arr' and a position, get the position and all cells around it as an object
 * This can be unpacked as follows:
@@ -25,6 +35,36 @@ export function getCellContext3x3(arr, x, y) {
     bottomLeft: getSafe(arr, x - 1, y - 1),
     bottom: getSafe(arr, x, y - 1),
     bottomRight: getSafe(arr, x + 1, y - 1)
+  };
+}
+
+/**
+* Given a 2D array 'arr' and a position, get the position and all cells around it as an object
+* This can be unpacked as follows:
+* const { left, front, right, back, top, bottom } = context;
+*/
+export function getCellContext3D(arr, x, y, z) {
+  return {
+    left: getSafe3D(arr, x - 1, y, z),
+    front: getSafe3D(arr, x, y + 1, z),
+    right: getSafe3D(arr, x + 1, y, z),
+    back: getSafe3D(arr, x, y - 1, z),
+    top: getSafe3D(arr, x, y, z + 1),
+    bottom: getSafe3D(arr, x, y, z - 1)
+  };
+}
+
+/**
+* Given a 2D array 'arr' and a position of a corner, get the height of all adjacent cells around it as an object
+* This can be unpacked as follows:
+* const { topLeft, topRight, bottomLeft, bottomRight } = context;
+*/
+export function getCornerContext2x2(arr, x, y) {
+  return {
+    topLeft: getSafe(arr, x - 1, y),
+    topRight: getSafe(arr, x, y),
+    bottomLeft: getSafe(arr, x - 1, y - 1),
+    bottomRight: getSafe(arr, x, y - 1)
   };
 }
 
