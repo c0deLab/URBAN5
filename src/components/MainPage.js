@@ -3,7 +3,6 @@ import PropTypes from 'prop-types';
 
 import Menu from './Menu';
 import Top from './Top';
-import ButtonsEnum from '../js/enums/ButtonsEnum';
 import ActionsEnum from '../js/enums/ActionsEnum';
 
 import DesignModel from '../js/DesignModel';
@@ -39,43 +38,43 @@ export default class MainPage extends React.Component {
     document.removeEventListener('keydown', this.handleKeyDown);
   }
 
-  onMenuClick = button => {
+  onMenuClick = action => {
     this.setState({
-      action: button.action,
+      action: action,
     });
   }
 
   /** Add some hotkeys to make testing easier */
   handleKeyDown = event => {
-    let actionCode;
+    let action;
     console.log(event.keyCode);
     switch (event.keyCode) {
       case 48: // 0
-        actionCode = ActionsEnum.REMOVE;
+        action = ActionsEnum.REMOVE;
         break;
       case 49: // 1
-        actionCode = ActionsEnum.ADDCUBE;
+        action = ActionsEnum.ADDCUBE;
         break;
       case 50: // 2
-        actionCode = ActionsEnum.ADDTREE;
+        action = ActionsEnum.ADDTREE;
         break;
       case 51: // 3
-        actionCode = ActionsEnum.ADDRFLFT;
+        action = ActionsEnum.ADDRFLFT;
         break;
       case 52: // 4
-        actionCode = ActionsEnum.ADDRFRGT;
+        action = ActionsEnum.ADDRFRGT;
         break;
       case 53: // 5
-        actionCode = ActionsEnum.REMOVE;
+        action = ActionsEnum.REMOVE;
         break;
       case 54: // 6
-        actionCode = ActionsEnum.ADDCUBE;
+        action = ActionsEnum.ADDCUBE;
         break;
       case 55: // 7
-        actionCode = ActionsEnum.ADDRFLFT;
+        action = ActionsEnum.ADDRFLFT;
         break;
       case 56: // 8
-        actionCode = ActionsEnum.ADDRFRGT;
+        action = ActionsEnum.ADDRFRGT;
         break;
 
       // Switch between views
@@ -98,9 +97,9 @@ export default class MainPage extends React.Component {
         break;
     }
 
-    if (actionCode) {
+    if (action) {
       this.setState({
-        action: actionCode,
+        action: action,
       });
     }
   }
@@ -129,18 +128,18 @@ export default class MainPage extends React.Component {
     return null;
   }
 
-  getButtons = () => {
+  getActions = () => {
     const { displayType } = this.state;
 
     switch (displayType) {
       case 'EDIT':
         return [
-          ButtonsEnum.ADDCUBE,
-          ButtonsEnum.ADDTREE,
-          ButtonsEnum.ADDRFLFT,
-          ButtonsEnum.ADDRFRGT,
-          ButtonsEnum.REMOVE,
-          ButtonsEnum.EDITTOPO
+          ActionsEnum.ADDCUBE,
+          ActionsEnum.ADDTREE,
+          ActionsEnum.ADDRFLFT,
+          ActionsEnum.ADDRFRGT,
+          ActionsEnum.REMOVE,
+          ActionsEnum.EDITTOPO
         ];
       case 'PATH':
         return [];
@@ -154,7 +153,7 @@ export default class MainPage extends React.Component {
   }
 
   render() {
-    const buttons = this.getButtons();
+    const actions = this.getActions();
 
     const { user } = this.props;
     return (
@@ -171,7 +170,7 @@ export default class MainPage extends React.Component {
         </div>
         <div style={{ width: '160px', height: '100%', float: 'left' }}>
           <div style={{ padding: '20px' }}>
-            <Menu buttons={buttons} onClick={this.onMenuClick} />
+            <Menu actions={actions} onClick={this.onMenuClick} />
           </div>
         </div>
       </div>

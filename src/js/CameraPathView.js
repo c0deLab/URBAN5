@@ -137,7 +137,7 @@ export default class CameraPathView {
         const cornerPoint = { x, y, z: corners[y][x] - 0.5 };
         const adjustedCornerPoint = this.getAdjustedPoint(cornerPoint);
         // Drop the height by half a block
-        adjustedCornerPoint.z = adjustedCornerPoint.z - 0.5;
+        adjustedCornerPoint.z -= 0.5;
         adjustedCorners[y][x] = adjustedCornerPoint;
 
         // Connect down and right
@@ -171,35 +171,6 @@ export default class CameraPathView {
     lines.position.z = position.z - (this.r / 2);
     this.scene.add(lines);
   }
-
-  // _addCubeWithJoins = (x, y, z, context) => {
-  //   // Do not draw interior lines, check context
-  //   //const { left, front, right, back, top, bottom } = context;
-
-  //   // // Bottom
-  //   // const p0 = new THREE.Vector3(x * this.r, z * this.r, -y * this.r);
-  //   // const p1 = new THREE.Vector3(x * this.r, (z + 1) * this.r, -y * this.r);
-  //   // const p2 = new THREE.Vector3((x + 1) * this.r, (z + 1) * this.r, -y * this.r);
-  //   // const p3 = new THREE.Vector3((x + 1) * this.r, z * this.r, -y * this.r);
-
-  //   // // Top
-  //   // const p4 = new THREE.Vector3(x * this.r, z * this.r, -(y + 1) * this.r);
-  //   // const p5 = new THREE.Vector3(x * this.r, (z + 1) * this.r, -(y + 1) * this.r);
-  //   // const p6 = new THREE.Vector3((x + 1) * this.r, (z + 1) * this.r, -(y + 1) * this.r);
-  //   // const p7 = new THREE.Vector3((x + 1) * this.r, z * this.r, -(y + 1) * this.r);
-
-  //   // geometry = new THREE.Geometry();
-  //   // geometry.vertices.push( v1, v2, v2, v3, v3, v4 );
-
-  //   const geometry = new THREE.BoxGeometry(this.r, this.r, this.r);
-  //   const wireframe = new THREE.EdgesGeometry(geometry);
-  //   const lines = new THREE.LineSegments(wireframe, material);
-  //   const position = { x: x * this.r, y: z * this.r, z: -y * this.r };
-  //   lines.position.x = position.x + (this.r / 2);
-  //   lines.position.y = position.y + (this.r / 2);
-  //   lines.position.z = position.z - (this.r / 2);
-  //   this.scene.add(lines);
-  // }
 
   _addTree = (x, y, z) => {
     const position = { x: (x + 0.5) * this.r, y: z * this.r, z: (-y - 0.5) * this.r };

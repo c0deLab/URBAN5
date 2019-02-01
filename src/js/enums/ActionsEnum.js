@@ -1,15 +1,15 @@
 const ActionsEnum = {
-  STEPOUT: 0, // Retreat to the previous slice
-  STEPIN: 1, // Advance to the next slice
-  ADDCUBE: 2, // Add a cube
-  REMOVE: 3, // Remove an object
-  ROTATELT: 4, // Rotate the view to the right
-  ROTATERT: 5, // Rotate the view to the left
-  ADDTREE: 6, // Add a Tree (trunk and foliage)
-  ADDRFLFT: 7, // Add Left Angle Roof
-  ADDRFRGT: 8, // Add Right Angle Roof
-  WALKTHRU: 9, // Start walkthrough
-  EDITTOPO: 10, // Edit topo mode
+  STEPOUT: { id: 0, label: 'STEP OUT' }, // Retreat to the previous slice
+  STEPIN: { id: 1, label: 'STEP  IN' }, // Advance to the next slice
+  ADDCUBE: { id: 2, label: 'ADD CUBE' }, // Add a cube
+  REMOVE: { id: 3, label: 'RE  MOVE' }, // Remove an object
+  ROTATELT: { id: 4, label: 'ROTATELT' }, // Rotate the view to the right
+  ROTATERT: { id: 5, label: 'ROTATERT' }, // Rotate the view to the left
+  ADDTREE: { id: 6, label: 'ADD TREE' }, // Add a Tree (trunk and foliage)
+  ADDRFLFT: { id: 7, label: 'ADDRFLFT' }, // Add Left Angle Roof
+  ADDRFRGT: { id: 8, label: 'ADDRFRGT' }, // Add Right Angle Roof
+  WALKTHRU: { id: 9, label: 'WALKTHRU' }, // Start walkthrough
+  EDITTOPO: { id: 10, label: 'EDITTOPO' } // Edit topo mode
 };
 
 export default ActionsEnum;
