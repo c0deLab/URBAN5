@@ -9,7 +9,9 @@ const ActionsEnum = {
   ADDRFLFT: { id: 7, label: 'ADDRFLFT' }, // Add Left Angle Roof
   ADDRFRGT: { id: 8, label: 'ADDRFRGT' }, // Add Right Angle Roof
   WALKTHRU: { id: 9, label: 'WALKTHRU' }, // Start walkthrough
-  EDITTOPO: { id: 10, label: 'EDITTOPO' } // Edit topo mode
+  EDITTOPO: { id: 10, label: 'EDITTOPO' }, // Edit topo mode
+
+  isAdd: action => [2, 6, 7, 8].includes(action.id),
 };
 
 export default ActionsEnum;

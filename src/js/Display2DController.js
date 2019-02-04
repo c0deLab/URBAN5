@@ -1,13 +1,16 @@
 import CamerasEnum from './enums/CamerasEnum';
+import ActionsEnum from './enums/ActionsEnum';
+import ObjectsEnum from './enums/ObjectsEnum';
 
 /** Class to control rotating to different slice angles and elevations and moving through slices */
 export default class Display2DController {
-  constructor(model) {
+  constructor(model, actionsAPI) {
     this.gridSize = 17;
     this.xMax = 17;
     this.yMax = 17;
     this.zMax = 7;
     this.model = model;
+    this.actionsAPI = actionsAPI;
     this.sliceXAxis = 0; // for W/E view
     this.sliceYAxis = 0; // for N/S view
     this.sliceZAxis = 6; // for TOP/BOTTOM view
@@ -21,14 +24,49 @@ export default class Display2DController {
 
   removeListener = toRemove => this.views.filter(view => view !== toRemove)
 
+  doAction = (action, clickX, clickY) => {
+    const modelPosition = this.getRelativePosition(clickX, clickY);
+    this.actionsAPI.onAction(action, { modelPosition });
+    // Execute the currently selected action from the light button at the click location
+    switch (action) {
+      case ActionsEnum.STEPOUT:
+        this.previousSlice();
+        break;
+      case ActionsEnum.STEPIN:
+        this.nextSlice();
+        break;
+      case ActionsEnum.ADDCUBE:
+        this.addObject(modelPosition, ObjectsEnum.CUBE);
+        break;
+      case ActionsEnum.REMOVE:
+        this.removeObject(modelPosition);
+        break;
+      case ActionsEnum.ROTATELT:
+        this.rotateLeft();
+        break;
+      case ActionsEnum.ADDTREE:
+        this.addObject(modelPosition, ObjectsEnum.TREE);
+        break;
+      case ActionsEnum.ADDRFLFT:
+        this.addObject(modelPosition, ObjectsEnum.ROOFLEFT);
+        break;
+      case ActionsEnum.ADDRFRGT:
+        this.addObject(modelPosition, ObjectsEnum.ROOFRGHT);
+        break;
+      case ActionsEnum.EDITTOPO:
+        this.setTopoHeight(modelPosition);
+        break;
+      default:
+        // nothing
+        break;
+    }
+  };
+
   /**
    * Add the object at the normalized position. Remove any object that is there.
-   * @param {int} clickX - Normalized x value [0,1]
-   * @param {int} clickY - Normalized y value [0,1]
-   * @param {int} object - ObjectsEnum object
+   * @param {object} modelPosition - {x,y,z}
    */
-  addObject = (clickX, clickY, object) => {
-    const modelPosition = this.getRelativePosition(clickX, clickY);
+  addObject = (modelPosition, object) => {
     if (modelPosition) {
       this.model.addObject(modelPosition, object);
       this.updateViews();
@@ -37,11 +75,9 @@ export default class Display2DController {
 
   /**
    * Remove the object at the normalized position.
-   * @param {int} clickX - Normalized x value [0,1]
-   * @param {int} clickY - Normalized y value [0,1]
+   * @param {object} modelPosition - {x,y,z}
    */
-  removeObject = (clickX, clickY) => {
-    const modelPosition = this.getRelativePosition(clickX, clickY);
+  removeObject = modelPosition => {
     if (modelPosition) {
       this.model.removeObject(modelPosition);
       this.updateViews();
@@ -51,11 +87,9 @@ export default class Display2DController {
   /**
    * Set the topo height at the normalized position. If there is no ground where you click, raise
    * to fill that area. If there is ground there, remove down to the base of that point
-   * @param {int} clickX - Normalized x value [0,1]
-   * @param {int} clickY - Normalized y value [0,1]
+   * @param {object} modelPosition - {x,y,z}
    */
-  setTopoHeight = (clickX, clickY) => {
-    const modelPosition = this.getRelativePosition(clickX, clickY);
+  setTopoHeight = modelPosition => {
     if (modelPosition) {
       const { x, y, z } = modelPosition;
       const { topo } = this.model;

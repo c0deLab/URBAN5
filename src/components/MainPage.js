@@ -5,32 +5,25 @@ import Menu from './Menu';
 import Top from './Top';
 import ActionsEnum from '../js/enums/ActionsEnum';
 
-import DesignModel from '../js/DesignModel';
-
-import DisplayEdit from './center/DisplayEdit';
-import DisplayWalkthrough from './center/DisplayWalkthrough';
-import DisplaySetTopo from './center/DisplaySetTopo';
+import DisplayEdit from './DisplayEdit';
+import DisplayWalkthrough from './DisplayWalkthrough';
 
 /* global document */
 
 /** Class for the rendering the main view with top, menu, and center panels */
 export default class MainPage extends React.Component {
   static propTypes = {
-    user: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
+    actionsAPI: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
+    monitor: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
+    designModel: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
   }
 
   state = {
-    action: 10, // Default action is ADDCUBE
-    model: null,
+    action: ActionsEnum.ADDCUBE, // Default action is ADDCUBE
     displayType: 'EDIT'
   };
 
   componentDidMount() {
-    const model = new DesignModel();
-    this.setState({
-      model
-    });
-
     document.addEventListener('keydown', this.handleKeyDown);
   }
 
@@ -39,9 +32,7 @@ export default class MainPage extends React.Component {
   }
 
   onMenuClick = action => {
-    this.setState({
-      action: action,
-    });
+    this.setState({ action });
   }
 
   /** Add some hotkeys to make testing easier */
@@ -88,39 +79,28 @@ export default class MainPage extends React.Component {
           displayType: 'PATH'
         });
         break;
-      case 78: // v
-        this.setState({
-          displayType: 'TOPO'
-        });
-        break;
       default:
         break;
     }
 
     if (action) {
-      this.setState({
-        action: action,
-      });
+      this.setState({ action });
     }
   }
 
   getDisplay = () => {
-    const { action } = this.state;
-    const {
-      model, displayType
-    } = this.state;
+    const { action, displayType } = this.state;
+    const { actionsAPI, designModel } = this.props;
 
-    if (!model || !action) {
+    if (!designModel || !action) {
       return null;
     }
 
     switch (displayType) {
       case 'EDIT':
-        return (<DisplayEdit action={action} model={model} />);
+        return (<DisplayEdit action={action} actionsAPI={actionsAPI} model={designModel} />);
       case 'PATH':
-        return (<DisplayWalkthrough model={model} />);
-      case 'TOPO':
-        return (<DisplaySetTopo model={model} />);
+        return (<DisplayWalkthrough model={designModel} />);
       default:
         break;
     }
@@ -143,8 +123,6 @@ export default class MainPage extends React.Component {
         ];
       case 'PATH':
         return [];
-      case 'TOPO':
-        return [];
       default:
         break;
     }
@@ -155,13 +133,13 @@ export default class MainPage extends React.Component {
   render() {
     const actions = this.getActions();
 
-    const { user } = this.props;
+    const { monitor } = this.props;
     return (
       <div>
         <div style={{ width: '864px', height: '100%', float: 'left' }}>
           <div style={{ width: '864px', height: '160px' }}>
             <div style={{ padding: '20px' }}>
-              <Top user={user} />
+              <Top monitor={monitor} />
             </div>
           </div>
           <div style={{ width: '852px', height: '852px', padding: '5px' }}>

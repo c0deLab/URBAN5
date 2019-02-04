@@ -1,20 +1,19 @@
 import React, { Component } from 'react';
 import MainPage from './components/MainPage';
+import ActionsAPI from './js/ActionsAPI';
+import Monitor from './js/Monitor';
+import DesignModel from './js/DesignModel';
 import './App.css';
 
-export default class App extends Component {
-  state = {
-    user: {
-      isNewUser: false,
-      name: 'Erik',
-    },
-  };
+const actionsAPI = new ActionsAPI();
+const designModel = new DesignModel();
+const monitor = new Monitor(actionsAPI, designModel);
 
+export default class App extends Component {
   render() {
-    const { user } = this.state;
     return (
       <div className="app">
-        <MainPage user={user} />
+        <MainPage actionsAPI={actionsAPI} monitor={monitor} designModel={designModel} />
       </div>
     );
   }

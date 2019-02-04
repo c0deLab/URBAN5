@@ -1,5 +1,5 @@
-import Display2DView from './Display2DView';
-import CamerasEnum from './enums/CamerasEnum';
+import Display2DView from '../js/Display2DView';
+import CamerasEnum from '../js/enums/CamerasEnum';
 
 export class TestViewSliceOffset {
   constructor(canvas, model, sliceOffset) {

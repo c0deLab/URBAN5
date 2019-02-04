@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
-import Display2DView from '../../js/Display2DView';
+import Display2DView from '../js/Display2DView';
 
 /* global document */
 

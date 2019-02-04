@@ -24,9 +24,7 @@ export default class TopoModel {
    * Get the topography height at a given position
    * @param {object} position - 2D position in the form {x:x,y:y}
    */
-  getTopoHeight = (position) => {
-    return this.heights[position.y][position.x];
-  };
+  getTopoHeight = position => this.heights[position.y][position.x];
 
   /**
    * Get a the 1D array of heights for the given slice at the camera angle

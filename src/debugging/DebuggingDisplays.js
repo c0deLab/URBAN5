@@ -2,8 +2,8 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import './DebuggingDisplays.css';
 
-import CamerasEnum from '../../js/enums/CamerasEnum';
-import { TestViewCameraSlice, TestViewCamera } from '../../js/DebuggingDisplaysViews';
+import CamerasEnum from '../js/enums/CamerasEnum';
+import { TestViewCameraSlice, TestViewCamera } from './DebuggingDisplaysViews';
 
 /* global document */
 
