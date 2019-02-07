@@ -51,6 +51,8 @@ input[type="text"] {
   outline: none;
   color: #E8E8DA;
   font-size: 17px;
+  text-transform: uppercase;
+  font-weight: bold;
   font-family: Andale Mono, "Courier New", Courier, monospace;
   /*caret-color: transparent;*/
   width: 864px;
