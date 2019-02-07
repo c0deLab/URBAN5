@@ -4,7 +4,6 @@ import PropTypes from 'prop-types';
 import CameraPath from './CameraPath';
 import ChoosePath from './ChoosePath';
 
-/**  */
 export default class DisplayWalkthrough extends React.Component {
   static propTypes = {
     model: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types

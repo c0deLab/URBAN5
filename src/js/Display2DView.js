@@ -194,8 +194,8 @@ export default class Display2DView {
       top, left, right, bottom
     } = context;
     // Determine which lines to remove representing joins
-    drawTop = ![ObjectsEnum.CUBE, ObjectsEnum.ROOFLEFT, ObjectsEnum.ROOFRGHT].includes(top);
-    drawBottom = ![ObjectsEnum.CUBE, ObjectsEnum.ROOFLEFT, ObjectsEnum.ROOFRGHT].includes(bottom);
+    drawTop = ![ObjectsEnum.ROOFLEFT, ObjectsEnum.ROOFRGHT].includes(top);
+    drawBottom = ![ObjectsEnum.ROOFLEFT, ObjectsEnum.ROOFRGHT].includes(bottom);
 
     // Lines on the sides require knowing the camera angle
     switch (this.camera) {

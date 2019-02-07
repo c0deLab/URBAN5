@@ -26,7 +26,10 @@ export default class Display2DController {
 
   doAction = (action, clickX, clickY) => {
     const modelPosition = this.getRelativePosition(clickX, clickY);
-    this.actionsAPI.onAction(action, { modelPosition });
+    if (modelPosition) {
+      // If legal model position
+      this.actionsAPI.onAction(action, { modelPosition });
+    }
     // Execute the currently selected action from the light button at the click location
     switch (action) {
       case ActionsEnum.STEPOUT:

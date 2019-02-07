@@ -7,6 +7,7 @@ export default class TopoModel {
   constructor(xMax, yMax) {
     this.xMax = xMax;
     this.yMax = yMax;
+    this.maxHeight = 7;
 
     this.heights = getEmpty2DArray(this.yMax, this.xMax, 0);
   }
@@ -17,7 +18,9 @@ export default class TopoModel {
    * @param {int} height - The y value of the topo at the position
    */
   setTopoHeight = (position, height) => {
-    this.heights[position.y][position.x] = height;
+    if (height >= 0 && height <= this.maxHeight) {
+      this.heights[position.y][position.x] = height;
+    }
   };
 
   /**

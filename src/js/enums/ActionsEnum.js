@@ -9,7 +9,10 @@ const ActionsEnum = {
   ADDRFLFT: { id: 7, label: 'ADDRFLFT' }, // Add Left Angle Roof
   ADDRFRGT: { id: 8, label: 'ADDRFRGT' }, // Add Right Angle Roof
   WALKTHRU: { id: 9, label: 'WALKTHRU' }, // Start walkthrough
-  EDITTOPO: { id: 10, label: 'EDITTOPO' }, // Edit topo mode
+  // EDITTOPO: { id: 10, label: 'EDITTOPO' }, // Edit topo mode
+  SPEAK_CONSTRAINT: { id: 11, label: 'SPEAK' }, // Enter text constraint
+  INCREASE_HEIGHT: { id: 12, label: 'INCRS HT' },
+  DECREASE_HEIGHT: { id: 13, label: 'DECRS HT' },
 
   isAdd: action => [2, 6, 7, 8].includes(action.id),
 };

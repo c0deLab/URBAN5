@@ -16,6 +16,11 @@ canvas {
   cursor: pointer;
 }
 
+canvas:focus {
+  outline: none;
+  -webkit-tap-highlight-color:  rgba(255, 255, 255, 0);
+}
+
 button {
   background: none;
   color: inherit;
@@ -35,5 +40,18 @@ button {
   font-size: 17px;
   line-height: 24px;
   text-align: 'left';
-  font-family: "Courier New", Courier, monospace;
+  text-transform: uppercase;
+  font-weight: bold;
+  font-family: Andale Mono, "Courier New", Courier, monospace;
+}
+
+input[type="text"] {
+  background: transparent;
+  border: none;
+  outline: none;
+  color: #E8E8DA;
+  font-size: 17px;
+  font-family: Andale Mono, "Courier New", Courier, monospace;
+  /*caret-color: transparent;*/
+  width: 864px;
 }

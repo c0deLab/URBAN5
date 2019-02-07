@@ -8,7 +8,7 @@ import DebuggingDisplays from '../debugging/DebuggingDisplays';
 /* global document */
 
 /** Class for the 2D slice views */
-export default class DisplayEdit extends React.Component {
+export default class Draw extends React.Component {
   static propTypes = {
     action: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
     model: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
@@ -24,7 +24,7 @@ export default class DisplayEdit extends React.Component {
     this.isWired = false;
 
     this.canvas = document.getElementById('display2D');
-    document.addEventListener('keydown', this.handleKeyDown);
+    this.canvas.addEventListener('keydown', this.handleKeyDown);
     this.canvas.addEventListener('click', this.handleClick);
 
     // If the model had already been created, immediately wire
@@ -37,7 +37,7 @@ export default class DisplayEdit extends React.Component {
   }
 
   componentWillUnmount() {
-    document.removeEventListener('keydown', this.handleKeyDown);
+    this.canvas.removeEventListener('keydown', this.handleKeyDown);
     this.canvas.removeEventListener('click', this.handleClick);
   }
 

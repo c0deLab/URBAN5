@@ -5,8 +5,9 @@ import Menu from './Menu';
 import Top from './Top';
 import ActionsEnum from '../js/enums/ActionsEnum';
 
-import DisplayEdit from './DisplayEdit';
+import Draw from './Draw';
 import DisplayWalkthrough from './DisplayWalkthrough';
+import Topo from './Topo';
 
 /* global document */
 
@@ -20,7 +21,7 @@ export default class MainPage extends React.Component {
 
   state = {
     action: ActionsEnum.ADDCUBE, // Default action is ADDCUBE
-    displayType: 'EDIT'
+    displayType: 'DRAW'
   };
 
   componentDidMount() {
@@ -37,55 +38,67 @@ export default class MainPage extends React.Component {
 
   /** Add some hotkeys to make testing easier */
   handleKeyDown = event => {
-    let action;
-    console.log(event.keyCode);
-    switch (event.keyCode) {
-      case 48: // 0
-        action = ActionsEnum.REMOVE;
-        break;
-      case 49: // 1
-        action = ActionsEnum.ADDCUBE;
-        break;
-      case 50: // 2
-        action = ActionsEnum.ADDTREE;
-        break;
-      case 51: // 3
-        action = ActionsEnum.ADDRFLFT;
-        break;
-      case 52: // 4
-        action = ActionsEnum.ADDRFRGT;
-        break;
-      case 53: // 5
-        action = ActionsEnum.REMOVE;
-        break;
-      case 54: // 6
-        action = ActionsEnum.ADDCUBE;
-        break;
-      case 55: // 7
-        action = ActionsEnum.ADDRFLFT;
-        break;
-      case 56: // 8
-        action = ActionsEnum.ADDRFRGT;
-        break;
+    let { action } = this.state;
+    if (action === ActionsEnum.SPEAK_CONSTRAINT) {
+      // do nothing
+    } else {
+      console.log(event.keyCode);
+      switch (event.keyCode) {
+        case 48: // 0
+          action = ActionsEnum.REMOVE;
+          break;
+        case 49: // 1
+          action = ActionsEnum.ADDCUBE;
+          break;
+        case 50: // 2
+          action = ActionsEnum.ADDTREE;
+          break;
+        case 51: // 3
+          action = ActionsEnum.ADDRFLFT;
+          break;
+        case 52: // 4
+          action = ActionsEnum.ADDRFRGT;
+          break;
+        case 53: // 5
+          action = ActionsEnum.REMOVE;
+          break;
+        case 54: // 6
+          action = ActionsEnum.ADDCUBE;
+          break;
+        case 55: // 7
+          action = ActionsEnum.ADDRFLFT;
+          break;
+        case 56: // 8
+          action = ActionsEnum.ADDRFRGT;
+          break;
 
-      // Switch between views
-      case 66: // b
-        this.setState({
-          displayType: 'EDIT'
-        });
-        break;
-      case 86: // v
-        this.setState({
-          displayType: 'PATH'
-        });
-        break;
-      default:
-        break;
+        // Switch between views
+        case 66: // b
+          this.setState({
+            displayType: 'DRAW',
+            action: ActionsEnum.ADDCUBE
+          });
+          break;
+        case 86: // v
+          this.setState({
+            displayType: 'CALC'
+          });
+          break;
+        case 67: // c
+          this.setState({
+            displayType: 'TOPO',
+            action: ActionsEnum.INCREASE_HEIGHT
+          });
+          break;
+        default:
+          break;
+      }
+
+      if (action) {
+        this.setState({ action });
+      }
     }
 
-    if (action) {
-      this.setState({ action });
-    }
   }
 
   getDisplay = () => {
@@ -97,10 +110,12 @@ export default class MainPage extends React.Component {
     }
 
     switch (displayType) {
-      case 'EDIT':
-        return (<DisplayEdit action={action} actionsAPI={actionsAPI} model={designModel} />);
-      case 'PATH':
+      case 'DRAW':
+        return (<Draw action={action} actionsAPI={actionsAPI} model={designModel} />);
+      case 'CALC':
         return (<DisplayWalkthrough model={designModel} />);
+      case 'TOPO':
+        return (<Topo action={action} model={designModel} />);
       default:
         break;
     }
@@ -112,17 +127,22 @@ export default class MainPage extends React.Component {
     const { displayType } = this.state;
 
     switch (displayType) {
-      case 'EDIT':
+      case 'DRAW':
         return [
           ActionsEnum.ADDCUBE,
           ActionsEnum.ADDTREE,
           ActionsEnum.ADDRFLFT,
           ActionsEnum.ADDRFRGT,
           ActionsEnum.REMOVE,
-          ActionsEnum.EDITTOPO
+          ActionsEnum.SPEAK_CONSTRAINT
         ];
-      case 'PATH':
+      case 'CALC':
         return [];
+      case 'TOPO':
+        return [
+          ActionsEnum.INCREASE_HEIGHT,
+          ActionsEnum.DECREASE_HEIGHT
+        ];
       default:
         break;
     }
@@ -131,15 +151,16 @@ export default class MainPage extends React.Component {
   }
 
   render() {
+    const { action } = this.state;
     const actions = this.getActions();
 
-    const { monitor } = this.props;
+    const { monitor, actionsAPI } = this.props;
     return (
       <div>
         <div style={{ width: '864px', height: '100%', float: 'left' }}>
           <div style={{ width: '864px', height: '160px' }}>
             <div style={{ padding: '20px' }}>
-              <Top monitor={monitor} />
+              <Top monitor={monitor} action={action} actionsAPI={actionsAPI} />
             </div>
           </div>
           <div style={{ width: '852px', height: '852px', padding: '5px' }}>

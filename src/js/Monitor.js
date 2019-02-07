@@ -44,11 +44,18 @@ export default class Monitor {
   getMessages = () => this.messages;
 
   onAction = actionEvent => {
+    const { action, metadata } = actionEvent;
+
+    if (action === ActionsEnum.SPEAK_CONSTRAINT) {
+      // add constraint
+      console.log(`Add Constraint: ${metadata.text}`);
+      this.sendMessage({ text: metadata.text });
+    }
+
     // console.log(JSON.stringify(actionEvent));
     this.checkIncompatibilities(actionEvent);
     this.checkConflicts(actionEvent);
   };
-
 
   /**
     * Conflict “An inconsistency discerned by the machine relating criteria specified by the designer
