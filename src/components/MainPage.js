@@ -22,11 +22,11 @@ export default class MainPage extends React.Component {
   }
 
   state = {
-    // action: ActionsEnum.ADDCUBE, // Default action is ADDCUBE
-    // displayType: 'CALC'
-
     action: ActionsEnum.ADDCUBE, // Default action is ADDCUBE
-    displayType: 'DRAW'
+    displayType: 'CALC'
+
+    // action: ActionsEnum.ADDCUBE, // Default action is ADDCUBE
+    // displayType: 'DRAW'
 
     // action: ActionsEnum.NO_SURFACE, // Default action is ADDCUBE
     // displayType: 'SURF'

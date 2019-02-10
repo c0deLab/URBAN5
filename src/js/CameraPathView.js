@@ -134,4 +134,12 @@ export default class CameraPathView {
       }
     }
   }
+
+  _addLine = (p0, p1) => {
+    const geometry = new THREE.Geometry();
+    geometry.vertices.push(new THREE.Vector3(p0.x, p0.y, p0.z));
+    geometry.vertices.push(new THREE.Vector3(p1.x, p1.y, p1.z));
+    const line = new THREE.Line(geometry, material);
+    this.scene.add(line);
+  }
 }

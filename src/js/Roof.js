@@ -10,7 +10,8 @@ export default class Roof {
     // north, east, south, west, top, bottom
     this.direction = direction;
     this.position = position;
-    this.hasSideSurface = !this._checkJoins(context);
+    this.hasSideSurface = true;
+    this._checkJoins(context);
   }
 
   // Join cube surfaces that connect
@@ -23,30 +24,45 @@ export default class Roof {
     }
 
     // Join to adjacent cubes that face this roof
-    let isJoined = false;
     if (n && n.constructor.name === 'Cube' && this.direction === 's') {
       n.surfaces.s = SurfacesEnum.NONE;
-      isJoined = true;
+      this.hasSideSurface = false;
     }
     if (e && e.constructor.name === 'Cube' && this.direction === 'w') {
       e.surfaces.w = SurfacesEnum.NONE;
-      isJoined = true;
+      this.hasSideSurface = false;
     }
     if (s && s.constructor.name === 'Cube' && this.direction === 'n') {
       s.surfaces.n = SurfacesEnum.NONE;
-      isJoined = true;
+      this.hasSideSurface = false;
     }
     if (w && w.constructor.name === 'Cube' && this.direction === 'e') {
       w.surfaces.e = SurfacesEnum.NONE;
-      isJoined = true;
+      this.hasSideSurface = false;
     }
 
-    return isJoined;
+    // Join to adjacent roofs
+    if (n && (n.constructor.name === 'Roof' && n.direction === 'n') && this.direction === 's') {
+      n.hasSideSurface = false;
+      this.hasSideSurface = false;
+    }
+    if (e && (e.constructor.name === 'Roof' && e.direction === 'e') && this.direction === 'w') {
+      e.hasSideSurface = false;
+      this.hasSideSurface = false;
+    }
+    if (s && (s.constructor.name === 'Roof' && s.direction === 's') && this.direction === 'n') {
+      s.hasSideSurface = false;
+      this.hasSideSurface = false;
+    }
+    if (w && (w.constructor.name === 'Roof' && w.direction === 'w') && this.direction === 'e') {
+      w.hasSideSurface = false;
+      this.hasSideSurface = false;
+    }
   };
 
   remove = context => {
     const { n, e, s, w, b } = context;
-    // check adjacent cubes and seal them
+    // Unjoin adjacent cubes
     if (b && b.constructor.name === 'Cube') {
       b.surfaces.t = SurfacesEnum.SOLID;
     }
@@ -61,6 +77,20 @@ export default class Roof {
     }
     if (w && w.constructor.name === 'Cube' && this.direction === 'e') {
       w.surfaces.e = SurfacesEnum.SOLID;
+    }
+
+    // Unjoin adjacent roofs
+    if (n && (n.constructor.name === 'Roof' && n.direction === 'n') && this.direction === 's') {
+      n.hasSideSurface = true;
+    }
+    if (e && (e.constructor.name === 'Roof' && e.direction === 'e') && this.direction === 'w') {
+      e.hasSideSurface = true;
+    }
+    if (s && (s.constructor.name === 'Roof' && s.direction === 's') && this.direction === 'n') {
+      s.hasSideSurface = true;
+    }
+    if (w && (w.constructor.name === 'Roof' && w.direction === 'w') && this.direction === 'e') {
+      w.hasSideSurface = true;
     }
   };
 
@@ -221,20 +251,21 @@ export default class Roof {
 
   _getRoof = () => {
     const geometry = new THREE.Geometry();
+
+    if (this.hasSideSurface) {
+      geometry.vertices.push(
+        // tall face bottom
+        new THREE.Vector3(0, SETTINGS.r, 0),
+        new THREE.Vector3(0, 0, 0),
+        new THREE.Vector3(0, 0, 0),
+        new THREE.Vector3(SETTINGS.r, 0, 0),
+        new THREE.Vector3(SETTINGS.r, 0, 0),
+        new THREE.Vector3(SETTINGS.r, SETTINGS.r, 0),
+      );
+    }
+
     geometry.vertices.push(
-      // tall face
-      // new THREE.Vector3(0, 0, 0),
-      // new THREE.Vector3(SETTINGS.r, 0, 0),
-      // new THREE.Vector3(SETTINGS.r, 0, 0),
-      // new THREE.Vector3(SETTINGS.r, SETTINGS.r, 0),
-      // new THREE.Vector3(SETTINGS.r, SETTINGS.r, 0),
-      // new THREE.Vector3(0, SETTINGS.r, 0),
-      // new THREE.Vector3(0, SETTINGS.r, 0),
-      // new THREE.Vector3(0, 0, 0),
-      // // short face
-      // new THREE.Vector3(0, 0, -SETTINGS.r),
-      // new THREE.Vector3(SETTINGS.r, 0, -SETTINGS.r),
-      // slant face
+      // slanted face
       new THREE.Vector3(0, 0, -SETTINGS.r),
       new THREE.Vector3(0, SETTINGS.r, 0),
       new THREE.Vector3(0, SETTINGS.r, 0),

@@ -268,28 +268,31 @@ export default class DesignModel {
     // this.addObject({ x: 11, y: 10 + 15, z: 0 }, ObjectsEnum.TREE);
     // this.addObject({ x: 11, y: 10 + 15, z: 1 }, ObjectsEnum.FOLIAGE);
 
-    // this.addObject({ x: 11, y: 10, z: 0 }, 0);
-    // this.addObject({ x: 11, y: 10, z: 1 }, 0);
-    // this.addObject({ x: 11, y: 10, z: 2 }, 1, 'w');
+    this.addObject({ x: 11, y: 10, z: 0 }, 0);
+    this.addObject({ x: 11, y: 10, z: 1 }, 0);
+    this.addObject({ x: 11, y: 10, z: 2 }, 1, 'w');
 
-    // this.addObject({ x: 12, y: 10, z: 0 }, 0);
-    // this.addObject({ x: 12, y: 10, z: 1 }, 0);
-    // this.addObject({ x: 12, y: 10, z: 2 }, 1, 'e');
+    this.addObject({ x: 12, y: 10, z: 0 }, 0);
+    this.addObject({ x: 12, y: 10, z: 1 }, 0);
+    this.addObject({ x: 12, y: 10, z: 2 }, 1, 'e');
 
-    // this.addObject({ x: 13, y: 10, z: 0 }, 0);
-    // this.addObject({ x: 13, y: 10, z: 1 }, 1, 'e');
+    this.addObject({ x: 13, y: 10, z: 0 }, 0);
+    this.addObject({ x: 13, y: 10, z: 1 }, 1, 'e');
 
-    // this.addObject({ x: 14, y: 10, z: 0 }, 0);
+    this.addObject({ x: 14, y: 10, z: 0 }, 0);
 
-    // this.addObject({ x: 15, y: 10, z: 0 }, 0);
+    this.addObject({ x: 15, y: 10, z: 0 }, 0);
 
-    // this.addObject({ x: 16, y: 10, z: 0 }, 2);
+    this.addObject({ x: 16, y: 10, z: 0 }, 2);
 
-    // this.addObject({ x: 9, y: 13, z: 0 }, 0);
-    // this.addObject({ x: 9, y: 13, z: 1 }, 1, 's');
+    this.addObject({ x: 9, y: 13, z: 0 }, 0);
+    this.addObject({ x: 9, y: 13, z: 1 }, 1, 's');
 
-    // this.addObject({ x: 9, y: 14, z: 0 }, 0);
-    // this.addObject({ x: 9, y: 14, z: 1 }, 1, 'n');
+    this.addObject({ x: 9, y: 14, z: 0 }, 0);
+    this.addObject({ x: 9, y: 14, z: 1 }, 1, 'n');
+
+
+    this.addObject({ x: 13, y: 5, z: 1 }, 1, 'e');
 
     // this.addObject({ x: 12, y: 15, z: 0 }, 0);
 
