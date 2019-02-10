@@ -41,16 +41,17 @@ export function getCellContext3x3(arr, x, y) {
 /**
 * Given a 2D array 'arr' and a position, get the position and all cells around it as an object
 * This can be unpacked as follows:
-* const { left, front, right, back, top, bottom } = context;
+* const { n, e, s, w, t, b } = context;
 */
-export function getCellContext3D(arr, x, y, z) {
+export function getCellContext3D(arr, position) {
+  const { x, y, z } = position;
   return {
-    left: getSafe3D(arr, x - 1, y, z),
-    front: getSafe3D(arr, x, y + 1, z),
-    right: getSafe3D(arr, x + 1, y, z),
-    back: getSafe3D(arr, x, y - 1, z),
-    top: getSafe3D(arr, x, y, z + 1),
-    bottom: getSafe3D(arr, x, y, z - 1)
+    w: getSafe3D(arr, x - 1, y, z),
+    n: getSafe3D(arr, x, y + 1, z),
+    e: getSafe3D(arr, x + 1, y, z),
+    s: getSafe3D(arr, x, y - 1, z),
+    t: getSafe3D(arr, x, y, z + 1),
+    b: getSafe3D(arr, x, y, z - 1)
   };
 }
 

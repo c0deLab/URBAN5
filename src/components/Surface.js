@@ -3,8 +3,10 @@ import PropTypes from 'prop-types';
 
 import Display2DView from '../js/Display2DView';
 import Display2DController from '../js/Display2DController';
+import { getGridPointInModelSpace } from '../js/Helpers';
 
 /* global document */
+/* global SETTINGS */
 
 export default class Surface extends React.Component {
   static propTypes = {
@@ -64,7 +66,7 @@ export default class Surface extends React.Component {
 
   /** Add some hotkeys to make testing easier */
   handleKeyDown = event => {
-    const { controller, showDebug } = this.state;
+    const { controller } = this.state;
 
     switch (event.keyCode) {
       case 87: // w
@@ -91,11 +93,6 @@ export default class Surface extends React.Component {
       case 40: // down arrow
         controller.previousSlice();
         break;
-      case 80: // p
-        this.setState({
-          showDebug: !showDebug
-        });
-        break;
       default:
         break;
     }
@@ -103,31 +100,21 @@ export default class Surface extends React.Component {
 
   handleClick = event => {
     const { controller } = this.state;
-    // There is a 1px padding around the edges to not cut off the graphics awkwardly
-    // Ignore clicks in that range
-    if (event.offsetX === 0 || event.offsetX === (this.width - 1)
-        || event.offsetY === 0 || event.offsetY === (this.height - 1)) {
+    const { action } = this.props;
+
+    const point = getGridPointInModelSpace(event.offsetX, event.offsetY);
+    if (!point) {
       return;
     }
 
-    // Offset click for 1px padding and find normalized position
-    const normalizedX = (event.offsetX - 1) / this.width;
-    const normalizedY = (event.offsetY - 1) / this.height;
-
-    const { action } = this.props;
-    controller.doAction(action, normalizedX, normalizedY);
+    controller.doAction(action, point.x, point.y);
   }
 
   render() {
-    const { controller, showDebug } = this.state;
-    const { model } = this.props;
-
-    this.width = 852;
-    this.height = 852;
+    const { w, h } = SETTINGS;
     return (
       <div>
-        <canvas id="display2D" width={this.width} height={this.height} />
-        {showDebug && model && controller ? (<DebuggingDisplays controller={controller} model={model} />) : null}
+        <canvas id="display2D" width={w} height={h} />
       </div>
     );
   }

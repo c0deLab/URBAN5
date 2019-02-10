@@ -5,8 +5,10 @@ import Display2DView from '../js/Display2DView';
 import Display2DController from '../js/Display2DController';
 import DebuggingDisplays from '../debugging/DebuggingDisplays';
 import ActionsEnum from '../js/enums/ActionsEnum';
+import { getGridPointInModelSpace } from '../js/Helpers';
 
 /* global document */
+/* global SETTINGS */
 
 /** Class for the 2D slice views */
 export default class Draw extends React.Component {
@@ -112,30 +114,23 @@ export default class Draw extends React.Component {
 
   handleClick = event => {
     const { controller } = this.state;
-    // There is a 1px padding around the edges to not cut off the graphics awkwardly
-    // Ignore clicks in that range
-    if (event.offsetX === 0 || event.offsetX === (this.width - 1)
-        || event.offsetY === 0 || event.offsetY === (this.height - 1)) {
+    const { action } = this.props;
+
+    const point = getGridPointInModelSpace(event.offsetX, event.offsetY);
+    if (!point) {
       return;
     }
-
-    // Offset click for 1px padding and find normalized position
-    const normalizedX = (event.offsetX - 1) / this.width;
-    const normalizedY = (event.offsetY - 1) / this.height;
-
-    const { action } = this.props;
-    controller.doAction(action, normalizedX, normalizedY);
+    controller.doAction(action, point.x, point.y);
   }
 
   render() {
     const { controller, showDebug } = this.state;
     const { model } = this.props;
+    const { w, h } = SETTINGS;
 
-    this.width = 852;
-    this.height = 852;
     return (
       <div>
-        <canvas id="display2D" width={this.width} height={this.height} />
+        <canvas id="display2D" width={w} height={h} />
         {showDebug && model && controller ? (<DebuggingDisplays controller={controller} model={model} />) : null}
       </div>
     );

@@ -1,6 +1,5 @@
 import ID from './ID';
 import ActionsEnum from './enums/ActionsEnum';
-import ObjectsEnum from './enums/ObjectsEnum';
 import { getCellContext3D } from './ArrayHelpers';
 
 const LABEL = {
@@ -208,15 +207,17 @@ export default class Monitor {
   };
 
   isCubeConnected = modelPosition => {
-    const { x, y, z } = modelPosition;
     const {
-      left, front, right, back, top, bottom
-    } = getCellContext3D(this.model.objects, x, y, z);
+      n, e, s, w, t, b
+    } = getCellContext3D(this.model.objects, modelPosition);
 
     // Check the context around it to see if any are cubes
-    const cubeConnected = left === ObjectsEnum.CUBE || front === ObjectsEnum.CUBE || right === ObjectsEnum.CUBE
-      || back === ObjectsEnum.CUBE || top === ObjectsEnum.CUBE || bottom === ObjectsEnum.CUBE;
-    // console.log('cubeConnected', cubeConnected);
+    const cubeConnected = (n && n.constructor.name === 'Cube')
+      || (e && e.constructor.name === 'Cube')
+      || (s && s.constructor.name === 'Cube')
+      || (w && w.constructor.name === 'Cube')
+      || (t && t.constructor.name === 'Cube')
+      || (b && b.constructor.name === 'Cube');
     return cubeConnected;
   };
 
@@ -226,6 +227,7 @@ export default class Monitor {
       return false;
     }
 
-    return this.model.objects[z - 1][y][x] === ObjectsEnum.CUBE;
+    const b = this.model.objects[z - 1][y][x];
+    return b && b.constructor.name === 'Cube';
   };
 }

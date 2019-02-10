@@ -2,18 +2,17 @@ import React from 'react';
 import PropTypes from 'prop-types';
 
 import TopoView from '../js/TopoView';
+import { getGridPointInModelSpace } from '../js/Helpers';
 import ActionsEnum from '../js/enums/ActionsEnum';
 
 /* global document */
+/* global SETTINGS */
 
 /** Class for t */
 export default class Topo extends React.Component {
   static propTypes = {
     model: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
-  }
-
-  state = {
-    hasStart: false
+    action: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
   }
 
   componentDidMount() {
@@ -54,20 +53,12 @@ export default class Topo extends React.Component {
 
   handleClick = event => {
     const { model, action } = this.props;
-    // There is a 1px padding around the edges to not cut off the graphics awkwardly
-    // Ignore clicks in that range
-    if (event.offsetX === 0 || event.offsetX === (this.width - 1)
-        || event.offsetY === 0 || event.offsetY === (this.height - 1)) {
+    const point = getGridPointInModelSpace(event.offsetX, event.offsetY);
+    if (!point) {
       return;
     }
 
-    // Offset click for 1px padding and find normalized position
-    const normalizedX = (event.offsetX - 1) / this.width;
-    const normalizedY = (event.offsetY - 1) / this.height;
-    const point = this.getRelativePosition(normalizedX, normalizedY);
-
     const currentHeight = model.topo.getTopoHeight(point);
-    console.log(action);
     if (action === ActionsEnum.DECREASE_HEIGHT) {
       model.topo.setTopoHeight(point, currentHeight - 1);
     } else {
@@ -76,25 +67,11 @@ export default class Topo extends React.Component {
     this.view.draw();
   }
 
-  /**
-   * Returns a 3D vector of the model position based on the normalized click
-   * @param {float} clickX - Normalized x between 0 and 1
-   * @param {float} clickY - Normalized y between 0 and 1
-   */
-  getRelativePosition = (clickX, clickY) => {
-    // get the x, y position in the scale of the model
-    const gridSize = 17;
-    const x = Math.floor(clickX * gridSize);
-    const y = gridSize - 1 - Math.floor(clickY * gridSize);
-    return { x, y };
-  }
-
   render() {
-    this.width = 852;
-    this.height = 852;
+    const { w, h } = SETTINGS;
     return (
       <div>
-        <canvas id="display" width={this.width} height={this.height} />
+        <canvas id="display" width={w} height={h} />
       </div>
     );
   }

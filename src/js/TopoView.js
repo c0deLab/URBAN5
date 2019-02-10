@@ -49,7 +49,7 @@ export default class TopoView {
     shape.graphics.drawRect(sx, sy, dx, dy);
     this.stage.addChild(shape);
 
-    const text = new createjs.Text(num, "bold 17px Andale Mono", this.color);
+    const text = new createjs.Text(num, 'bold 17px Andale Mono', this.color);
     text.x = sx + (dx / 2) - 5;
     text.y = sy + (dy / 2) - 6;
     this.stage.addChild(text);

@@ -4,12 +4,14 @@ import CameraPathController from '../js/CameraPathController';
 import CameraPathView from '../js/CameraPathView';
 
 /* global document */
+/* global SETTINGS */
 
 /** Class for the 3D fly throughs of the model */
 export default class CameraPath extends React.Component {
   static propTypes = {
     model: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
-    path: PropTypes.array.isRequired // eslint-disable-line react/forbid-prop-types
+    path: PropTypes.array.isRequired, // eslint-disable-line react/forbid-prop-types
+    onWalkthroughEnd: PropTypes.func.isRequired // eslint-disable-line react/forbid-prop-types
   }
 
   componentDidMount() {
@@ -53,11 +55,10 @@ export default class CameraPath extends React.Component {
   }
 
   render() {
-    this.width = 852;
-    this.height = 852;
+    const { w, h } = SETTINGS;
 
     return (
-      <div id="display3D" style={{ width: this.width, height: this.height }} />
+      <div id="display3D" style={{ width: w, height: h }} />
     );
   }
 }

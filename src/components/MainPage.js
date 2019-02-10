@@ -6,8 +6,10 @@ import Top from './Top';
 import ActionsEnum from '../js/enums/ActionsEnum';
 
 import Draw from './Draw';
-import DisplayWalkthrough from './DisplayWalkthrough';
 import Topo from './Topo';
+import Surface from './Surface';
+
+import DisplayWalkthrough from './DisplayWalkthrough';
 
 /* global document */
 
@@ -20,8 +22,14 @@ export default class MainPage extends React.Component {
   }
 
   state = {
+    // action: ActionsEnum.ADDCUBE, // Default action is ADDCUBE
+    // displayType: 'CALC'
+
     action: ActionsEnum.ADDCUBE, // Default action is ADDCUBE
     displayType: 'DRAW'
+
+    // action: ActionsEnum.NO_SURFACE, // Default action is ADDCUBE
+    // displayType: 'SURF'
   };
 
   componentDidMount() {
@@ -53,24 +61,6 @@ export default class MainPage extends React.Component {
         case 50: // 2
           action = ActionsEnum.ADDTREE;
           break;
-        case 51: // 3
-          action = ActionsEnum.ADDRFLFT;
-          break;
-        case 52: // 4
-          action = ActionsEnum.ADDRFRGT;
-          break;
-        case 53: // 5
-          action = ActionsEnum.REMOVE;
-          break;
-        case 54: // 6
-          action = ActionsEnum.ADDCUBE;
-          break;
-        case 55: // 7
-          action = ActionsEnum.ADDRFLFT;
-          break;
-        case 56: // 8
-          action = ActionsEnum.ADDRFRGT;
-          break;
 
         // Switch between views
         case 66: // b
@@ -88,6 +78,12 @@ export default class MainPage extends React.Component {
           this.setState({
             displayType: 'TOPO',
             action: ActionsEnum.INCREASE_HEIGHT
+          });
+          break;
+        case 78: // n
+          this.setState({
+            displayType: 'SURF',
+            action: ActionsEnum.NO_SURFACE
           });
           break;
         default:
@@ -115,7 +111,9 @@ export default class MainPage extends React.Component {
       case 'CALC':
         return (<DisplayWalkthrough model={designModel} />);
       case 'TOPO':
-        return (<Topo action={action} model={designModel} />);
+        return (<Topo action={action} actionsAPI={actionsAPI} model={designModel} />);
+      case 'SURF':
+        return (<Surface action={action} actionsAPI={actionsAPI} model={designModel} />);
       default:
         break;
     }
@@ -131,8 +129,10 @@ export default class MainPage extends React.Component {
         return [
           ActionsEnum.ADDCUBE,
           ActionsEnum.ADDTREE,
-          ActionsEnum.ADDRFLFT,
-          ActionsEnum.ADDRFRGT,
+          ActionsEnum.ADD_ROOF_EAST,
+          ActionsEnum.ADD_ROOF_WEST,
+          ActionsEnum.ADD_ROOF_NORTH,
+          ActionsEnum.ADD_ROOF_SOUTH,
           ActionsEnum.REMOVE,
           ActionsEnum.SPEAK_CONSTRAINT
         ];
@@ -142,6 +142,15 @@ export default class MainPage extends React.Component {
         return [
           ActionsEnum.INCREASE_HEIGHT,
           ActionsEnum.DECREASE_HEIGHT
+        ];
+      case 'SURF':
+        return [
+          ActionsEnum.SOLID_SURFACE,
+          ActionsEnum.PARTITION_SURFACE,
+          ActionsEnum.TRANSPARENT_SURFACE,
+          ActionsEnum.NO_SURFACE,
+          ActionsEnum.HAS_ACCESS,
+          ActionsEnum.NO_ACCESS
         ];
       default:
         break;

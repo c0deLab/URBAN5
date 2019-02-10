@@ -2,6 +2,7 @@ import * as THREE from 'three';
 import ObjectsEnum from './enums/ObjectsEnum';
 import { getEmpty2DArray } from './ArrayHelpers';
 
+/* global SETTINGS */
 /* global requestAnimationFrame */
 /* global window */
 const material = new THREE.LineBasicMaterial({ color: 0xE8E8DA });
@@ -11,13 +12,13 @@ export default class CameraPathView {
   constructor(container, model) {
     this.container = container;
 
-    this.width = 852;
-    this.height = 852;
-    this.gridSize = 17;
-    this.xMax = 17;
-    this.yMax = 17;
-    this.zMax = 7;
-    this.r = (this.width - 2) / this.gridSize;
+    this.width = SETTINGS.w;
+    this.height = SETTINGS.h;
+    this.gridSize = SETTINGS.gridSize;
+    this.xMax = SETTINGS.xMax;
+    this.yMax = SETTINGS.yMax;
+    this.zMax = SETTINGS.zMax;
+    this.r = SETTINGS.r;
     this.target = null;
 
     // Set to true once the controller gives it a camera position
@@ -90,27 +91,8 @@ export default class CameraPathView {
       for (let y = 0; y < this.yMax; y += 1) {
         for (let x = 0; x < this.xMax; x += 1) {
           const object = objects[z][y][x];
-          switch (object) {
-            case ObjectsEnum.CUBE:
-              this._addCube(x, y, z);
-              // const context = getCellContext3D(objects, x, y, z);
-              // this._addCubeWithJoins(x, y, z, context);
-              break;
-            case ObjectsEnum.TREE:
-              this._addTree(x, y, z);
-              break;
-            case ObjectsEnum.FOLIAGE:
-              this._addFoliage(x, y, z);
-              break;
-            case ObjectsEnum.ROOFLEFT:
-              this._addRoofLeft(x, y, z);
-              break;
-            case ObjectsEnum.ROOFRGHT:
-              this._addRoofRight(x, y, z);
-              break;
-            default:
-              // Draw nothing
-              break;
+          if (object) {
+            object.draw3D(this.scene);
           }
         }
       }
@@ -151,93 +133,5 @@ export default class CameraPathView {
         }
       }
     }
-  }
-
-  _addLine = (p0, p1) => {
-    const geometry = new THREE.Geometry();
-    geometry.vertices.push(new THREE.Vector3(p0.x, p0.y, p0.z));
-    geometry.vertices.push(new THREE.Vector3(p1.x, p1.y, p1.z));
-    const line = new THREE.Line(geometry, material);
-    this.scene.add(line);
-  }
-
-  _addCube = (x, y, z) => {
-    const geometry = new THREE.BoxGeometry(this.r, this.r, this.r);
-    const wireframe = new THREE.EdgesGeometry(geometry);
-    const lines = new THREE.LineSegments(wireframe, material);
-    const position = { x: x * this.r, y: z * this.r, z: -y * this.r };
-    lines.position.x = position.x + (this.r / 2);
-    lines.position.y = position.y + (this.r / 2);
-    lines.position.z = position.z - (this.r / 2);
-    this.scene.add(lines);
-  }
-
-  _addTree = (x, y, z) => {
-    const position = { x: (x + 0.5) * this.r, y: z * this.r, z: (-y - 0.5) * this.r };
-    const position2 = { x: position.x, y: position.y + this.r, z: position.z };
-    this._addLine(position, position2);
-  }
-
-  _addFoliage = (x, y, z) => {
-    const geometry = new THREE.SphereGeometry(this.r / 2, 5, 5);
-    const wireframe = new THREE.EdgesGeometry(geometry);
-    const lines = new THREE.LineSegments(wireframe, material);
-    const position = { x: x * this.r, y: z * this.r, z: -y * this.r };
-    lines.position.x = position.x + (this.r / 2);
-    lines.position.y = position.y + (this.r / 2);
-    lines.position.z = position.z - (this.r / 2);
-    this.scene.add(lines);
-  }
-
-  _addRoofLeft = (x, y, z) => {
-    const geometry = new THREE.Geometry();
-    geometry.vertices.push(
-      new THREE.Vector3(0, 0, 0),
-      new THREE.Vector3(0, 0, -this.r),
-      new THREE.Vector3(this.r, 0, -this.r),
-      new THREE.Vector3(this.r, 0, 0),
-      new THREE.Vector3(this.r, this.r, 0),
-      new THREE.Vector3(this.r, this.r, -this.r)
-    );
-    geometry.faces.push(
-      new THREE.Face3(0, 1, 2, 3),
-      new THREE.Face3(2, 3, 4, 5),
-      new THREE.Face3(0, 3, 4),
-      new THREE.Face3(1, 2, 5),
-      new THREE.Face3(0, 1, 4, 5)
-    );
-    const wireframe = new THREE.EdgesGeometry(geometry);
-    const lines = new THREE.LineSegments(wireframe, material);
-    const position = { x: x * this.r, y: z * this.r, z: -y * this.r };
-    lines.position.x = position.x;
-    lines.position.y = position.y;
-    lines.position.z = position.z;
-    this.scene.add(lines);
-  }
-
-  _addRoofRight = (x, y, z) => {
-    const geometry = new THREE.Geometry();
-    geometry.vertices.push(
-      new THREE.Vector3(0, 0, 0),
-      new THREE.Vector3(0, 0, -this.r),
-      new THREE.Vector3(this.r, 0, -this.r),
-      new THREE.Vector3(this.r, 0, 0),
-      new THREE.Vector3(0, this.r, 0),
-      new THREE.Vector3(0, this.r, -this.r)
-    );
-    geometry.faces.push(
-      new THREE.Face3(0, 1, 2, 3),
-      new THREE.Face3(2, 3, 4, 5),
-      new THREE.Face3(0, 3, 4),
-      new THREE.Face3(1, 2, 5),
-      new THREE.Face3(0, 1, 4, 5)
-    );
-    const wireframe = new THREE.EdgesGeometry(geometry);
-    const lines = new THREE.LineSegments(wireframe, material);
-    const position = { x: x * this.r, y: z * this.r, z: -y * this.r };
-    lines.position.x = position.x;
-    lines.position.y = position.y;
-    lines.position.z = position.z;
-    this.scene.add(lines);
   }
 }

@@ -2,7 +2,13 @@ import Array2D from 'array2d';
 import ObjectsEnum from './enums/ObjectsEnum';
 import CamerasEnum from './enums/CamerasEnum';
 import TopoModel from './TopoModel';
-import { getEmpty2DArray } from './ArrayHelpers';
+import { getEmpty2DArray, getCellContext3D } from './ArrayHelpers';
+
+import Cube from './Cube';
+import Roof from './Roof';
+import { Foliage, Trunk } from './Tree';
+
+/* global SETTINGS */
 
 /**
  * Represents the data of a design world
@@ -14,12 +20,12 @@ import { getEmpty2DArray } from './ArrayHelpers';
  */
 export default class DesignModel {
   constructor() {
-    this.xMax = 17;
-    this.yMax = 17;
-    this.zMax = 7;
+    this.xMax = SETTINGS.xMax;
+    this.yMax = SETTINGS.yMax;
+    this.zMax = SETTINGS.zMax;
 
     // init empty world
-    this.objects = this._initObjects();
+    this.objects = this._empty3DArray();
     this.topo = new TopoModel(this.xMax, this.yMax);
 
     // add some things to it to start
@@ -31,7 +37,8 @@ export default class DesignModel {
    * @param {object} position - 3D position in the form {x:x,y:y,z:z}
    * @param {int} obj - int representing the ObjectsEnum object
    */
-  addObject = (position, obj) => {
+  addObject = (position, obj, modifier) => {
+    console.log(position);
     switch (obj) {
       case ObjectsEnum.TREE:
         if (position.y < (this.yMax - 1)) {
@@ -41,18 +48,30 @@ export default class DesignModel {
           const foliagePosition = { x, y, z };
           // Check placement spot and placement spot above
           if (this._getCell(position) === null && this._getCell(foliagePosition) === null) {
-            this._setCell(position, ObjectsEnum.TREE);
-            this._setCell(foliagePosition, ObjectsEnum.FOLIAGE);
+            this._setCell(position, new Trunk(position));
+            this._setCell(foliagePosition, new Foliage(foliagePosition));
             return true;
           }
         }
         return false;
-      default:
+      case ObjectsEnum.CUBE:
         if (this._getCell(position) === null) {
-          this._setCell(position, obj);
+          const context = getCellContext3D(this.objects, position);
+          const c = new Cube(position, context);
+          this._setCell(position, c);
           return true;
         }
         break;
+      case ObjectsEnum.ROOF:
+        if (this._getCell(position) === null) {
+          const context = getCellContext3D(this.objects, position);
+          const r = new Roof(position, modifier, context);
+          this._setCell(position, r);
+          return true;
+        }
+        break;
+      default:
+        return false;
     }
 
     return false;
@@ -85,6 +104,10 @@ export default class DesignModel {
         }
         break;
       default:
+        if (obj && obj.remove) {
+          const context = getCellContext3D(this.objects, position);
+          obj.remove(context);
+        }
         this._setCell(position, null);
         break;
     }
@@ -214,14 +237,20 @@ export default class DesignModel {
   }
 
   /** Create an empty version of the design model */
-  _initObjects = () => {
-    const objects = new Array(this.zMax);
+  _empty3DArray = () => {
+    const arr = new Array(this.zMax);
 
-    for (let i = 0; i < objects.length; i += 1) {
-      objects[i] = getEmpty2DArray(this.yMax, this.xMax, null);
+    for (let i = 0; i < arr.length; i += 1) {
+      arr[i] = getEmpty2DArray(this.yMax, this.xMax, null);
     }
 
-    return objects;
+    return arr;
+  }
+
+  _addCube = position => {
+    const context = getCellContext3D(position);
+    const c = new Cube(position, context);
+    this.addObject(position, c);
   }
 
   /** Populates the design world with some objects */
@@ -239,38 +268,62 @@ export default class DesignModel {
     // this.addObject({ x: 11, y: 10 + 15, z: 0 }, ObjectsEnum.TREE);
     // this.addObject({ x: 11, y: 10 + 15, z: 1 }, ObjectsEnum.FOLIAGE);
 
-    this.addObject({ x: 2, y: 10 + 0, z: 2 }, 0);
-    this.addObject({ x: 2, y: 10 + 0, z: 3 }, 0);
-    this.addObject({ x: 3, y: 10 + 0, z: 3 }, 0);
-    this.addObject({ x: 4, y: 10 + 0, z: 3 }, 0);
-    this.addObject({ x: 2, y: 10 + 0, z: 4 }, 0);
-    this.addObject({ x: 3, y: 10 + 0, z: 4 }, 0);
-    this.addObject({ x: 4, y: 10 + 0, z: 4 }, 0);
-    this.addObject({ x: 2, y: 10 + 0, z: 5 }, 0);
-    this.addObject({ x: 3, y: 10 + 0, z: 5 }, 0);
-    this.addObject({ x: 4, y: 10 + 0, z: 5 }, 0);
-    this.addObject({ x: 13, y: 10 + 0, z: 0 }, 0);
-    this.addObject({ x: 12, y: 10 + 0, z: 0 }, 0);
-    this.addObject({ x: 12, y: 10 + 0, z: 1 }, 0);
-    this.addObject({ x: 11, y: 10 + 0, z: 1 }, 0);
-    this.addObject({ x: 10, y: 10 + 0, z: 1 }, 0);
-    this.addObject({ x: 11, y: 10 + 0, z: 2 }, 2);
-    this.addObject({ x: 14, y: 10 + 0, z: 0 }, 3);
-    this.addObject({ x: 15, y: 10 + 0, z: 0 }, 3);
-    this.addObject({ x: 8, y: 10 + 0, z: 0 }, 3);
-    this.addObject({ x: 4, y: 10 + 1, z: 1 }, 0);
-    this.addObject({ x: 4, y: 10 + 1, z: 2 }, 0);
-    this.addObject({ x: 3, y: 10 + 1, z: 2 }, 0);
-    this.addObject({ x: 5, y: 10 + 1, z: 2 }, 0);
-    this.addObject({ x: 6, y: 10 + 1, z: 2 }, 0);
-    this.addObject({ x: 6, y: 10 + 1, z: 3 }, 0);
-    this.addObject({ x: 7, y: 10 + 1, z: 3 }, 0);
-    this.addObject({ x: 8, y: 10 + 1, z: 0 }, 0);
-    this.addObject({ x: 9, y: 10 + 1, z: 0 }, 0);
-    this.addObject({ x: 9, y: 10 + 1, z: 1 }, 0);
-    this.addObject({ x: 11, y: 10 + 1, z: 0 }, 0);
-    this.addObject({ x: 9, y: 10 + 2, z: 2 }, 0);
-    this.addObject({ x: 9, y: 10 + 2, z: 3 }, 1);
+    // this.addObject({ x: 11, y: 10, z: 0 }, 0);
+    // this.addObject({ x: 11, y: 10, z: 1 }, 0);
+    // this.addObject({ x: 11, y: 10, z: 2 }, 1, 'w');
+
+    // this.addObject({ x: 12, y: 10, z: 0 }, 0);
+    // this.addObject({ x: 12, y: 10, z: 1 }, 0);
+    // this.addObject({ x: 12, y: 10, z: 2 }, 1, 'e');
+
+    // this.addObject({ x: 13, y: 10, z: 0 }, 0);
+    // this.addObject({ x: 13, y: 10, z: 1 }, 1, 'e');
+
+    // this.addObject({ x: 14, y: 10, z: 0 }, 0);
+
+    // this.addObject({ x: 15, y: 10, z: 0 }, 0);
+
+    // this.addObject({ x: 16, y: 10, z: 0 }, 2);
+
+    // this.addObject({ x: 9, y: 13, z: 0 }, 0);
+    // this.addObject({ x: 9, y: 13, z: 1 }, 1, 's');
+
+    // this.addObject({ x: 9, y: 14, z: 0 }, 0);
+    // this.addObject({ x: 9, y: 14, z: 1 }, 1, 'n');
+
+    // this.addObject({ x: 12, y: 15, z: 0 }, 0);
+
+
+    // this.addObject({ x: 3, y: 10 + 0, z: 3 }, 0);
+    // this.addObject({ x: 4, y: 10 + 0, z: 3 }, 0);
+    // this.addObject({ x: 2, y: 10 + 0, z: 4 }, 0);
+    // this.addObject({ x: 3, y: 10 + 0, z: 4 }, 0);
+    // this.addObject({ x: 4, y: 10 + 0, z: 4 }, 0);
+    // this.addObject({ x: 2, y: 10 + 0, z: 5 }, 0);
+    // this.addObject({ x: 3, y: 10 + 0, z: 5 }, 0);
+    // this.addObject({ x: 4, y: 10 + 0, z: 5 }, 0);
+    // this.addObject({ x: 13, y: 10 + 0, z: 0 }, 0);
+    // this.addObject({ x: 12, y: 10 + 0, z: 0 }, 0);
+    // this.addObject({ x: 12, y: 10 + 0, z: 1 }, 0);
+    // this.addObject({ x: 11, y: 10 + 0, z: 1 }, 0);
+    // this.addObject({ x: 10, y: 10 + 0, z: 1 }, 0);
+    // this.addObject({ x: 11, y: 10 + 0, z: 2 }, 1, 'e');
+    // this.addObject({ x: 14, y: 10 + 0, z: 0 }, 1, 'w');
+    // this.addObject({ x: 15, y: 10 + 0, z: 0 }, 2);
+    // this.addObject({ x: 8, y: 10 + 0, z: 0 }, 2);
+    // this.addObject({ x: 4, y: 10 + 1, z: 1 }, 0);
+    // this.addObject({ x: 4, y: 10 + 1, z: 2 }, 0);
+    // this.addObject({ x: 3, y: 10 + 1, z: 2 }, 0);
+    // this.addObject({ x: 5, y: 10 + 1, z: 2 }, 0);
+    // this.addObject({ x: 6, y: 10 + 1, z: 2 }, 0);
+    // this.addObject({ x: 6, y: 10 + 1, z: 3 }, 0);
+    // this.addObject({ x: 7, y: 10 + 1, z: 3 }, 0);
+    // this.addObject({ x: 8, y: 10 + 1, z: 0 }, 0);
+    // this.addObject({ x: 9, y: 10 + 1, z: 0 }, 0);
+    // this.addObject({ x: 9, y: 10 + 1, z: 1 }, 0);
+    // this.addObject({ x: 11, y: 10 + 1, z: 0 }, 0);
+    // this.addObject({ x: 9, y: 10 + 2, z: 2 }, 0);
+    // this.addObject({ x: 9, y: 10 + 2, z: 3 }, 1, 'n');
 
     for (let y = 0; y < 17; y += 1) {
       this.topo.setTopoHeight({ x: 0, y }, 2);

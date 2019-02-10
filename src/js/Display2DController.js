@@ -2,13 +2,15 @@ import CamerasEnum from './enums/CamerasEnum';
 import ActionsEnum from './enums/ActionsEnum';
 import ObjectsEnum from './enums/ObjectsEnum';
 
+/* global SETTINGS */
+
 /** Class to control rotating to different slice angles and elevations and moving through slices */
 export default class Display2DController {
   constructor(model, actionsAPI) {
-    this.gridSize = 17;
-    this.xMax = 17;
-    this.yMax = 17;
-    this.zMax = 7;
+    this.gridSize = SETTINGS.gridSize;
+    this.xMax = SETTINGS.xMax;
+    this.yMax = SETTINGS.yMax;
+    this.zMax = SETTINGS.zMax;
     this.model = model;
     this.actionsAPI = actionsAPI;
     this.sliceXAxis = 0; // for W/E view
@@ -50,11 +52,17 @@ export default class Display2DController {
       case ActionsEnum.ADDTREE:
         this.addObject(modelPosition, ObjectsEnum.TREE);
         break;
-      case ActionsEnum.ADDRFLFT:
-        this.addObject(modelPosition, ObjectsEnum.ROOFLEFT);
+      case ActionsEnum.ADD_ROOF_EAST:
+        this.addObject(modelPosition, ObjectsEnum.ROOF, 'e');
         break;
-      case ActionsEnum.ADDRFRGT:
-        this.addObject(modelPosition, ObjectsEnum.ROOFRGHT);
+      case ActionsEnum.ADD_ROOF_WEST:
+        this.addObject(modelPosition, ObjectsEnum.ROOF, 'w');
+        break;
+      case ActionsEnum.ADD_ROOF_NORTH:
+        this.addObject(modelPosition, ObjectsEnum.ROOF, 'n');
+        break;
+      case ActionsEnum.ADD_ROOF_SOUTH:
+        this.addObject(modelPosition, ObjectsEnum.ROOF, 's');
         break;
       case ActionsEnum.EDITTOPO:
         this.setTopoHeight(modelPosition);
@@ -69,9 +77,9 @@ export default class Display2DController {
    * Add the object at the normalized position. Remove any object that is there.
    * @param {object} modelPosition - {x,y,z}
    */
-  addObject = (modelPosition, object) => {
+  addObject = (modelPosition, object, modifier) => {
     if (modelPosition) {
-      this.model.addObject(modelPosition, object);
+      this.model.addObject(modelPosition, object, modifier);
       this.updateViews();
     }
   }
@@ -290,11 +298,7 @@ export default class Display2DController {
    * @param {float} clickX - Normalized x between 0 and 1
    * @param {float} clickY - Normalized y between 0 and 1
    */
-  getRelativePosition = (clickX, clickY) => {
-    // get the x, y position in the scale of the model
-    const x = Math.floor(clickX * this.gridSize);
-    const y = this.gridSize - 1 - Math.floor(clickY * this.gridSize);
-
+  getRelativePosition = (x, y) => {
     // Check that it is a legal 3D index
     switch (this.camera) {
       case CamerasEnum.NORTH:
@@ -314,7 +318,7 @@ export default class Display2DController {
       case CamerasEnum.NORTH:
         return { x, y: this.sliceYAxis, z: y };
       case CamerasEnum.SOUTH:
-        return { x: this.gridSize - 1 - x, y: this.sliceZAxis, z: y };
+        return { x: this.gridSize - 1 - x, y: this.sliceYAxis, z: y };
       case CamerasEnum.EAST:
         return { x: this.sliceXAxis, y: this.gridSize - 1 - x, z: y };
       case CamerasEnum.WEST:

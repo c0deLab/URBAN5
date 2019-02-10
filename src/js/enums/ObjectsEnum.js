@@ -1,11 +1,10 @@
 // Various objects that can occupy a single cube in space
 const ObjectsEnum = {
   CUBE: 0,
-  ROOFLEFT: 1,
-  ROOFRGHT: 2,
-  TREE: 3,
-  FOLIAGE: 4,
-  PERSON: 5,
+  ROOF: 1,
+  TREE: 2,
+  FOLIAGE: 3,
+  PERSON: 4,
 };
 
 export default ObjectsEnum;
