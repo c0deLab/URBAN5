@@ -30,3 +30,61 @@ export function getGridPointInModelSpace(x, y) {
   return point;
 }
 
+export function getClosestEdgeInModelSpace(clickX, clickY) {
+  const { w, h, gridSize } = SETTINGS;
+  // There is a 1px padding around the edges to not cut off the graphics awkwardly
+  // Ignore clicks in that range
+  if (clickX === 0 || clickX === (w - 1)
+      || clickY === 0 || clickY === (h - 1)) {
+    return null;
+  }
+
+  // Offset click for 1px padding and find normalized position
+  const normalizedX = (clickX - 1) / w;
+  const normalizedY = (clickY - 1) / h;
+
+  const x = normalizedX * gridSize;
+  const xRound = Math.floor(x);
+  const xRemainder = x - xRound;
+
+  const y = gridSize - (normalizedY * gridSize);
+  const yRound = Math.floor(y);
+  const yRemainder = y - yRound;
+
+  let side;
+  const tDist = 1 - yRemainder;
+  const bDist = yRemainder;
+  const lDist = xRemainder;
+  const rDist = 1 - xRemainder;
+  const max = Math.min(tDist, bDist, lDist, rDist);
+  if (tDist === max) {
+    side = 't';
+  } else if (bDist === max) {
+    side = 'b';
+  } else if (lDist === max) {
+    side = 'l';
+  } else if (rDist === max) {
+    side = 'r';
+  }
+
+  return { x: xRound, y: yRound, side };
+}
+
+export function getOppositeDirection(cardinalDirection) {
+  switch (cardinalDirection) {
+    case 'n':
+      return 's';
+    case 's':
+      return 'n';
+    case 'e':
+      return 'w';
+    case 'w':
+      return 'e';
+    case 't':
+      return 'b';
+    case 'b':
+      return 't';
+    default:
+      return null;
+  }
+}

@@ -14,7 +14,7 @@ const MESSAGE = {
 };
 
 const INCOMPATIBILITY = {
-  IS_COLLISION: { text: `${LABEL.NOT_POSSIBLE} There is something there already.` },
+  IS_COLLISION: { text: 'There is something there already.' },
   IS_BELOW_GROUND: { text: `${LABEL.NOT_POSSIBLE} The object is below ground.` },
   IS_FLOATING: { text: `${LABEL.NOT_POSSIBLE} The object is floating.` },
   NO_GROUND_BELOW: { text: `${LABEL.NOT_POSSIBLE} There is no ground below.` },

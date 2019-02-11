@@ -1,6 +1,7 @@
 import CamerasEnum from './enums/CamerasEnum';
 import ActionsEnum from './enums/ActionsEnum';
 import ObjectsEnum from './enums/ObjectsEnum';
+import SurfacesEnum from './enums/SurfacesEnum';
 
 /* global SETTINGS */
 
@@ -26,7 +27,7 @@ export default class Display2DController {
 
   removeListener = toRemove => this.views.filter(view => view !== toRemove)
 
-  doAction = (action, clickX, clickY) => {
+  doAction = (action, clickX, clickY, modifier) => {
     const modelPosition = this.getRelativePosition(clickX, clickY);
     if (modelPosition) {
       // If legal model position
@@ -67,6 +68,18 @@ export default class Display2DController {
       case ActionsEnum.EDITTOPO:
         this.setTopoHeight(modelPosition);
         break;
+      case ActionsEnum.NO_SURFACE:
+        this.setSurface(this.camera, modelPosition, modifier, SurfacesEnum.NONE);
+        break;
+      case ActionsEnum.SOLID_SURFACE:
+        this.setSurface(this.camera, modelPosition, modifier, SurfacesEnum.SOLID);
+        break;
+      case ActionsEnum.TRANSPARENT_SURFACE:
+        this.setSurface(this.camera, modelPosition, modifier, SurfacesEnum.TRANS);
+        break;
+      case ActionsEnum.PARTITION_SURFACE:
+        this.setSurface(this.camera, modelPosition, modifier, SurfacesEnum.PART);
+        break;
       default:
         // nothing
         break;
@@ -91,6 +104,15 @@ export default class Display2DController {
   removeObject = modelPosition => {
     if (modelPosition) {
       this.model.removeObject(modelPosition);
+      this.updateViews();
+    }
+  }
+
+  /**
+   */
+  setSurface = (camera, position, side, surface) => {
+    if (position) {
+      this.model.setSurface(camera, position, side, surface);
       this.updateViews();
     }
   }

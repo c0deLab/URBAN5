@@ -2,6 +2,7 @@ import * as THREE from 'three';
 import { createjs } from '@createjs/easeljs';
 import CamerasEnum from './enums/CamerasEnum';
 import SurfacesEnum from './enums/SurfacesEnum';
+import { getOppositeDirection } from './Helpers';
 
 /* global SETTINGS */
 
@@ -91,6 +92,35 @@ export default class Roof {
     }
     if (w && (w.constructor.name === 'Roof' && w.direction === 'w') && this.direction === 'e') {
       w.hasSideSurface = true;
+    }
+  };
+
+  setSurface = (sideCardinal, surface) => {
+    if (surface === SurfacesEnum.NONE) {
+      switch (sideCardinal) {
+        case 'n':
+          if (this.direction === 's') {
+            this.hasSideSurface = false;
+          }
+          break;
+        case 's':
+          if (this.direction === 'n') {
+            this.hasSideSurface = false;
+          }
+          break;
+        case 'e':
+          if (this.direction === 'w') {
+            this.hasSideSurface = false;
+          }
+          break;
+        case 'w':
+          if (this.direction === 'e') {
+            this.hasSideSurface = false;
+          }
+          break;
+        default:
+          break;
+      }
     }
   };
 

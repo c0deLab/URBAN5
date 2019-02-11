@@ -3,6 +3,7 @@ import ObjectsEnum from './enums/ObjectsEnum';
 import CamerasEnum from './enums/CamerasEnum';
 import TopoModel from './TopoModel';
 import { getEmpty2DArray, getCellContext3D } from './ArrayHelpers';
+import { getOppositeDirection } from './Helpers';
 
 import Cube from './Cube';
 import Roof from './Roof';
@@ -38,7 +39,6 @@ export default class DesignModel {
    * @param {int} obj - int representing the ObjectsEnum object
    */
   addObject = (position, obj, modifier) => {
-    console.log(position);
     switch (obj) {
       case ObjectsEnum.TREE:
         if (position.y < (this.yMax - 1)) {
@@ -111,6 +111,99 @@ export default class DesignModel {
         this._setCell(position, null);
         break;
     }
+  }
+
+
+  /**
+   * Use the camera and 2D side (l, r, t, b) to get a cardinal
+   * point (n,s,e,w,t,b) and set that surface at the model position
+   * to the given surface.
+   */
+  setSurface = (camera, position, side, surface) => {
+    const obj = this._getCell(position);
+
+    const sideCardinal = this.getCardinalSide(camera, side);
+    if (obj && obj.setSurface) {
+      obj.setSurface(sideCardinal, surface);
+    }
+
+    const context = getCellContext3D(this.objects, position);
+    const sharedWallNeighbor = context[sideCardinal];
+    if (sharedWallNeighbor && sharedWallNeighbor.setSurface) {
+      sharedWallNeighbor.setSurface(getOppositeDirection(sideCardinal), surface);
+    }
+  }
+
+  getCardinalSide = (camera, side) => {
+    let sideCardinal;
+    if (side === 't' || side === 'b') {
+      switch (camera) {
+        case CamerasEnum.NORTH:
+        case CamerasEnum.SOUTH:
+        case CamerasEnum.EAST:
+        case CamerasEnum.WEST:
+          sideCardinal = side;
+          break;
+        case CamerasEnum.BOTTOM:
+          if (side === 't') {
+            sideCardinal = 's';
+          } else {
+            sideCardinal = 'n';
+          }
+          break;
+        case CamerasEnum.TOP:
+          if (side === 't') {
+            sideCardinal = 'n';
+          } else {
+            sideCardinal = 's';
+          }
+          break;
+        default:
+          throw new Error(`camera ${camera} is not recognized!`);
+      }
+    } else {
+      switch (camera) {
+        case CamerasEnum.NORTH:
+          if (side === 'l') {
+            sideCardinal = 'w';
+          } else if (side === 'r') {
+            sideCardinal = 'e';
+          }
+          break;
+        case CamerasEnum.SOUTH:
+          if (side === 'l') {
+            sideCardinal = 'e';
+          } else if (side === 'r') {
+            sideCardinal = 'w';
+          }
+          break;
+        case CamerasEnum.EAST:
+          if (side === 'l') {
+            sideCardinal = 'n';
+          } else if (side === 'r') {
+            sideCardinal = 's';
+          }
+          break;
+        case CamerasEnum.WEST:
+          if (side === 'l') {
+            sideCardinal = 's';
+          } else if (side === 'r') {
+            sideCardinal = 'n';
+          }
+          break;
+        case CamerasEnum.BOTTOM:
+        case CamerasEnum.TOP:
+          if (side === 'l') {
+            sideCardinal = 'w';
+          } else if (side === 'r') {
+            sideCardinal = 'e';
+          }
+          break;
+        default:
+          throw new Error(`camera ${camera} is not recognized!`);
+      }
+    }
+    return sideCardinal;
   }
 
   /**
@@ -268,22 +361,22 @@ export default class DesignModel {
     // this.addObject({ x: 11, y: 10 + 15, z: 0 }, ObjectsEnum.TREE);
     // this.addObject({ x: 11, y: 10 + 15, z: 1 }, ObjectsEnum.FOLIAGE);
 
-    this.addObject({ x: 11, y: 10, z: 0 }, 0);
-    this.addObject({ x: 11, y: 10, z: 1 }, 0);
-    this.addObject({ x: 11, y: 10, z: 2 }, 1, 'w');
+    this.addObject({ x: 11, y: 3, z: 0 }, 0);
+    this.addObject({ x: 11, y: 3, z: 1 }, 0);
+    this.addObject({ x: 11, y: 3, z: 2 }, 1, 'w');
 
-    this.addObject({ x: 12, y: 10, z: 0 }, 0);
-    this.addObject({ x: 12, y: 10, z: 1 }, 0);
-    this.addObject({ x: 12, y: 10, z: 2 }, 1, 'e');
+    this.addObject({ x: 12, y: 3, z: 0 }, 0);
+    this.addObject({ x: 12, y: 3, z: 1 }, 0);
+    this.addObject({ x: 12, y: 3, z: 2 }, 1, 'e');
 
-    this.addObject({ x: 13, y: 10, z: 0 }, 0);
-    this.addObject({ x: 13, y: 10, z: 1 }, 1, 'e');
+    this.addObject({ x: 13, y: 3, z: 0 }, 0);
+    this.addObject({ x: 13, y: 3, z: 1 }, 1, 'e');
 
-    this.addObject({ x: 14, y: 10, z: 0 }, 0);
+    this.addObject({ x: 14, y: 3, z: 0 }, 0);
 
-    this.addObject({ x: 15, y: 10, z: 0 }, 0);
+    this.addObject({ x: 15, y: 3, z: 0 }, 0);
 
-    this.addObject({ x: 16, y: 10, z: 0 }, 2);
+    this.addObject({ x: 16, y: 3, z: 0 }, 2);
 
     this.addObject({ x: 9, y: 13, z: 0 }, 0);
     this.addObject({ x: 9, y: 13, z: 1 }, 1, 's');
@@ -292,7 +385,12 @@ export default class DesignModel {
     this.addObject({ x: 9, y: 14, z: 1 }, 1, 'n');
 
 
-    this.addObject({ x: 13, y: 5, z: 1 }, 1, 'e');
+    this.addObject({ x: 13, y: 5, z: 4 }, 1, 'e');
+
+    this.addObject({ x: 5, y: 0, z: 1 }, 1, 'e');
+    this.addObject({ x: 7, y: 0, z: 0 }, 0);
+    this.addObject({ x: 9, y: 0, z: 0 }, 0);
+    this.addObject({ x: 10, y: 0, z: 0 }, 0);
 
     // this.addObject({ x: 12, y: 15, z: 0 }, 0);
 

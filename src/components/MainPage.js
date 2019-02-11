@@ -22,14 +22,14 @@ export default class MainPage extends React.Component {
   }
 
   state = {
-    action: ActionsEnum.ADDCUBE, // Default action is ADDCUBE
-    displayType: 'CALC'
-
     // action: ActionsEnum.ADDCUBE, // Default action is ADDCUBE
-    // displayType: 'DRAW'
+    // displayType: 'CALC'
 
-    // action: ActionsEnum.NO_SURFACE, // Default action is ADDCUBE
-    // displayType: 'SURF'
+    // // action: ActionsEnum.ADDCUBE, // Default action is ADDCUBE
+    // // displayType: 'DRAW'
+
+    action: ActionsEnum.NO_SURFACE, // Default action is ADDCUBE
+    displayType: 'SURF'
   };
 
   componentDidMount() {
@@ -52,16 +52,6 @@ export default class MainPage extends React.Component {
     } else {
       console.log(event.keyCode);
       switch (event.keyCode) {
-        case 48: // 0
-          action = ActionsEnum.REMOVE;
-          break;
-        case 49: // 1
-          action = ActionsEnum.ADDCUBE;
-          break;
-        case 50: // 2
-          action = ActionsEnum.ADDTREE;
-          break;
-
         // Switch between views
         case 66: // b
           this.setState({
@@ -88,10 +78,6 @@ export default class MainPage extends React.Component {
           break;
         default:
           break;
-      }
-
-      if (action) {
-        this.setState({ action });
       }
     }
 
@@ -146,11 +132,11 @@ export default class MainPage extends React.Component {
       case 'SURF':
         return [
           ActionsEnum.SOLID_SURFACE,
-          ActionsEnum.PARTITION_SURFACE,
-          ActionsEnum.TRANSPARENT_SURFACE,
           ActionsEnum.NO_SURFACE,
-          ActionsEnum.HAS_ACCESS,
-          ActionsEnum.NO_ACCESS
+          // ActionsEnum.PARTITION_SURFACE,
+          // ActionsEnum.TRANSPARENT_SURFACE,
+          // ActionsEnum.HAS_ACCESS,
+          // ActionsEnum.NO_ACCESS
         ];
       default:
         break;

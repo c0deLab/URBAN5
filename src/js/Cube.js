@@ -61,15 +61,24 @@ export default class Cube {
   };
 
   draw3D = scene => {
-    const { x, y, z } = this.position;
+    // const { x, y, z } = this.position;
 
-    const geometry = new THREE.BoxGeometry(SETTINGS.r, SETTINGS.r, SETTINGS.r);
-    const wireframe = new THREE.EdgesGeometry(geometry);
-    const lines = new THREE.LineSegments(wireframe, SETTINGS.material);
-    const position = { x: x * SETTINGS.r, y: z * SETTINGS.r, z: -y * SETTINGS.r };
-    lines.position.x = position.x + (SETTINGS.r / 2);
-    lines.position.y = position.y + (SETTINGS.r / 2);
-    lines.position.z = position.z - (SETTINGS.r / 2);
+    // const geometry = new THREE.BoxGeometry(SETTINGS.r, SETTINGS.r, SETTINGS.r);
+    // const wireframe = new THREE.EdgesGeometry(geometry);
+    // const lines = new THREE.LineSegments(wireframe, SETTINGS.material);
+    // const position = { x: x * SETTINGS.r, y: z * SETTINGS.r, z: -y * SETTINGS.r };
+    // lines.position.x = position.x + (SETTINGS.r / 2);
+    // lines.position.y = position.y + (SETTINGS.r / 2);
+    // lines.position.z = position.z - (SETTINGS.r / 2);
+    // scene.add(lines);
+
+    const lines = this._getFaces();
+
+    const position = { x: this.position.x * SETTINGS.r, y: this.position.z * SETTINGS.r, z: -this.position.y * SETTINGS.r };
+
+    lines.position.x = position.x;
+    lines.position.y = position.y;
+    lines.position.z = position.z;
     scene.add(lines);
   };
 
@@ -144,6 +153,11 @@ export default class Cube {
       w.surfaces.e = SurfacesEnum.SOLID;
     }
 
+    // Readd floor from cube above
+    if (t && t.constructor.name === 'Cube') {
+      t.surfaces.b = SurfacesEnum.SOLID;
+    }
+
     // Unjoin to adjacent roofs that face this cube
     if (n && n.constructor.name === 'Roof' && n.direction === 'n') {
       n.hasSideSurface = true;
@@ -157,6 +171,10 @@ export default class Cube {
     if (w && w.constructor.name === 'Roof' && w.direction === 'w') {
       w.hasSideSurface = true;
     }
+  };
+
+  setSurface = (sideCardinal, surface) => {
+    this.surfaces[sideCardinal] = surface;
   };
 
   _drawSquare = (stage, x, y, isDashed = false, drawLeft = true, drawTop = true, drawRight = true, drawBottom = true) => {
@@ -187,4 +205,91 @@ export default class Cube {
 
     stage.addChild(shape);
   };
+
+  _getFaces = () => {
+    const geometry = new THREE.Geometry();
+
+    if (this.surfaces.t === SurfacesEnum.SOLID) {
+      geometry.vertices.push(
+        // top face
+        new THREE.Vector3(0, SETTINGS.r, 0),
+        new THREE.Vector3(SETTINGS.r, SETTINGS.r, 0),
+        new THREE.Vector3(SETTINGS.r, SETTINGS.r, 0),
+        new THREE.Vector3(SETTINGS.r, SETTINGS.r, -SETTINGS.r),
+        new THREE.Vector3(SETTINGS.r, SETTINGS.r, -SETTINGS.r),
+        new THREE.Vector3(0, SETTINGS.r, -SETTINGS.r),
+        new THREE.Vector3(0, SETTINGS.r, -SETTINGS.r),
+        new THREE.Vector3(0, SETTINGS.r, 0),
+      );
+    }
+    if (this.surfaces.b === SurfacesEnum.SOLID) {
+      geometry.vertices.push(
+        // bottom face
+        new THREE.Vector3(0, 0, 0),
+        new THREE.Vector3(SETTINGS.r, 0, 0),
+        new THREE.Vector3(SETTINGS.r, 0, 0),
+        new THREE.Vector3(SETTINGS.r, 0, -SETTINGS.r),
+        new THREE.Vector3(SETTINGS.r, 0, -SETTINGS.r),
+        new THREE.Vector3(0, 0, -SETTINGS.r),
+        new THREE.Vector3(0, 0, -SETTINGS.r),
+        new THREE.Vector3(0, 0, 0),
+      );
+    }
+    if (this.surfaces.n === SurfacesEnum.SOLID) {
+      geometry.vertices.push(
+        // north face
+        new THREE.Vector3(0, 0, -SETTINGS.r),
+        new THREE.Vector3(SETTINGS.r, 0, -SETTINGS.r),
+        new THREE.Vector3(SETTINGS.r, 0, -SETTINGS.r),
+        new THREE.Vector3(SETTINGS.r, SETTINGS.r, -SETTINGS.r),
+        new THREE.Vector3(SETTINGS.r, SETTINGS.r, -SETTINGS.r),
+        new THREE.Vector3(0, SETTINGS.r, -SETTINGS.r),
+        new THREE.Vector3(0, SETTINGS.r, -SETTINGS.r),
+        new THREE.Vector3(0, 0, -SETTINGS.r),
+      );
+    }
+    if (this.surfaces.s === SurfacesEnum.SOLID) {
+      geometry.vertices.push(
+        // south face
+        new THREE.Vector3(0, 0, 0),
+        new THREE.Vector3(SETTINGS.r, 0, 0),
+        new THREE.Vector3(SETTINGS.r, 0, 0),
+        new THREE.Vector3(SETTINGS.r, SETTINGS.r, 0),
+        new THREE.Vector3(SETTINGS.r, SETTINGS.r, 0),
+        new THREE.Vector3(0, SETTINGS.r, 0),
+        new THREE.Vector3(0, SETTINGS.r, 0),
+        new THREE.Vector3(0, 0, 0),
+      );
+    }
+    if (this.surfaces.e === SurfacesEnum.SOLID) {
+      geometry.vertices.push(
+        // east face
+        new THREE.Vector3(SETTINGS.r, 0, 0),
+        new THREE.Vector3(SETTINGS.r, SETTINGS.r, 0),
+        new THREE.Vector3(SETTINGS.r, SETTINGS.r, 0),
+        new THREE.Vector3(SETTINGS.r, SETTINGS.r, -SETTINGS.r),
+        new THREE.Vector3(SETTINGS.r, SETTINGS.r, -SETTINGS.r),
+        new THREE.Vector3(SETTINGS.r, 0, -SETTINGS.r),
+        new THREE.Vector3(SETTINGS.r, 0, -SETTINGS.r),
+        new THREE.Vector3(SETTINGS.r, 0, 0),
+      );
+    }
+    if (this.surfaces.w === SurfacesEnum.SOLID) {
+      geometry.vertices.push(
+        // west face
+        new THREE.Vector3(0, 0, 0),
+        new THREE.Vector3(0, SETTINGS.r, 0),
+        new THREE.Vector3(0, SETTINGS.r, 0),
+        new THREE.Vector3(0, SETTINGS.r, -SETTINGS.r),
+        new THREE.Vector3(0, SETTINGS.r, -SETTINGS.r),
+        new THREE.Vector3(0, 0, -SETTINGS.r),
+        new THREE.Vector3(0, 0, -SETTINGS.r),
+        new THREE.Vector3(0, 0, 0),
+      );
+    }
+
+    const lines = new THREE.LineSegments(geometry, SETTINGS.material);
+
+    return lines;
+  }
 }

@@ -26,7 +26,7 @@ export default class Draw extends React.Component {
   componentDidMount() {
     this.isWired = false;
 
-    this.canvas = document.getElementById('display2D');
+    this.canvas = document.getElementById('draw');
     document.addEventListener('keydown', this.handleKeyDown);
     this.canvas.addEventListener('click', this.handleClick);
 
@@ -115,7 +115,7 @@ export default class Draw extends React.Component {
   handleClick = event => {
     const { controller } = this.state;
     const { action } = this.props;
-
+    console.log(action);
     const point = getGridPointInModelSpace(event.offsetX, event.offsetY);
     if (!point) {
       return;
@@ -130,7 +130,7 @@ export default class Draw extends React.Component {
 
     return (
       <div>
-        <canvas id="display2D" width={w} height={h} />
+        <canvas id="draw" width={w} height={h} />
         {showDebug && model && controller ? (<DebuggingDisplays controller={controller} model={model} />) : null}
       </div>
     );

@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 
 import Display2DView from '../js/Display2DView';
 import Display2DController from '../js/Display2DController';
-import { getGridPointInModelSpace } from '../js/Helpers';
+import { getClosestEdgeInModelSpace } from '../js/Helpers';
 
 /* global document */
 /* global SETTINGS */
@@ -22,8 +22,8 @@ export default class Surface extends React.Component {
   componentDidMount() {
     this.isWired = false;
 
-    this.canvas = document.getElementById('display2D');
-    this.canvas.addEventListener('keydown', this.handleKeyDown);
+    this.canvas = document.getElementById('surface');
+    document.addEventListener('keydown', this.handleKeyDown);
     this.canvas.addEventListener('click', this.handleClick);
 
     // If the model had already been created, immediately wire
@@ -36,7 +36,7 @@ export default class Surface extends React.Component {
   }
 
   componentWillUnmount() {
-    this.canvas.removeEventListener('keydown', this.handleKeyDown);
+    document.removeEventListener('keydown', this.handleKeyDown);
     this.canvas.removeEventListener('click', this.handleClick);
   }
 
@@ -102,19 +102,20 @@ export default class Surface extends React.Component {
     const { controller } = this.state;
     const { action } = this.props;
 
-    const point = getGridPointInModelSpace(event.offsetX, event.offsetY);
-    if (!point) {
+    const edge = getClosestEdgeInModelSpace(event.offsetX, event.offsetY);
+    if (!edge) {
       return;
     }
 
-    controller.doAction(action, point.x, point.y);
+    const { x, y, side } = edge;
+    controller.doAction(action, x, y, side);
   }
 
   render() {
     const { w, h } = SETTINGS;
     return (
       <div>
-        <canvas id="display2D" width={w} height={h} />
+        <canvas id="surface" width={w} height={h} />
       </div>
     );
   }
