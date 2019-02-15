@@ -18,10 +18,10 @@ export class Foliage {
     const foliage = new createjs.Shape();
 
     if (isDashed) {
-      foliage.graphics.setStrokeDash([3, 7], 0);
+      foliage.graphics.setStrokeDash([SETTINGS.stroke, 7], 0);
     }
 
-    foliage.graphics.beginStroke(SETTINGS.color).setStrokeStyle(3);
+    foliage.graphics.beginStroke(SETTINGS.color).setStrokeStyle(SETTINGS.stroke);
     const cornerX = ((x + 0.5) * SETTINGS.r) + 1;
     const cornerY = SETTINGS.h - ((y + 0.45) * SETTINGS.r) - 1;
     foliage.graphics.drawCircle(cornerX, cornerY, SETTINGS.r * 0.40);
@@ -57,10 +57,10 @@ export class Trunk {
     const trunk = new createjs.Shape();
 
     if (isDashed) {
-      trunk.graphics.setStrokeDash([3, 7], 0);
+      trunk.graphics.setStrokeDash([4, 8], 0);
     }
 
-    trunk.graphics.beginStroke(SETTINGS.color).setStrokeStyle(3);
+    trunk.graphics.beginStroke(SETTINGS.color).setStrokeStyle(SETTINGS.stroke);
     let cornerX = ((x + 0.5) * SETTINGS.r) + 1;
     let cornerY = SETTINGS.h - (y * SETTINGS.r) - 1;
 
@@ -70,15 +70,12 @@ export class Trunk {
       case CamerasEnum.SOUTH:
       case CamerasEnum.WEST:
       case CamerasEnum.EAST:
-        // Draw a rectangle
-        trunk.graphics.drawRect(cornerX, cornerY, 2, -SETTINGS.r);
+        // Draw a line
+        trunk.graphics.moveTo(cornerX, cornerY).lineTo(cornerX, cornerY - SETTINGS.r);
         break;
       case CamerasEnum.TOP:
       case CamerasEnum.BOTTOM:
-        // Draw a point
-        cornerX -= 2;
-        cornerY -= (0.5 * SETTINGS.r) + 2;
-        trunk.graphics.drawRect(cornerX, cornerY, 6, 6);
+        // Draw no point, because grid point
         break;
       default:
         throw new Error(`camera ${camera} is not recognized!`);

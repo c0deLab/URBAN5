@@ -20,17 +20,22 @@ import { Foliage, Trunk } from './Tree';
  *
  */
 export default class DesignModel {
-  constructor() {
+  constructor(model) {
     this.xMax = SETTINGS.xMax;
     this.yMax = SETTINGS.yMax;
     this.zMax = SETTINGS.zMax;
 
-    // init empty world
-    this.objects = this._empty3DArray();
-    this.topo = new TopoModel(this.xMax, this.yMax);
+    if (model) {
+      this.objects = model.objects;
+      this.topo = new TopoModel(this.xMax, this.yMax, model.topo.heights);
+    } else {
+      // init empty world
+      this.objects = this._empty3DArray();
+      this.topo = new TopoModel(this.xMax, this.yMax);
 
-    // add some things to it to start
-    this._populate();
+      // add some things to it to start
+      this._populate();
+    }
   }
 
   /**
@@ -39,6 +44,7 @@ export default class DesignModel {
    * @param {int} obj - int representing the ObjectsEnum object
    */
   addObject = (position, obj, modifier) => {
+    const context = getCellContext3D(this.objects, position);
     switch (obj) {
       case ObjectsEnum.TREE:
         if (position.y < (this.yMax - 1)) {
@@ -47,34 +53,20 @@ export default class DesignModel {
           z += 1;
           const foliagePosition = { x, y, z };
           // Check placement spot and placement spot above
-          if (this._getCell(position) === null && this._getCell(foliagePosition) === null) {
-            this._setCell(position, new Trunk(position));
-            this._setCell(foliagePosition, new Foliage(foliagePosition));
-            return true;
-          }
+          this._setCell(position, new Trunk(position));
+          this._setCell(foliagePosition, new Foliage(foliagePosition));
+          return true;
         }
         return false;
       case ObjectsEnum.CUBE:
-        if (this._getCell(position) === null) {
-          const context = getCellContext3D(this.objects, position);
-          const c = new Cube(position, context);
-          this._setCell(position, c);
-          return true;
-        }
-        break;
+        this._setCell(position, new Cube(position, context));
+        return true;
       case ObjectsEnum.ROOF:
-        if (this._getCell(position) === null) {
-          const context = getCellContext3D(this.objects, position);
-          const r = new Roof(position, modifier, context);
-          this._setCell(position, r);
-          return true;
-        }
-        break;
+        this._setCell(position, new Roof(position, modifier, context));
+        return true;
       default:
         return false;
     }
-
-    return false;
   }
 
   /**
@@ -391,6 +383,20 @@ export default class DesignModel {
     this.addObject({ x: 7, y: 0, z: 0 }, 0);
     this.addObject({ x: 9, y: 0, z: 0 }, 0);
     this.addObject({ x: 10, y: 0, z: 0 }, 0);
+
+
+    this.addObject({ x: 1, y: 1, z: 2 }, 0);
+    this.addObject({ x: 2, y: 1, z: 2 }, 0);
+    this.addObject({ x: 1, y: 2, z: 2 }, 0);
+    this.addObject({ x: 2, y: 2, z: 2 }, 0);
+    this.addObject({ x: 1, y: 2, z: 3 }, 0);
+    this.addObject({ x: 2, y: 2, z: 3 }, 0);
+
+    this.addObject({ x: 4, y: 2, z: 5 }, 1, 's');
+    this.addObject({ x: 4, y: 2, z: 5 }, 1, 'n');
+
+    this.addObject({ x: 4, y: 2, z: 5 }, 1, 's');
+    this.addObject({ x: 4, y: 2, z: 5 }, 1, 'n');
 
     // this.addObject({ x: 12, y: 15, z: 0 }, 0);
 

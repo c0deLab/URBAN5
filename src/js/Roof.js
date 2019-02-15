@@ -2,7 +2,6 @@ import * as THREE from 'three';
 import { createjs } from '@createjs/easeljs';
 import CamerasEnum from './enums/CamerasEnum';
 import SurfacesEnum from './enums/SurfacesEnum';
-import { getOppositeDirection } from './Helpers';
 
 /* global SETTINGS */
 
@@ -12,7 +11,9 @@ export default class Roof {
     this.direction = direction;
     this.position = position;
     this.hasSideSurface = true;
-    this._checkJoins(context);
+    if (context) {
+      this._checkJoins(context);
+    }
   }
 
   // Join cube surfaces that connect
@@ -202,7 +203,7 @@ export default class Roof {
 
   _drawSquare = (stage, x, y, isDashed = false) => {
     const shape = new createjs.Shape();
-    shape.graphics.beginStroke(SETTINGS.color).setStrokeStyle(3);
+    shape.graphics.beginStroke(SETTINGS.color).setStrokeStyle(SETTINGS.stroke);
 
     const sx = (x * SETTINGS.r) + 1;
     const dx = SETTINGS.r;
@@ -226,12 +227,12 @@ export default class Roof {
     const roof = new createjs.Shape();
 
     if (isDashed) {
-      roof.graphics.setStrokeDash([3, 8.5], 0);
+      roof.graphics.setStrokeDash([4, 8], 0);
     }
 
     let cornerX = (x * SETTINGS.r) + 1;
     let cornerY = SETTINGS.h - (y * SETTINGS.r) - 1;
-    roof.graphics.beginStroke(SETTINGS.color).setStrokeStyle(3);
+    roof.graphics.beginStroke(SETTINGS.color).setStrokeStyle(SETTINGS.stroke);
     roof.graphics.moveTo(cornerX, cornerY);
     cornerX += SETTINGS.r;
     cornerY -= SETTINGS.r;
@@ -256,12 +257,12 @@ export default class Roof {
     const roof = new createjs.Shape();
 
     if (isDashed) {
-      roof.graphics.setStrokeDash([3, 8.5], 0);
+      roof.graphics.setStrokeDash([4, 8], 0);
     }
 
     let cornerX = (x * SETTINGS.r) + 1;
     let cornerY = SETTINGS.h - ((y + 1) * SETTINGS.r) - 1;
-    roof.graphics.beginStroke(SETTINGS.color).setStrokeStyle(3);
+    roof.graphics.beginStroke(SETTINGS.color).setStrokeStyle(SETTINGS.stroke);
     roof.graphics.moveTo(cornerX, cornerY);
     cornerX += SETTINGS.r;
     cornerY += SETTINGS.r;

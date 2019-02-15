@@ -22,7 +22,7 @@ const ActionsEnum = {
   ADD_ROOF_WEST: { id: 20, label: 'ADDROOFW' }, // Add Angled Roof down towards west
   ADD_ROOF_EAST: { id: 21, label: 'ADDROOFE' }, // Add Angled Roof down towards east
 
-  isAdd: action => [2, 6, 7, 8].includes(action.id),
+  isAdd: action => [2, 6, 7, 8, 20, 21].includes(action.id),
 };
 
 export default ActionsEnum;

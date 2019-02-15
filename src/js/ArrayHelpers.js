@@ -85,3 +85,13 @@ export function getEmpty2DArray(rows, columns, defaultValue = null) {
   }
   return arr;
 }
+
+export function getEmpty3DArray(x, y, z) {
+  const arr = new Array(z);
+
+  for (let i = 0; i < arr.length; i += 1) {
+    arr[i] = getEmpty2DArray(y, x, null);
+  }
+
+  return arr;
+}

@@ -2,6 +2,8 @@ import ID from './ID';
 import ActionsEnum from './enums/ActionsEnum';
 import { getCellContext3D } from './ArrayHelpers';
 
+/* global SETTINGS */
+
 const LABEL = {
   NOT_POSSIBLE: 'Not structurally possible at this time.',
   SOME_INCOMPATIBILITIES: 'Ted, there are some incompatibilities occurring.',
@@ -72,72 +74,68 @@ export default class Monitor {
     */
   checkIncompatibilities = actionEvent => {
     if (ActionsEnum.isAdd(actionEvent.action)) {
-      // If the user added an object, check that if it encounters another object
-      const { action, metadata } = actionEvent;
+      // If the user added an object, check that position
+      const { metadata } = actionEvent;
       const { modelPosition } = metadata;
-
-      if (this.isBelowGround(modelPosition)) {
-        this.sendMessage(INCOMPATIBILITY.IS_BELOW_GROUND);
-      } else if (this.isCollision(modelPosition)) {
-        this.sendMessage(INCOMPATIBILITY.IS_COLLISION);
-      }
-
-      switch (action) {
-        case ActionsEnum.ADDTREE:
-          // If its a tree, it needs ground underneath
-          if (!this.isOnGround(modelPosition)) {
-            this.sendMessage(INCOMPATIBILITY.NO_GROUND_BELOW);
-          }
-          break;
-        case ActionsEnum.ADDCUBE:
-          // If it is a cube, it needs another cube touching it or ground underneath
-          if (!(this.isCubeConnected(modelPosition) || this.isOnGround(modelPosition))) {
-            this.sendMessage(INCOMPATIBILITY.IS_FLOATING);
-          }
-          break;
-        case ActionsEnum.ADDRFLFT:
-        case ActionsEnum.ADDRFRGT:
-          // If it is a roof, it needs a cube underneath
-          if (!this.isCubeBelow(modelPosition)) {
-            this.sendMessage(INCOMPATIBILITY.NO_BUILDING_BELOW);
-          }
-          break;
-        default:
-          // nothing
-          break;
-      }
-    } else if (ActionsEnum.EDITTOPO === actionEvent.action) {
-      // If the user set the topo height, check all incompatibilities
-      const numIncompatibilities = this.getAllIncompatibilities();
-      // console.log('numIncompatibilities', numIncompatibilities);
-      if (numIncompatibilities > 5) {
+      const incompatibilities = this.getIncompatibilitiesAtPosition(modelPosition);
+      incompatibilities.forEach(i => this.sendMessage(i));
+    } else if (ActionsEnum.EDITTOPO === actionEvent.action || ActionsEnum.REMOVE === actionEvent.action) {
+      // If the user set the topo height or remove something, check all incompatibilities
+      const incompatibilities = this.getAllIncompatibilities();
+      if (incompatibilities.length > 5) {
         this.sendMessage(INCOMPATIBILITY.MULTIPLE);
-      } else if (numIncompatibilities > 0) {
+      } else if (incompatibilities.length > 0) {
         this.sendMessage(INCOMPATIBILITY.SOME);
       }
     }
   };
 
   getAllIncompatibilities = () => {
-    const xMax = 17;
-    const yMax = 17;
-    const zMax = 7;
-
-    let incompatibilities = 0;
+    const incompatibilities = [];
 
     // check default constraints
     const { objects } = this.model;
-    for (let z = 0; z < zMax; z += 1) {
-      for (let y = 0; y < xMax; y += 1) {
-        for (let x = 0; x < yMax; x += 1) {
+    for (let z = 0; z < SETTINGS.zMax; z += 1) {
+      for (let y = 0; y < SETTINGS.yMax; y += 1) {
+        for (let x = 0; x < SETTINGS.xMax; x += 1) {
           if (objects[z][y][x] !== null) {
             const modelPosition = { x, y, z };
-            const isStructurallyPossible = this.isStructurallyPossible(modelPosition);
-            if (!isStructurallyPossible) {
-              console.log(`incompatibility at: ${JSON.stringify({ x, y, z })}`);
-              incompatibilities += 1;
-            }
+            incompatibilities.push(...this.getIncompatibilitiesAtPosition(modelPosition));
           }
+        }
+      }
+    }
+
+    return incompatibilities;
+  };
+
+  getIncompatibilitiesAtPosition = modelPosition => {
+    const incompatibilities = [];
+    if (this.isBelowGround(modelPosition)) {
+      incompatibilities.push(INCOMPATIBILITY.IS_BELOW_GROUND);
+    }
+    // else if (this.isCollision(modelPosition)) {
+    //   incompatibilities.push(INCOMPATIBILITY.IS_COLLISION);
+    // }
+
+    const { x, y, z } = modelPosition;
+    const obj = this.model.objects[z][y][x];
+
+    if (obj) {
+      if (obj.constructor.name === 'Cube') {
+        // If it is a cube, it needs another cube touching it or ground underneath
+        if (!(this.isCubeConnected(modelPosition) || this.isOnGround(modelPosition))) {
+          incompatibilities.push(INCOMPATIBILITY.IS_FLOATING);
+        }
+      } else if (obj.constructor.name === 'Trunk') {
+        // If its a tree, it needs ground underneath
+        if (!this.isOnGround(modelPosition)) {
+          incompatibilities.push(INCOMPATIBILITY.NO_GROUND_BELOW);
+        }
+      } else if (obj.constructor.name === 'Roof') {
+        // If it is a roof, it needs a cube underneath
+        if (!this.isCubeBelow(modelPosition)) {
+          incompatibilities.push(INCOMPATIBILITY.NO_BUILDING_BELOW);
         }
       }
     }
@@ -155,12 +153,6 @@ export default class Monitor {
     this.listeners.forEach(listener => listener.onMessage(newMessage));
   };
 
-  isStructurallyPossible = modelPosition => {
-    const isBelowGround = this.isBelowGround(modelPosition);
-    const isFloating = this.isFloating(modelPosition);
-    return !isBelowGround && !isFloating;
-  };
-
   isCollision = modelPosition => {
     const { x, y, z } = modelPosition;
 
@@ -176,25 +168,6 @@ export default class Monitor {
     const belowGroud = z < groundHeight;
     // console.log('belowGroud', belowGroud);
     return belowGroud;
-  };
-
-  isFloating = (action, modelPosition) => {
-    switch (action) {
-      case ActionsEnum.ADDTREE:
-        // If its a tree, it needs ground underneath
-        return !this.isOnGround(modelPosition);
-      case ActionsEnum.ADDCUBE:
-        // If it is a cube, it needs another cube touching it or ground underneath
-        return !(this.isCubeConnected(modelPosition) || this.isOnGround(modelPosition));
-      case ActionsEnum.ADDRFLFT:
-      case ActionsEnum.ADDRFRGT:
-        // If it is a roof, it needs a cube underneath
-        return !this.isCubeBelow(modelPosition);
-      default:
-        // nothing
-        break;
-    }
-    return null;
   };
 
   isOnGround = modelPosition => {

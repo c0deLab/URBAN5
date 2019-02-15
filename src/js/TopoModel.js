@@ -4,12 +4,16 @@ import { getEmpty2DArray, getCellContext3x3, getCornerContext2x2 } from './Array
 
 /** Class represents the topograhy of a design world */
 export default class TopoModel {
-  constructor(xMax, yMax) {
+  constructor(xMax, yMax, heights) {
     this.xMax = xMax;
     this.yMax = yMax;
     this.maxHeight = 7;
 
-    this.heights = getEmpty2DArray(this.yMax, this.xMax, 0);
+    if (heights) {
+      this.heights = heights;
+    } else {
+      this.heights = getEmpty2DArray(this.yMax, this.xMax, 0);
+    }
   }
 
   /**

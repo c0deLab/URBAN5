@@ -8,7 +8,9 @@ import SurfacesEnum from './enums/SurfacesEnum';
 export default class Cube {
   constructor(position, context) {
     // n, e, s, w, t, b
-    this.surfaces = this._getSurfaces(context);
+    if (context) {
+      this.surfaces = this._getSurfaces(context);
+    }
     this.position = position;
   }
 
@@ -92,7 +94,7 @@ export default class Cube {
       b: SurfacesEnum.SOLID
     };
 
-    const { n, e, s, w, t, b } = context;
+    const { n, e, s, w, t } = context;
     // Join to adjacent cubes (update both this one and the other)
     if (n && n.constructor.name === 'Cube') {
       surfaces.n = SurfacesEnum.NONE;
@@ -139,7 +141,7 @@ export default class Cube {
 
   remove = context => {
     // check adjacent cubes and seal them?
-    const { n, e, s, w, t, b } = context;
+    const { n, e, s, w, t } = context;
     if (n && n.constructor.name === 'Cube') {
       n.surfaces.s = SurfacesEnum.SOLID;
     }
@@ -179,7 +181,7 @@ export default class Cube {
 
   _drawSquare = (stage, x, y, isDashed = false, drawLeft = true, drawTop = true, drawRight = true, drawBottom = true) => {
     const shape = new createjs.Shape();
-    shape.graphics.beginStroke(SETTINGS.color).setStrokeStyle(3);
+    shape.graphics.beginStroke(SETTINGS.color).setStrokeStyle(SETTINGS.stroke);
 
     const sx = (x * SETTINGS.r) + 1;
     const dx = SETTINGS.r;
@@ -187,7 +189,7 @@ export default class Cube {
     const dy = -SETTINGS.r;
 
     if (isDashed) {
-      shape.graphics.setStrokeDash([3, 7], 0);
+      shape.graphics.setStrokeDash([4, 8], 0);
     }
 
     if (drawLeft) { // left

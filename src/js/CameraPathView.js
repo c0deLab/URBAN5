@@ -1,5 +1,4 @@
 import * as THREE from 'three';
-import ObjectsEnum from './enums/ObjectsEnum';
 import { getEmpty2DArray } from './ArrayHelpers';
 
 /* global SETTINGS */

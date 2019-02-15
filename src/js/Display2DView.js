@@ -1,5 +1,4 @@
 import { createjs } from '@createjs/easeljs';
-import ObjectsEnum from './enums/ObjectsEnum';
 import CamerasEnum from './enums/CamerasEnum';
 import { getEmpty2DArray } from './ArrayHelpers';
 
@@ -98,7 +97,7 @@ export default class Display2DView {
     const line = new createjs.Shape();
     let cornerX = 1;
     let cornerY;
-    line.graphics.beginStroke(SETTINGS.color).setStrokeStyle(3);
+    line.graphics.beginStroke(SETTINGS.color).setStrokeStyle(SETTINGS.stroke);
 
     // Draw the heights left to right as a connected line
     topoSlice.forEach(s => {
@@ -146,7 +145,7 @@ export default class Display2DView {
         const contextX = (x + 0.5) * SETTINGS.r;
         const contextY = SETTINGS.h - ((y + 0.5) * SETTINGS.r);
 
-        point.graphics.beginStroke(SETTINGS.color).setStrokeStyle(2).drawRect(contextX, contextY, 2, -2);
+        point.graphics.beginStroke(SETTINGS.color).setStrokeStyle(SETTINGS.stroke - 1).drawRect(contextX, contextY, 2, -2);
         this.stage.addChild(point);
       }
     }
@@ -160,7 +159,7 @@ export default class Display2DView {
   drawCircle = (x, y) => {
     const circle = new createjs.Shape();
 
-    circle.graphics.beginStroke(SETTINGS.color).setStrokeStyle(3);
+    circle.graphics.beginStroke(SETTINGS.color).setStrokeStyle(SETTINGS.stroke);
     const cornerX = ((x + 0.5) * SETTINGS.r) + 1;
     const cornerY = SETTINGS.h - ((y + 0.45) * SETTINGS.r) - 1;
     circle.graphics.drawCircle(cornerX, cornerY, SETTINGS.r * 0.40);
