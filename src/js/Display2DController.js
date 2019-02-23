@@ -7,13 +7,14 @@ import SurfacesEnum from './enums/SurfacesEnum';
 
 /** Class to control rotating to different slice angles and elevations and moving through slices */
 export default class Display2DController {
-  constructor(model, actionsAPI) {
+  constructor(session) {
+    this.session = session;
+
     this.gridSize = SETTINGS.gridSize;
     this.xMax = SETTINGS.xMax;
     this.yMax = SETTINGS.yMax;
     this.zMax = SETTINGS.zMax;
-    this.model = model;
-    this.actionsAPI = actionsAPI;
+
     this.sliceXAxis = 0; // for W/E view
     this.sliceYAxis = 0; // for N/S view
     this.sliceZAxis = 6; // for TOP/BOTTOM view
@@ -80,9 +81,9 @@ export default class Display2DController {
         // nothing
         break;
     }
-    if (modelPosition) {
-      this.actionsAPI.onAction(action, { modelPosition });
-    }
+    // if (modelPosition) {
+    //   this.actionsAPI.onAction(action, { modelPosition });
+    // }
   };
 
   /**
@@ -91,7 +92,7 @@ export default class Display2DController {
    */
   addObject = (modelPosition, object, modifier) => {
     if (modelPosition) {
-      this.model.addObject(modelPosition, object, modifier);
+      this.session.design.add(object, modelPosition, modifier);
       this.updateViews();
     }
   }
@@ -102,7 +103,7 @@ export default class Display2DController {
    */
   removeObject = modelPosition => {
     if (modelPosition) {
-      this.model.removeObject(modelPosition);
+      this.session.design.remove(modelPosition);
       this.updateViews();
     }
   }
@@ -111,35 +112,35 @@ export default class Display2DController {
    */
   setSurface = (camera, position, side, surface) => {
     if (position) {
-      this.model.setSurface(camera, position, side, surface);
+      this.session.design.setSurface(camera, position, side, surface);
       this.updateViews();
     }
   }
 
-  /**
-   * Set the topo height at the normalized position. If there is no ground where you click, raise
-   * to fill that area. If there is ground there, remove down to the base of that point
-   * @param {object} modelPosition - {x,y,z}
-   */
-  setTopoHeight = modelPosition => {
-    if (modelPosition) {
-      const { x, y, z } = modelPosition;
-      const { topo } = this.model;
+  // /**
+  //  * Set the topo height at the normalized position. If there is no ground where you click, raise
+  //  * to fill that area. If there is ground there, remove down to the base of that point
+  //  * @param {object} modelPosition - {x,y,z}
+  //  */
+  // setTopoHeight = modelPosition => {
+  //   if (modelPosition) {
+  //     const { x, y, z } = modelPosition;
+  //     const { topo } = this.model;
 
-      let height;
+  //     let height;
 
-      const currentHeight = topo.getTopoHeight({ x, y });
-      if (z < currentHeight) {
-        // If ground was previous full, Drop height down to base of click grid square
-        height = z;
-      } else {
-        // Raise height to fill up the grid square if it was empty
-        height = z + 1;
-      }
-      this.model.topo.setTopoHeight({ x, y }, height);
-      this.updateViews();
-    }
-  }
+  //     const currentHeight = topo.getTopoHeight({ x, y });
+  //     if (z < currentHeight) {
+  //       // If ground was previous full, Drop height down to base of click grid square
+  //       height = z;
+  //     } else {
+  //       // Raise height to fill up the grid square if it was empty
+  //       height = z + 1;
+  //     }
+  //     this.session.topo.setTopoHeight({ x, y }, height);
+  //     this.updateViews();
+  //   }
+  // }
 
   /** Move the view to the next slice, without exceeding the last slice */
   nextSlice = () => {

@@ -2,7 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 
 import Display2DView from '../js/Display2DView';
-import { getGridPointInModelSpace } from '../js/Helpers';
+import { getGridPointInModelSpace } from '../js/helpers/Helpers';
 
 /* global document */
 /* global SETTINGS */
@@ -10,7 +10,7 @@ import { getGridPointInModelSpace } from '../js/Helpers';
 /** Class for t */
 export default class ChoosePath extends React.Component {
   static propTypes = {
-    model: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
+    session: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
     onSelectStart: PropTypes.func.isRequired, // eslint-disable-line react/forbid-prop-types
     onSelectEnd: PropTypes.func.isRequired, // eslint-disable-line react/forbid-prop-types
   }
@@ -43,14 +43,14 @@ export default class ChoosePath extends React.Component {
    * It sets up the rendering to the canvas.
    */
   wire = () => {
-    const { model } = this.props;
+    const { session } = this.props;
     // Only wire once, and only do it once the model is ready
-    if (this.isWired || !model) {
+    if (this.isWired || !session) {
       return;
     }
     this.isWired = true;
 
-    this.view = new Display2DView(this.canvas, model);
+    this.view = new Display2DView(this.canvas, session);
     // Trigger initial render
     this.view.drawTopCompressedView();
   }

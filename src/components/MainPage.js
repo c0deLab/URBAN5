@@ -16,17 +16,18 @@ import DisplayWalkthrough from './DisplayWalkthrough';
 /** Class for the rendering the main view with top, menu, and center panels */
 export default class MainPage extends React.Component {
   static propTypes = {
-    actionsAPI: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
-    monitor: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
-    designModel: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
+    session: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
   }
 
   state = {
-    // action: ActionsEnum.ADDCUBE, // Default action is ADDCUBE
-    // displayType: 'CALC'
-
     action: ActionsEnum.ADDCUBE, // Default action is ADDCUBE
-    displayType: 'DRAW'
+    displayType: 'CALC'
+
+    // action: ActionsEnum.ADDCUBE, // Default action is ADDCUBE
+    // displayType: 'DRAW'
+
+    // action: ActionsEnum.INCREASE_HEIGHT, // Default action is ADDCUBE
+    // displayType: 'TOPO'
 
     // action: ActionsEnum.NO_SURFACE, // Default action is ADDCUBE
     // displayType: 'SURF'
@@ -46,7 +47,7 @@ export default class MainPage extends React.Component {
 
   /** Add some hotkeys to make testing easier */
   handleKeyDown = event => {
-    let { action } = this.state;
+    const { action } = this.state;
     if (action === ActionsEnum.SPEAK_CONSTRAINT) {
       // do nothing
     } else {
@@ -85,21 +86,21 @@ export default class MainPage extends React.Component {
 
   getDisplay = () => {
     const { action, displayType } = this.state;
-    const { actionsAPI, designModel } = this.props;
+    const { session } = this.props;
 
-    if (!designModel || !action) {
+    if (!session || !action) {
       return null;
     }
 
     switch (displayType) {
       case 'DRAW':
-        return (<Draw action={action} actionsAPI={actionsAPI} model={designModel} />);
+        return (<Draw action={action} session={session} />);
       case 'CALC':
-        return (<DisplayWalkthrough model={designModel} />);
+        return (<DisplayWalkthrough session={session} />);
       case 'TOPO':
-        return (<Topo action={action} actionsAPI={actionsAPI} model={designModel} />);
+        return (<Topo action={action} session={session} />);
       case 'SURF':
-        return (<Surface action={action} actionsAPI={actionsAPI} model={designModel} />);
+        return (<Surface action={action} session={session} />);
       default:
         break;
     }
@@ -149,13 +150,13 @@ export default class MainPage extends React.Component {
     const { action } = this.state;
     const actions = this.getActions();
 
-    const { monitor, actionsAPI } = this.props;
+    const { session } = this.props;
     return (
       <div>
         <div style={{ width: '864px', height: '100%', float: 'left' }}>
           <div style={{ width: '864px', height: '160px' }}>
             <div style={{ padding: '20px' }}>
-              <Top monitor={monitor} action={action} actionsAPI={actionsAPI} />
+              <Top session={session} action={action} />
             </div>
           </div>
           <div style={{ width: '852px', height: '852px', padding: '5px' }}>

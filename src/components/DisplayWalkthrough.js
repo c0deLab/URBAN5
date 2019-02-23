@@ -6,7 +6,7 @@ import ChoosePath from './ChoosePath';
 
 export default class DisplayWalkthrough extends React.Component {
   static propTypes = {
-    model: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
+    session: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
   }
 
   state = {
@@ -15,10 +15,10 @@ export default class DisplayWalkthrough extends React.Component {
   }
 
   doWalkthrough = end => {
-    const { model } = this.props;
+    const { session } = this.props;
     const { start } = this.state;
 
-    const path = this.calculatePath(start, end, model);
+    const path = this.calculatePath(start, end, session);
 
     this.setState({ path });
   }
@@ -36,21 +36,21 @@ export default class DisplayWalkthrough extends React.Component {
 
   render() {
     const { path } = this.state;
-    const { model } = this.props;
+    const { session } = this.props;
 
     return (
       <div>
         { !path
           ? (
             <ChoosePath
-              model={model}
+              session={session}
               onSelectStart={start => this.setState({ start })}
               onSelectEnd={end => this.doWalkthrough(end)}
             />
           )
           : (
             <CameraPath
-              model={model}
+              session={session}
               path={path}
               onWalkthroughEnd={() => this.setState({ path: null })}
             />

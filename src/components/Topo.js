@@ -2,7 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 
 import TopoView from '../js/TopoView';
-import { getGridPointInModelSpace } from '../js/Helpers';
+import { getGridPointInModelSpace } from '../js/helpers/Helpers';
 import ActionsEnum from '../js/enums/ActionsEnum';
 
 /* global document */
@@ -11,7 +11,7 @@ import ActionsEnum from '../js/enums/ActionsEnum';
 /** Class for t */
 export default class Topo extends React.Component {
   static propTypes = {
-    model: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
+    session: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
     action: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
   }
 
@@ -39,30 +39,29 @@ export default class Topo extends React.Component {
    * It sets up the rendering to the canvas.
    */
   wire = () => {
-    const { model } = this.props;
+    const { session } = this.props;
     // Only wire once, and only do it once the model is ready
-    if (this.isWired || !model) {
+    if (this.isWired || !session) {
       return;
     }
     this.isWired = true;
 
-    this.view = new TopoView(this.canvas, model.topo);
+    this.view = new TopoView(this.canvas, session);
     // Trigger initial render
     this.view.draw();
   }
 
   handleClick = event => {
-    const { model, action } = this.props;
+    const { session, action } = this.props;
     const point = getGridPointInModelSpace(event.offsetX, event.offsetY);
     if (!point) {
       return;
     }
 
-    const currentHeight = model.topo.getTopoHeight(point);
     if (action === ActionsEnum.DECREASE_HEIGHT) {
-      model.topo.setTopoHeight(point, currentHeight - 1);
+      session.topo.decrease(point);
     } else {
-      model.topo.setTopoHeight(point, currentHeight + 1);
+      session.topo.increase(point);
     }
     this.view.draw();
   }

@@ -1,14 +1,19 @@
 import { createjs } from '@createjs/easeljs';
 import CamerasEnum from './enums/CamerasEnum';
-import { getEmpty2DArray } from './ArrayHelpers';
+import { getEmpty2DArray } from './helpers/ArrayHelpers';
+
+import TopoRenderer2D from './renderers/TopoRenderer2D';
+import DesignRenderer2D from './renderers/DesignRenderer2D';
 
 /* global SETTINGS */
 
 /** Class responsible for rednering a 2D slice */
 export default class Display2DView {
-  constructor(canvas, model) {
-    this.model = model;
+  constructor(canvas, session) {
+    this.session = session;
     this.stage = new createjs.Stage(canvas);
+    this.designRenderer = new DesignRenderer2D(this.stage);
+    this.topoRenderer = new TopoRenderer2D(this.stage);
 
     this.drawBackground = true; // Whether background slices should be rendered
   }
@@ -24,23 +29,23 @@ export default class Display2DView {
     this.stage.removeAllChildren();
 
     // Draw the topography
-    const topoSlice = this.model.getTopoSlice(camera, sliceIndex);
+    const topoSlice = this.session.topo.getSlice(camera, sliceIndex);
     if (topoSlice) {
-      this._drawTopoSlice(topoSlice);
+      this.topoRenderer.draw(topoSlice);
     }
 
     // Draw the background slices
     if (this.drawBackground) {
-      const backgroundSlices = this.model.getBackgroundSlices(camera, sliceIndex);
-      backgroundSlices.forEach(s => this._drawSlice(camera, s, isBackgroundDashed));
+      const backgroundSlices = this.session.design.getBackgroundSlices(camera, sliceIndex);
+      backgroundSlices.forEach(s => this.designRenderer.drawSlice(camera, s, isBackgroundDashed));
     }
 
     // Draw the given slice
-    const currentSlice = this.model.getSlice(camera, sliceIndex);
-    this._drawSlice(camera, currentSlice);
+    const currentSlice = this.session.design.getSlice(camera, sliceIndex);
+    this.designRenderer.drawSlice(camera, currentSlice);
 
     // Draw the grid of appropriate size for this slice
-    this._drawGridPoints(currentSlice);
+    this.designRenderer.drawGridPoints(currentSlice);
 
     // Render to the screen
     this.stage.update();
@@ -53,14 +58,14 @@ export default class Display2DView {
     // Clear the screen
     this.stage.removeAllChildren();
 
-    const allSlices = this.model.getBackgroundSlices(CamerasEnum.TOP, this.model.zMax);
+    const allSlices = this.session.design.getBackgroundSlices(CamerasEnum.TOP, SETTINGS.zMax);
     // Reverse to go from bottom up
     allSlices.reverse();
 
     // Create master slice from all slices
-    const masterSlice = getEmpty2DArray(this.model.xMax, this.model.yMax, null);
-    for (let y = 0; y < this.model.yMax; y += 1) {
-      for (let x = 0; x < this.model.xMax; x += 1) {
+    const masterSlice = getEmpty2DArray(SETTINGS.xMax, SETTINGS.yMax, null);
+    for (let y = 0; y < SETTINGS.yMax; y += 1) {
+      for (let x = 0; x < SETTINGS.xMax; x += 1) {
         let topObj = null;
         allSlices.forEach(slice => {
           const obj = slice[y][x];
@@ -72,7 +77,7 @@ export default class Display2DView {
       }
     }
 
-    this._drawSlice(CamerasEnum.TOP, masterSlice);
+    this.designRenderer.drawSlice(CamerasEnum.TOP, masterSlice);
 
     // Render to the screen
     this.stage.update();

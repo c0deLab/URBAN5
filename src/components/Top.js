@@ -9,10 +9,8 @@ import TextInput from './TextInput';
 /** Class for the top of the screen where text interaction with URBAN5 takes place */
 export default class Top extends React.PureComponent {
   static propTypes = {
-    // An object representing the user data that the system interacts with and updates
-    monitor: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
+    session: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
     action: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
-    actionsAPI: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
   }
 
   state = {
@@ -20,10 +18,9 @@ export default class Top extends React.PureComponent {
   };
 
   componentDidMount() {
-    const { monitor } = this.props;
+    const { session } = this.props;
 
-    monitor.addListener(this);
-    const currentMessages = monitor.getMessages();
+    const currentMessages = session.monitor.getMessages();
     currentMessages.forEach(m => this.onMessage(m));
   }
 
@@ -45,9 +42,9 @@ export default class Top extends React.PureComponent {
   };
 
   onSpeak = text => {
-    const { actionsAPI } = this.props;
+    const { session } = this.props;
 
-    actionsAPI.onAction(ActionsEnum.SPEAK_CONSTRAINT, { text });
+    session.monitor.addConstraint(text);
   };
 
   render() {

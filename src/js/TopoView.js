@@ -1,15 +1,16 @@
 import { createjs } from '@createjs/easeljs';
 
+import EditTopoRenderer2D from './renderers/EditTopoRenderer2D';
+
+/* global SETTINGS */
+
 /** Class responsible for rednering a 2D slice */
 export default class TopoView {
-  constructor(canvas, model) {
-    this.model = model;
+  constructor(canvas, session) {
+    this.session = session;
     this.stage = new createjs.Stage(canvas);
 
-    this.gridSize = 17;
-    this.height = canvas.height;
-    this.r = (this.height - 2) / this.gridSize;
-    this.color = '#E8E8DA';
+    this.renderer = new EditTopoRenderer2D(this.stage);
   }
 
   /**
@@ -22,36 +23,13 @@ export default class TopoView {
     // Clear the screen
     this.stage.removeAllChildren();
 
-    for (let y = 0; y < this.model.yMax; y += 1) {
-      for (let x = 0; x < this.model.xMax; x += 1) {
-        this._drawSquare(x, y, this.model.getTopoHeight({ x, y }));
+    for (let y = 0; y < SETTINGS.yMax; y += 1) {
+      for (let x = 0; x < SETTINGS.xMax; x += 1) {
+        this.renderer.drawSquare(x, y, this.session.topo.getAt({ x, y }));
       }
     }
 
     // Render to the screen
     this.stage.update();
-  };
-
-  /**
-   * Add a square at x,y with number representing height
-   * @param {int} x
-   * @param {int} y
-   */
-  _drawSquare = (x, y, num) => {
-    const shape = new createjs.Shape();
-    shape.graphics.beginStroke(this.color).setStrokeStyle(1);
-
-    const sx = (x * this.r) + 1;
-    const dx = this.r;
-    const sy = this.height - (y * this.r) - 1;
-    const dy = -this.r;
-
-    shape.graphics.drawRect(sx, sy, dx, dy);
-    this.stage.addChild(shape);
-
-    const text = new createjs.Text(num, 'bold 17px Andale Mono', this.color);
-    text.x = sx + (dx / 2) - 5;
-    text.y = sy + (dy / 2) - 6;
-    this.stage.addChild(text);
   };
 }

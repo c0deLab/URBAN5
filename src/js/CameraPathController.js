@@ -1,7 +1,7 @@
 /** Class for controlling a 3D view mimicking a walk through of the model */
 export default class CameraPathController {
-  constructor(model, onWalkthroughEnd) {
-    this.model = model;
+  constructor(session, onWalkthroughEnd) {
+    this.session = session;
     this.views = [];
     this.onWalkthroughEnd = onWalkthroughEnd;
   }

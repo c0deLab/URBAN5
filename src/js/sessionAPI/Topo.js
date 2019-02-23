@@ -1,28 +1,29 @@
 import Array2D from 'array2d';
-import CamerasEnum from './enums/CamerasEnum';
-import { getEmpty2DArray, getCellContext3x3, getCornerContext2x2 } from './ArrayHelpers';
+import CamerasEnum from '../enums/CamerasEnum';
+import { getEmpty2DArray, getCellContext3x3, getCornerContext2x2 } from '../helpers/ArrayHelpers';
+
+/* global SETTINGS */
 
 /** Class represents the topograhy of a design world */
-export default class TopoModel {
-  constructor(xMax, yMax, heights) {
-    this.xMax = xMax;
-    this.yMax = yMax;
-    this.maxHeight = 7;
-
+class Topo {
+  constructor(heights) {
     if (heights) {
       this.heights = heights;
     } else {
-      this.heights = getEmpty2DArray(this.yMax, this.xMax, 0);
+      this.heights = getEmpty2DArray(SETTINGS.yMax, SETTINGS.xMax, 0);
     }
   }
 
-  /**
-   * Set the topography height at a given position
-   * @param {object} position - 2D position in the form {x:x,y:y}
-   * @param {int} height - The y value of the topo at the position
-   */
-  setTopoHeight = (position, height) => {
-    if (height >= 0 && height <= this.maxHeight) {
+  increase = position => {
+    const height = this.heights[position.y][position.x] + 1;
+    if (height <= SETTINGS.zMax) {
+      this.heights[position.y][position.x] = height;
+    }
+  };
+
+  decrease = position => {
+    const height = this.heights[position.y][position.x] - 1;
+    if (height >= 0) {
       this.heights[position.y][position.x] = height;
     }
   };
@@ -31,14 +32,14 @@ export default class TopoModel {
    * Get the topography height at a given position
    * @param {object} position - 2D position in the form {x:x,y:y}
    */
-  getTopoHeight = position => this.heights[position.y][position.x];
+  getAt = position => this.heights[position.y][position.x];
 
   /**
    * Get a the 1D array of heights for the given slice at the camera angle
    * @param {int} camera - The CamerasEnum camera view
    * @param {int} sliceIndex - The current slice being viewed from that camera view
    */
-  getTopoSlice = (camera, sliceIndex) => {
+  getSlice = (camera, sliceIndex) => {
     // console.log(`camera ${camera} and sliceIndex ${sliceIndex}`);
     let heightsView;
     switch (camera) {
@@ -90,7 +91,7 @@ export default class TopoModel {
   /**
    * Get 2D array of all the corner heights (at each corner use the highest adjacent tile)
    */
-  getTopoCorners = () => {
+  getCorners = () => {
     const { length } = this.heights;
     const cornersLength = length + 1;
     // Create a 2D array 1 longer and wider than heights
@@ -111,3 +112,18 @@ export default class TopoModel {
     return corners;
   };
 }
+
+Topo.freeze = topo => {
+  const jsonStr = JSON.stringify(topo);
+  const json = JSON.parse(jsonStr);
+
+  return json;
+};
+
+Topo.thaw = json => {
+  const { heights } = json;
+  const topo = new Topo(heights);
+  return topo;
+};
+
+export default Topo;

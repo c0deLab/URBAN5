@@ -9,7 +9,7 @@ import CameraPathView from '../js/CameraPathView';
 /** Class for the 3D fly throughs of the model */
 export default class CameraPath extends React.Component {
   static propTypes = {
-    model: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
+    session: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
     path: PropTypes.array.isRequired, // eslint-disable-line react/forbid-prop-types
     onWalkthroughEnd: PropTypes.func.isRequired // eslint-disable-line react/forbid-prop-types
   }
@@ -39,14 +39,14 @@ export default class CameraPath extends React.Component {
    * It sets up the rendering to the DOM.
    */
   wire = () => {
-    const { model, path, onWalkthroughEnd } = this.props;
-    if (this.isWired || !model || !path) {
+    const { session, path, onWalkthroughEnd } = this.props;
+    if (this.isWired || !session || !path) {
       return;
     }
     this.isWired = true;
 
-    this.controller = new CameraPathController(model, onWalkthroughEnd);
-    this.view = new CameraPathView(this.container, model);
+    this.controller = new CameraPathController(session, onWalkthroughEnd);
+    this.view = new CameraPathView(this.container, session);
     this.controller.addListener(this.view);
   }
 

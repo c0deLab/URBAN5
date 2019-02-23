@@ -1,9 +1,9 @@
 import Array2D from 'array2d';
-import ObjectsEnum from './enums/ObjectsEnum';
-import CamerasEnum from './enums/CamerasEnum';
-import TopoModel from './TopoModel';
-import { getEmpty2DArray, getCellContext3D } from './ArrayHelpers';
-import { getOppositeDirection } from './Helpers';
+import ObjectsEnum from '../enums/ObjectsEnum';
+import CamerasEnum from '../enums/CamerasEnum';
+
+import { getEmpty2DArray, getCellContext3D } from '../helpers/ArrayHelpers';
+import { getOppositeDirection } from '../helpers/Helpers';
 
 import Cube from './Cube';
 import Roof from './Roof';
@@ -19,35 +19,31 @@ import { Foliage, Trunk } from './Tree';
  * away from you, and z increasing as it goes up.
  *
  */
-export default class DesignModel {
-  constructor(model) {
-    this.xMax = SETTINGS.xMax;
-    this.yMax = SETTINGS.yMax;
-    this.zMax = SETTINGS.zMax;
-
-    if (model) {
-      this.objects = model.objects;
-      this.topo = new TopoModel(this.xMax, this.yMax, model.topo.heights);
+class Design {
+  constructor(objects) {
+    if (objects) {
+      this.objects = objects;
     } else {
       // init empty world
       this.objects = this._empty3DArray();
-      this.topo = new TopoModel(this.xMax, this.yMax);
 
-      // add some things to it to start
-      this._populate();
+      this.fill();
     }
   }
+
+  getAll = () => this.objects;
 
   /**
    * Add an object at a certain position.
    * @param {object} position - 3D position in the form {x:x,y:y,z:z}
    * @param {int} obj - int representing the ObjectsEnum object
    */
-  addObject = (position, obj, modifier) => {
+  add = (obj, position, modifier) => {
     const context = getCellContext3D(this.objects, position);
+    let newObject;
     switch (obj) {
       case ObjectsEnum.TREE:
-        if (position.y < (this.yMax - 1)) {
+        if (position.y < (SETTINGS.yMax - 1)) {
           const { x, y } = position;
           let { z } = position;
           z += 1;
@@ -59,10 +55,14 @@ export default class DesignModel {
         }
         return false;
       case ObjectsEnum.CUBE:
-        this._setCell(position, new Cube(position, context));
+        newObject = new Cube();
+        this._setCell(position, newObject);
+        newObject.hookAfterInsert(context);
         return true;
       case ObjectsEnum.ROOF:
-        this._setCell(position, new Roof(position, modifier, context));
+        newObject = new Roof();
+        this._setCell(position, newObject);
+        newObject.hookAfterInsert(modifier, context);
         return true;
       default:
         return false;
@@ -73,12 +73,12 @@ export default class DesignModel {
    * Remove the object at a certain position
    * @param {object} position - 3D position in the form {x:x,y:y,z:z}
    */
-  removeObject = position => {
+  remove = position => {
     const obj = this._getCell(position);
 
     switch (obj) {
       case ObjectsEnum.TREE:
-        if (position.z < (this.zMax - 1)) {
+        if (position.z < (SETTINGS.zMax - 1)) {
           this._setCell(position, null);
           const { x, y } = position;
           let { z } = position;
@@ -96,15 +96,14 @@ export default class DesignModel {
         }
         break;
       default:
-        if (obj && obj.remove) {
+        if (obj && obj.hookBeforeRemove) {
           const context = getCellContext3D(this.objects, position);
-          obj.remove(context);
+          obj.hookBeforeRemove(context);
         }
         this._setCell(position, null);
         break;
     }
   }
-
 
   /**
    * Use the camera and 2D side (l, r, t, b) to get a cardinal
@@ -199,15 +198,6 @@ export default class DesignModel {
   }
 
   /**
-   * For a given slice, get the highest corners of the current
-   * cube and the cubes in front and back and left and right. Imagine a sheet hung
-   * over stacks of cubes. That is what we represent.
-   * @param {int} camera - The CamerasEnum camera view
-   * @param {int} slice - The current slice being viewed from that camera view
-   */
-  getTopoSlice = (camera, slice) => this.topo.getTopoSlice(camera, slice)
-
-  /**
    * Returns 2D array of objects in the given slice
    * @param {int} camera - The CamerasEnum camera view
    * @param {int} sliceIndex - The current slice being viewed from that camera view
@@ -242,7 +232,7 @@ export default class DesignModel {
     const backgroundSliceIndices = [];
     switch (camera) {
       case CamerasEnum.NORTH:
-        while (backgroundSliceIndex < (this.yMax - 1)) {
+        while (backgroundSliceIndex < (SETTINGS.yMax - 1)) {
           backgroundSliceIndex += 1;
           backgroundSliceIndices.push(backgroundSliceIndex);
         }
@@ -254,7 +244,7 @@ export default class DesignModel {
         }
         break;
       case CamerasEnum.EAST:
-        while (backgroundSliceIndex < (this.xMax - 1)) {
+        while (backgroundSliceIndex < (SETTINGS.xMax - 1)) {
           backgroundSliceIndex += 1;
           backgroundSliceIndices.push(backgroundSliceIndex);
         }
@@ -266,7 +256,7 @@ export default class DesignModel {
         }
         break;
       case CamerasEnum.BOTTOM:
-        while (backgroundSliceIndex < (this.zMax - 1)) {
+        while (backgroundSliceIndex < (SETTINGS.zMax - 1)) {
           backgroundSliceIndex += 1;
           backgroundSliceIndices.push(backgroundSliceIndex);
         }
@@ -287,9 +277,9 @@ export default class DesignModel {
   _getZSlice = z => this.objects[z]
 
   _getXSlice = x => {
-    const slice = getEmpty2DArray(this.zMax, this.yMax);
-    for (let z = 0; z < this.zMax; z += 1) {
-      for (let y = 0; y < this.yMax; y += 1) {
+    const slice = getEmpty2DArray(SETTINGS.zMax, SETTINGS.yMax);
+    for (let z = 0; z < SETTINGS.zMax; z += 1) {
+      for (let y = 0; y < SETTINGS.yMax; y += 1) {
         slice[z][y] = this.objects[z][y][x];
       }
     }
@@ -297,9 +287,9 @@ export default class DesignModel {
   }
 
   _getYSlice = y => {
-    const slice = getEmpty2DArray(this.zMax, this.xMax);
-    for (let z = 0; z < this.zMax; z += 1) {
-      for (let x = 0; x < this.xMax; x += 1) {
+    const slice = getEmpty2DArray(SETTINGS.zMax, SETTINGS.xMax);
+    for (let z = 0; z < SETTINGS.zMax; z += 1) {
+      for (let x = 0; x < SETTINGS.xMax; x += 1) {
         slice[z][x] = this.objects[z][y][x];
       }
     }
@@ -308,7 +298,7 @@ export default class DesignModel {
 
   _getCell = position => {
     const { x, y, z } = position;
-    if (x >= 0 && y >= 0 && z >= 0 && x < this.xMax && y < this.yMax && z < this.zMax) {
+    if (x >= 0 && y >= 0 && z >= 0 && x < SETTINGS.xMax && y < SETTINGS.yMax && z < SETTINGS.zMax) {
       return this.objects[z][y][x];
     }
     return null;
@@ -316,17 +306,17 @@ export default class DesignModel {
 
   _setCell = (position, object) => {
     const { x, y, z } = position;
-    if (x >= 0 && y >= 0 && z >= 0 && x < this.xMax && y < this.yMax && z < this.zMax) {
+    if (x >= 0 && y >= 0 && z >= 0 && x < SETTINGS.xMax && y < SETTINGS.yMax && z < SETTINGS.zMax) {
       this.objects[z][y][x] = object;
     }
   }
 
   /** Create an empty version of the design model */
   _empty3DArray = () => {
-    const arr = new Array(this.zMax);
+    const arr = new Array(SETTINGS.zMax);
 
     for (let i = 0; i < arr.length; i += 1) {
-      arr[i] = getEmpty2DArray(this.yMax, this.xMax, null);
+      arr[i] = getEmpty2DArray(SETTINGS.yMax, SETTINGS.xMax, null);
     }
 
     return arr;
@@ -338,113 +328,99 @@ export default class DesignModel {
     this.addObject(position, c);
   }
 
-  /** Populates the design world with some objects */
-  _populate = () => {
-    // const getRandomInt = (max) => Math.floor(Math.random() * Math.floor(max));
+  fill = () => {
+    const addObject = (pos, type, mod) => {
+        this.add(type, pos, mod);
+    };
 
-    // for (let i = 0; i < 100; i += 1) {
-    //   this.addObject({x:getRandomInt(17), y:getRandomInt(17), z:getRandomInt(7)}, ObjectsEnum.CUBE);
-    // }
+    addObject({ x: 11, y: 3, z: 0 }, 0);
+    addObject({ x: 11, y: 3, z: 1 }, 0);
+    addObject({ x: 11, y: 3, z: 2 }, 1, 'w');
 
-    // this.addObject({ x: 9, y: 10 + 16, z: 0 }, ObjectsEnum.CUBE);
-    // this.addObject({ x: 10, y: 10 + 16, z: 0 }, ObjectsEnum.CUBE);
-    // this.addObject({ x: 9, y: 10 + 16, z: 1 }, ObjectsEnum.ROOFLEFT);
-    // this.addObject({ x: 10, y: 10 + 16, z: 1 }, ObjectsEnum.ROOFRGHT);
-    // this.addObject({ x: 11, y: 10 + 15, z: 0 }, ObjectsEnum.TREE);
-    // this.addObject({ x: 11, y: 10 + 15, z: 1 }, ObjectsEnum.FOLIAGE);
+    addObject({ x: 12, y: 3, z: 0 }, 0);
+    addObject({ x: 12, y: 3, z: 1 }, 0);
+    addObject({ x: 12, y: 3, z: 2 }, 1, 'e');
 
-    this.addObject({ x: 11, y: 3, z: 0 }, 0);
-    this.addObject({ x: 11, y: 3, z: 1 }, 0);
-    this.addObject({ x: 11, y: 3, z: 2 }, 1, 'w');
+    addObject({ x: 13, y: 3, z: 0 }, 0);
+    addObject({ x: 13, y: 3, z: 1 }, 1, 'e');
 
-    this.addObject({ x: 12, y: 3, z: 0 }, 0);
-    this.addObject({ x: 12, y: 3, z: 1 }, 0);
-    this.addObject({ x: 12, y: 3, z: 2 }, 1, 'e');
+    addObject({ x: 14, y: 3, z: 0 }, 0);
 
-    this.addObject({ x: 13, y: 3, z: 0 }, 0);
-    this.addObject({ x: 13, y: 3, z: 1 }, 1, 'e');
+    addObject({ x: 15, y: 3, z: 0 }, 0);
 
-    this.addObject({ x: 14, y: 3, z: 0 }, 0);
+    addObject({ x: 16, y: 3, z: 0 }, 2);
 
-    this.addObject({ x: 15, y: 3, z: 0 }, 0);
+    addObject({ x: 9, y: 13, z: 0 }, 0);
+    addObject({ x: 9, y: 13, z: 1 }, 1, 's');
 
-    this.addObject({ x: 16, y: 3, z: 0 }, 2);
-
-    this.addObject({ x: 9, y: 13, z: 0 }, 0);
-    this.addObject({ x: 9, y: 13, z: 1 }, 1, 's');
-
-    this.addObject({ x: 9, y: 14, z: 0 }, 0);
-    this.addObject({ x: 9, y: 14, z: 1 }, 1, 'n');
+    addObject({ x: 9, y: 14, z: 0 }, 0);
+    addObject({ x: 9, y: 14, z: 1 }, 1, 'n');
 
 
-    this.addObject({ x: 13, y: 5, z: 4 }, 1, 'e');
+    addObject({ x: 13, y: 5, z: 4 }, 1, 'e');
 
-    this.addObject({ x: 5, y: 0, z: 1 }, 1, 'e');
-    this.addObject({ x: 7, y: 0, z: 0 }, 0);
-    this.addObject({ x: 9, y: 0, z: 0 }, 0);
-    this.addObject({ x: 10, y: 0, z: 0 }, 0);
-
-
-    this.addObject({ x: 1, y: 1, z: 2 }, 0);
-    this.addObject({ x: 2, y: 1, z: 2 }, 0);
-    this.addObject({ x: 1, y: 2, z: 2 }, 0);
-    this.addObject({ x: 2, y: 2, z: 2 }, 0);
-    this.addObject({ x: 1, y: 2, z: 3 }, 0);
-    this.addObject({ x: 2, y: 2, z: 3 }, 0);
-
-    this.addObject({ x: 4, y: 2, z: 5 }, 1, 's');
-    this.addObject({ x: 4, y: 2, z: 5 }, 1, 'n');
-
-    this.addObject({ x: 4, y: 2, z: 5 }, 1, 's');
-    this.addObject({ x: 4, y: 2, z: 5 }, 1, 'n');
-
-    // this.addObject({ x: 12, y: 15, z: 0 }, 0);
+    addObject({ x: 5, y: 0, z: 1 }, 1, 'e');
+    addObject({ x: 7, y: 0, z: 0 }, 0);
+    addObject({ x: 9, y: 0, z: 0 }, 0);
+    addObject({ x: 10, y: 0, z: 0 }, 0);
 
 
-    // this.addObject({ x: 3, y: 10 + 0, z: 3 }, 0);
-    // this.addObject({ x: 4, y: 10 + 0, z: 3 }, 0);
-    // this.addObject({ x: 2, y: 10 + 0, z: 4 }, 0);
-    // this.addObject({ x: 3, y: 10 + 0, z: 4 }, 0);
-    // this.addObject({ x: 4, y: 10 + 0, z: 4 }, 0);
-    // this.addObject({ x: 2, y: 10 + 0, z: 5 }, 0);
-    // this.addObject({ x: 3, y: 10 + 0, z: 5 }, 0);
-    // this.addObject({ x: 4, y: 10 + 0, z: 5 }, 0);
-    // this.addObject({ x: 13, y: 10 + 0, z: 0 }, 0);
-    // this.addObject({ x: 12, y: 10 + 0, z: 0 }, 0);
-    // this.addObject({ x: 12, y: 10 + 0, z: 1 }, 0);
-    // this.addObject({ x: 11, y: 10 + 0, z: 1 }, 0);
-    // this.addObject({ x: 10, y: 10 + 0, z: 1 }, 0);
-    // this.addObject({ x: 11, y: 10 + 0, z: 2 }, 1, 'e');
-    // this.addObject({ x: 14, y: 10 + 0, z: 0 }, 1, 'w');
-    // this.addObject({ x: 15, y: 10 + 0, z: 0 }, 2);
-    // this.addObject({ x: 8, y: 10 + 0, z: 0 }, 2);
-    // this.addObject({ x: 4, y: 10 + 1, z: 1 }, 0);
-    // this.addObject({ x: 4, y: 10 + 1, z: 2 }, 0);
-    // this.addObject({ x: 3, y: 10 + 1, z: 2 }, 0);
-    // this.addObject({ x: 5, y: 10 + 1, z: 2 }, 0);
-    // this.addObject({ x: 6, y: 10 + 1, z: 2 }, 0);
-    // this.addObject({ x: 6, y: 10 + 1, z: 3 }, 0);
-    // this.addObject({ x: 7, y: 10 + 1, z: 3 }, 0);
-    // this.addObject({ x: 8, y: 10 + 1, z: 0 }, 0);
-    // this.addObject({ x: 9, y: 10 + 1, z: 0 }, 0);
-    // this.addObject({ x: 9, y: 10 + 1, z: 1 }, 0);
-    // this.addObject({ x: 11, y: 10 + 1, z: 0 }, 0);
-    // this.addObject({ x: 9, y: 10 + 2, z: 2 }, 0);
-    // this.addObject({ x: 9, y: 10 + 2, z: 3 }, 1, 'n');
+    addObject({ x: 1, y: 1, z: 2 }, 0);
+    addObject({ x: 2, y: 1, z: 2 }, 0);
+    addObject({ x: 1, y: 2, z: 2 }, 0);
+    addObject({ x: 2, y: 2, z: 2 }, 0);
+    addObject({ x: 1, y: 2, z: 3 }, 0);
+    addObject({ x: 2, y: 2, z: 3 }, 0);
 
-    for (let y = 0; y < 17; y += 1) {
-      this.topo.setTopoHeight({ x: 0, y }, 2);
-      this.topo.setTopoHeight({ x: 1, y }, 2);
-      this.topo.setTopoHeight({ x: 2, y }, 2);
-      this.topo.setTopoHeight({ x: 3, y }, 1);
-      this.topo.setTopoHeight({ x: 4, y }, 1);
-      this.topo.setTopoHeight({ x: 5, y }, 1);
-      this.topo.setTopoHeight({ x: 0, y }, 2);
-      this.topo.setTopoHeight({ x: 1, y }, 2);
-      this.topo.setTopoHeight({ x: 2, y }, 2);
-      this.topo.setTopoHeight({ x: 3, y }, 1);
-      this.topo.setTopoHeight({ x: 4, y }, 1);
-      this.topo.setTopoHeight({ x: 5, y }, 1);
-    }
+    addObject({ x: 4, y: 2, z: 5 }, 1, 's');
+    addObject({ x: 4, y: 2, z: 5 }, 1, 'n');
+
+    addObject({ x: 4, y: 2, z: 5 }, 1, 's');
+    addObject({ x: 4, y: 2, z: 5 }, 1, 'n');
   }
 }
+
+Design.freeze = design => {
+  const jsonStr = JSON.stringify(design);
+  const json = JSON.parse(jsonStr);
+
+  return json;
+};
+
+Design.thaw = json => {
+  const { objects } = json;
+  const objectsUnpacked = this._empty3DArray();
+  // Deserialize all the object data into objects
+  for (let z = 0; z < SETTINGS.zMax; z += 1) {
+    for (let y = 0; y < SETTINGS.xMax; y += 1) {
+      for (let x = 0; x < SETTINGS.xMax; x += 1) {
+        const objectData = objects[z][y][x];
+        const { type } = objectData;
+        let object = null;
+        switch (type) {
+          case ObjectsEnum.CUBE:
+            object = new Cube(objectData);
+            break;
+          case ObjectsEnum.ROOF:
+            object = new Roof(objectData);
+            break;
+          case ObjectsEnum.FOLIAGE:
+            object = new Foliage(objectData);
+            break;
+          case ObjectsEnum.TRUNK:
+            object = new Trunk(objectData);
+            break;
+          default:
+            break;
+        }
+
+        objectsUnpacked[z][y][x] = object;
+      }
+    }
+  }
+
+  const design = new Design(objectsUnpacked);
+  return design;
+};
+
+export default Design;

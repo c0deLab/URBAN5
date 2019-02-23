@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 
 import Display2DView from '../js/Display2DView';
 import Display2DController from '../js/Display2DController';
-import { getClosestEdgeInModelSpace } from '../js/Helpers';
+import { getClosestEdgeInModelSpace } from '../js/helpers/Helpers';
 
 /* global document */
 /* global SETTINGS */
@@ -11,8 +11,7 @@ import { getClosestEdgeInModelSpace } from '../js/Helpers';
 export default class Surface extends React.Component {
   static propTypes = {
     action: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
-    model: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
-    actionsAPI: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
+    session: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
   }
 
   state = {
@@ -45,16 +44,16 @@ export default class Surface extends React.Component {
    * It sets up the rendering to the canvas.
    */
   wire = () => {
-    const { model, actionsAPI } = this.props;
+    const { session } = this.props;
     // Only wire once, and only do it once the model is ready
-    if (this.isWired || !model) {
+    if (this.isWired || !session) {
       return;
     }
     this.isWired = true;
 
     // Create controller and 2D slice view
-    const controller = new Display2DController(model, actionsAPI);
-    this.view = new Display2DView(this.canvas, model);
+    const controller = new Display2DController(session);
+    this.view = new Display2DView(this.canvas, session);
     controller.addListener(this.view);
     // Trigger initial render
     controller.updateViews();
