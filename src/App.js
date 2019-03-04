@@ -3,6 +3,8 @@ import './App.css';
 import * as THREE from 'three';
 
 import MainPage from './components/MainPage';
+import DebuggingConstraints from './debugging/DebuggingConstraints';
+import Debugging3D from './debugging/Debugging3D';
 import U5SessionFactory from './js/sessionAPI/U5SessionFactory';
 
 /* global window */
@@ -21,13 +23,37 @@ const SETTINGS = {
 };
 window.SETTINGS = SETTINGS;
 
-const session = new U5SessionFactory().newSession();
+const session = new U5SessionFactory().last();
 // const session = new U5SessionFactory().test();
 
-export default function App() {
-  return (
-    <div className="app">
-      <MainPage session={session} />
-    </div>
-  );
+export default class App extends React.Component {
+
+  state = {
+    debug: true
+  }
+
+  componentDidMount() {
+    document.addEventListener('keydown', (event) => {
+      const { debug } = this.state;
+      if (event.key === 'p') {
+        this.setState({ debug: !debug });
+      }
+    });
+  }
+
+  render() {
+    console.log('render app');
+    const { debug } = this.state;
+    return (
+      <div className="app">
+        <MainPage session={session} />
+        { debug && (
+          <div>
+            <DebuggingConstraints session={session} />
+            <Debugging3D session={session} />
+          </div>
+        )}
+      </div>
+    );
+  }
 }

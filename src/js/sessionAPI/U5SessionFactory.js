@@ -8,14 +8,15 @@ export default class U5SessionFactory {
     let ids = localStorage.getItem('U5SessionIDList');
     if (!ids) {
       ids = [];
+    } else {
+      ids = ids.split(',');
     }
-    ids = ids.split(',');
     console.log(ids);
     return ids;
   }
 
   get = id => {
-    const json = localStorage.getItem(`U5Session${id}`);
+    const json = JSON.parse(localStorage.getItem(id));
     const session = U5Session.thaw(json);
 
     // Reorder sessions to make this session the most recent
@@ -38,7 +39,11 @@ export default class U5SessionFactory {
     const ids = this.getIDList();
     const id = ids.pop();
 
-    const json = localStorage.getItem(`U5Session${id}`);
+    if (!id) {
+      return this.newSession();
+    }
+
+    const json = JSON.parse(localStorage.getItem(id));
     const session = U5Session.thaw(json);
 
     return session;

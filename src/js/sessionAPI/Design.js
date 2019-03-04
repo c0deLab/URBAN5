@@ -2,7 +2,7 @@ import Array2D from 'array2d';
 import ObjectsEnum from '../enums/ObjectsEnum';
 import CamerasEnum from '../enums/CamerasEnum';
 
-import { getEmpty2DArray, getCellContext3D } from '../helpers/ArrayHelpers';
+import { getEmpty2DArray, getEmpty3DArray, getCellContext3D } from '../helpers/ArrayHelpers';
 import { getOppositeDirection } from '../helpers/Helpers';
 
 import Cube from './Cube';
@@ -25,8 +25,7 @@ class Design {
       this.objects = objects;
     } else {
       // init empty world
-      this.objects = this._empty3DArray();
-
+      this.objects = getEmpty3DArray(SETTINGS.xMax, SETTINGS.yMax, SETTINGS.zMax);
       this.fill();
     }
   }
@@ -42,7 +41,7 @@ class Design {
     const context = getCellContext3D(this.objects, position);
     let newObject;
     switch (obj) {
-      case ObjectsEnum.TREE:
+      case ObjectsEnum.TRUNK:
         if (position.y < (SETTINGS.yMax - 1)) {
           const { x, y } = position;
           let { z } = position;
@@ -76,8 +75,12 @@ class Design {
   remove = position => {
     const obj = this._getCell(position);
 
-    switch (obj) {
-      case ObjectsEnum.TREE:
+    if (!obj) {
+      return;
+    }
+
+    switch (obj.constructor.name) {
+      case 'Trunk':
         if (position.z < (SETTINGS.zMax - 1)) {
           this._setCell(position, null);
           const { x, y } = position;
@@ -86,7 +89,7 @@ class Design {
           this._setCell({ x, y, z }, null);
         }
         break;
-      case ObjectsEnum.FOLIAGE:
+      case 'Foliage':
         if (position.z > 0) {
           this._setCell(position, null);
           const { x, y } = position;
@@ -123,6 +126,197 @@ class Design {
     if (sharedWallNeighbor && sharedWallNeighbor.setSurface) {
       sharedWallNeighbor.setSurface(getOppositeDirection(sideCardinal), surface);
     }
+  }
+
+  getObjects = () => {
+    const objects = [];
+    for (let z = 0; z < SETTINGS.zMax; z += 1) {
+      for (let y = 0; y < SETTINGS.yMax; y += 1) {
+        for (let x = 0; x < SETTINGS.xMax; x += 1) {
+          const object = this.objects[z][y][x];
+          if (object) {
+            let type = null;
+            switch (object.constructor.name) {
+              case 'Cube':
+                type = ObjectsEnum.CUBE;
+                break;
+              case 'Roof':
+                type = ObjectsEnum.ROOF;
+                break;
+              case 'Foliage':
+                type = ObjectsEnum.FOLIAGE;
+                break;
+              case 'Trunk':
+                type = ObjectsEnum.TRUNK;
+                break;
+              default:
+                break;
+            }
+            objects.push({
+              object,
+              type,
+              position: { x, y, z }
+            });
+          }
+        }
+      }
+    }
+
+    return objects;
+  }
+
+  getBuildings = () => {
+    if (this._buildings) {
+      return this._buildings;
+    }
+    return [];
+  }
+
+  calculateAttributes = topo => {
+    const objects = this.getObjects();
+    this._objects = objects;
+
+    // Calculate individual object attributes
+    objects.forEach(item => {
+      const { position, object } = item;
+      const { x, y, z } = position;
+      const gh = topo.getAt({ x, y }); // get ground height
+      // const {
+      //   n, e, s, w, t, b
+      // } = getCellContext3D(this.objects, { x, y, z });
+      const { b } = getCellContext3D(this.objects, { x, y, z });
+
+      switch (object.constructor.name) {
+        case 'Cube':
+          object.area = 100;
+          object.height = 10 * (z + 1 - gh);
+          break;
+        case 'Roof':
+          object.height = 10 * (z + 1 - gh);
+          // 0 if has building below, else 1
+          object.noBase = b && b.constructor.name === 'Cube' ? 0 : 1;
+          break;
+        case 'Foliage':
+          object.height = 10 * (z + 1 - gh);
+          break;
+        case 'Trunk':
+          object.height = 10 * (z + 1 - gh);
+          break;
+        default:
+          break;
+      }
+    });
+
+    // Get buildings
+    const buildings = {};
+    let nextIndex = 0;
+
+    const buildingParts = objects.filter(item => item.type === ObjectsEnum.CUBE || item.type === ObjectsEnum.ROOF);
+
+    buildingParts.forEach(item => {
+      const { position, object } = item;
+      const { x, y, z } = position;
+      const {
+        s, w, b
+      } = getCellContext3D(this.objects, { x, y, z });
+
+      // If connected to cube, add to same building
+      // Does adjacent cube have building, if so, add this cube to that building
+      const adjacentBuildings = [];
+
+      if (item.type === ObjectsEnum.CUBE) {
+        // Only check neighbors that were already check this pass
+        [b, s, w].forEach(neighbor => {
+          if (neighbor && neighbor.constructor.name === 'Cube' && neighbor.buildingIndex !== undefined) {
+            if (!adjacentBuildings.includes(neighbor.buildingIndex)) {
+              adjacentBuildings.push(neighbor.buildingIndex);
+            }
+          }
+        });
+      } else if (item.type === ObjectsEnum.ROOF) {
+        [b].forEach(neighbor => {
+          if (neighbor && neighbor.constructor.name === 'Cube' && neighbor.buildingIndex !== undefined) {
+            if (!adjacentBuildings.includes(neighbor.buildingIndex)) {
+              adjacentBuildings.push(neighbor.buildingIndex);
+            }
+          }
+        });
+      }
+
+
+      if (adjacentBuildings.length === 0) {
+        // console.log('create building: ' + nextIndex);
+        // If no adjacent building, create new building
+        buildings[nextIndex] = [object];
+        object.buildingIndex = nextIndex;
+        nextIndex += 1;
+      } else if (adjacentBuildings.length === 1) {
+        // If 1 adjacent building, add to that building
+        const buildingIndex = adjacentBuildings[0];
+        const adjacentBuilding = buildings[buildingIndex];
+        // console.log('add to building: ' + buildingIndex);
+        if (adjacentBuilding) {
+          adjacentBuilding.push(object);
+          object.buildingIndex = buildingIndex;
+        }
+      } else {
+        // If > 1, add to first, add other buildings to first, and remove them
+        const firstBuildingIndex = adjacentBuildings[0];
+        const firstAdjacentBuilding = buildings[firstBuildingIndex];
+        // console.log('add to building: ' + firstBuildingIndex);
+        if (firstAdjacentBuilding) {
+          firstAdjacentBuilding.push(object);
+          object.buildingIndex = firstBuildingIndex;
+          adjacentBuildings.splice(0, 1);
+
+          // Add other buildings contents to first and mark them as defunct
+          adjacentBuildings.forEach(i => {
+            buildings[firstBuildingIndex] = firstAdjacentBuilding.concat(buildings[i]);
+            // Remark the objects to update them
+            buildings[i].forEach(buildingItem => {
+              buildingItem.building = firstBuildingIndex;
+            });
+            // console.log('remove building: ' + i);
+            delete buildings[i];
+          });
+        }
+      }
+    });
+
+    // Check building attributes
+    // console.log(Object.keys(buildings), buildings);
+    // Calculate buildings:
+    this._buildings = [];
+    Object.keys(buildings).forEach(key => {
+      const building = buildings[key];
+      // building touches ground
+      // square footage of buildings
+      let floating = true;
+      let height = 0;
+      let ground = Infinity;
+      let area = 0;
+      building.forEach(part => {
+        if (part.constructor.name === 'Cube') {
+          area += 100;
+        }
+        if (part.height === 10) { // on ground
+          floating = false;
+        }
+        if (part.height > height) {
+          height = part.height;
+        }
+        const partGround = part.height - 10;
+        if (partGround < ground) {
+          ground = partGround;
+        }
+      });
+      this._buildings.push({
+        area,
+        floating: floating ? 1 : 0,
+        height,
+        ground
+      });
+    });
   }
 
   getCardinalSide = (camera, side) => {
@@ -311,17 +505,6 @@ class Design {
     }
   }
 
-  /** Create an empty version of the design model */
-  _empty3DArray = () => {
-    const arr = new Array(SETTINGS.zMax);
-
-    for (let i = 0; i < arr.length; i += 1) {
-      arr[i] = getEmpty2DArray(SETTINGS.yMax, SETTINGS.xMax, null);
-    }
-
-    return arr;
-  }
-
   _addCube = position => {
     const context = getCellContext3D(position);
     const c = new Cube(position, context);
@@ -381,40 +564,58 @@ class Design {
 }
 
 Design.freeze = design => {
-  const jsonStr = JSON.stringify(design);
-  const json = JSON.parse(jsonStr);
+  const { objects } = design;
+  const objectsPacked = getEmpty3DArray(SETTINGS.xMax, SETTINGS.yMax, SETTINGS.zMax);
+  for (let z = 0; z < SETTINGS.zMax; z += 1) {
+    for (let y = 0; y < SETTINGS.xMax; y += 1) {
+      for (let x = 0; x < SETTINGS.xMax; x += 1) {
+        const objectData = objects[z][y][x];
+        if (objectData) {
+          const jsonStr = JSON.stringify(objectData);
+          const json = JSON.parse(jsonStr);
+          json.type = objectData.constructor.name;
+          objectsPacked[z][y][x] = json;
+        }
+      }
+    }
+  }
+
+  const json = {
+    objects: objectsPacked
+  };
 
   return json;
 };
 
 Design.thaw = json => {
   const { objects } = json;
-  const objectsUnpacked = this._empty3DArray();
+  const objectsUnpacked = getEmpty3DArray(SETTINGS.xMax, SETTINGS.yMax, SETTINGS.zMax);
   // Deserialize all the object data into objects
   for (let z = 0; z < SETTINGS.zMax; z += 1) {
     for (let y = 0; y < SETTINGS.xMax; y += 1) {
       for (let x = 0; x < SETTINGS.xMax; x += 1) {
         const objectData = objects[z][y][x];
-        const { type } = objectData;
-        let object = null;
-        switch (type) {
-          case ObjectsEnum.CUBE:
-            object = new Cube(objectData);
-            break;
-          case ObjectsEnum.ROOF:
-            object = new Roof(objectData);
-            break;
-          case ObjectsEnum.FOLIAGE:
-            object = new Foliage(objectData);
-            break;
-          case ObjectsEnum.TRUNK:
-            object = new Trunk(objectData);
-            break;
-          default:
-            break;
-        }
+        if (objectData) {
+          let object = null;
+          switch (objectData.type) {
+            case 'Cube':
+              object = new Cube(objectData);
+              break;
+            case 'Roof':
+              object = new Roof(objectData);
+              break;
+            case 'Foliage':
+              object = new Foliage(objectData);
+              break;
+            case 'Trunk':
+              object = new Trunk(objectData);
+              break;
+            default:
+              break;
+          }
 
-        objectsUnpacked[z][y][x] = object;
+          objectsUnpacked[z][y][x] = object;
+        }
       }
     }
   }

@@ -4,18 +4,30 @@ import Topo from './Topo';
 
 /* global localStorage */
 
-/** Represents a user's session with the system and provides an interface for the UI to display information about it. */
+/**
+* Represents a user's session with the system and provides an interface for
+* the UI to display information about it.
+*/
 class U5Session {
   constructor(id) {
     this._id = id;
-
   }
 
   onUpdate = () => {
-    // save
-    localStorage.setItem(`U5Session${this._id}`, U5Session.freeze(this));
+    const t0 = new Date().getTime();
+    // calculate totals
+    this._design.calculateAttributes(this.topo);
+    const t1 = new Date().getTime();
 
     // monitor checks design
+    this._monitor.checkConflicts(this._design);
+    const t2 = new Date().getTime();
+
+    // save
+    this.save();
+    const t3 = new Date().getTime();
+
+    console.log(t1 - t0, t2 - t1, t3 - t2);
   };
 
   // Interface for the design model
@@ -67,19 +79,26 @@ class U5Session {
     },
     getMessages: () => this._monitor.getMessages()
   };
+
+  save = () => {
+    // console.log('save!');
+    const ice = U5Session.freeze(this);
+    localStorage.setItem(this._id, JSON.stringify(ice));
+  };
 }
 
 U5Session.create = id => {
   const session = new U5Session(id);
-  session._design = new Design();
-  session._topo = new Topo();
-  session._monitor = new Monitor();
+  session._design = new Design();  // eslint-disable-line
+  session._topo = new Topo();  // eslint-disable-line
+  session._monitor = new Monitor();  // eslint-disable-line
 
+  session.save();
   return session;
 };
 
 U5Session.freeze = session => {
-  const { _id, _design, _topo, _monitor } = session;
+  const { _id, _design, _topo, _monitor } = session;  // eslint-disable-line
 
   const json = {
     id: _id,
@@ -92,11 +111,13 @@ U5Session.freeze = session => {
 };
 
 U5Session.thaw = json => {
-  const { id, design, topo, monitor } = json;
+  const { id, design, topo, monitor } = json;  // eslint-disable-line
   const session = new U5Session(id);
-  session._design = Design.thaw(design);
-  session._topo = Topo.thaw(topo);
-  session._monitor = Monitor.thaw(monitor);
+  session._design = Design.thaw(design);  // eslint-disable-line
+  session._topo = Topo.thaw(topo);  // eslint-disable-line
+  session._monitor = Monitor.thaw(monitor);  // eslint-disable-line
+
+  session.onUpdate();
 
   return session;
 };

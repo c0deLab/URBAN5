@@ -20,8 +20,12 @@ export default class Top extends React.PureComponent {
   componentDidMount() {
     const { session } = this.props;
 
-    const currentMessages = session.monitor.getMessages();
-    currentMessages.forEach(m => this.onMessage(m));
+    const poll = () => {
+      const textMessages = session.monitor.getMessages();
+      this.setState({ textMessages });
+      setTimeout(poll, 100);
+    };
+    poll();
   }
 
   onMessage = newMessage => {
@@ -45,6 +49,9 @@ export default class Top extends React.PureComponent {
     const { session } = this.props;
 
     session.monitor.addConstraint(text);
+
+    const textMessages = session.monitor.getMessages();
+    this.setState({ textMessages });
   };
 
   render() {
@@ -58,7 +65,7 @@ export default class Top extends React.PureComponent {
     }
 
     const messageElements = textMessages.map(message => (
-      <div key={message.id} className="mono-text">{message.data.text}</div>
+      <div className="mono-text">{message}</div>
     ));
 
     return (

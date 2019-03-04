@@ -103,12 +103,12 @@ class Topo {
         const {
           topLeft, topRight, bottomLeft, bottomRight
         } = context;
-        console.log(topLeft, topRight, bottomLeft, bottomRight);
+        // console.log(topLeft, topRight, bottomLeft, bottomRight);
         corners[y][x] = Math.max(topLeft, topRight, bottomLeft, bottomRight);
       }
     }
 
-    console.dir(corners);
+    // console.dir(corners);
     return corners;
   };
 }

@@ -23,10 +23,10 @@ class DesignRenderer3D {
                 this.drawRoof(scene, object, position);
                 break;
               case 'Foliage':
-                this.drawFoliage(scene, object, position);
+                this.drawFoliage(scene, position);
                 break;
               case 'Trunk':
-                this.drawTrunk(scene, object, position);
+                this.drawTrunk(scene, position);
                 break;
               default:
                 break;

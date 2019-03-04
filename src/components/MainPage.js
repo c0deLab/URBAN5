@@ -20,11 +20,11 @@ export default class MainPage extends React.Component {
   }
 
   state = {
-    action: ActionsEnum.ADDCUBE, // Default action is ADDCUBE
-    displayType: 'CALC'
-
     // action: ActionsEnum.ADDCUBE, // Default action is ADDCUBE
-    // displayType: 'DRAW'
+    // displayType: 'CALC'
+
+    action: ActionsEnum.ADDCUBE, // Default action is ADDCUBE
+    displayType: 'DRAW'
 
     // action: ActionsEnum.INCREASE_HEIGHT, // Default action is ADDCUBE
     // displayType: 'TOPO'
@@ -165,7 +165,7 @@ export default class MainPage extends React.Component {
         </div>
         <div style={{ width: '160px', height: '100%', float: 'left' }}>
           <div style={{ padding: '20px' }}>
-            <Menu actions={actions} onClick={this.onMenuClick} />
+            <Menu actions={actions} onClick={this.onMenuClick} action={action} />
           </div>
         </div>
       </div>

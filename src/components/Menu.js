@@ -13,20 +13,20 @@ export default class Menu extends React.PureComponent {
   render() {
     const buttonElements = [];
 
-    const { actions, onClick } = this.props;
+    const { actions, onClick, action } = this.props;
     if (actions) {
-      actions.forEach(action => {
+      actions.forEach(item => {
         buttonElements.push((
           <button
             type="button"
-            key={action.label}
+            key={item.label}
             onClick={e => {
               e.preventDefault();
-              onClick(action);
+              onClick(item);
             }}
             style={{ display: 'block' }}
           >
-            {action.label}
+            {item.label + (item.id === action.id ? '_' : '')}
           </button>
         ));
       });

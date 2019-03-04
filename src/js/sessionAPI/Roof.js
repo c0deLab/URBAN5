@@ -8,7 +8,7 @@ export default class Roof {
       this.hasSideSurface = hasSideSurface;
     } else {
       this.direction = 'n';
-      this.hasSideSurface = false;
+      this.hasSideSurface = true;
     }
   }
 

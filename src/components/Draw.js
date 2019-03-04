@@ -3,7 +3,6 @@ import PropTypes from 'prop-types';
 
 import Display2DView from '../js/Display2DView';
 import Display2DController from '../js/Display2DController';
-import DebuggingDisplays from '../debugging/DebuggingDisplays';
 import ActionsEnum from '../js/enums/ActionsEnum';
 import { getGridPointInModelSpace } from '../js/helpers/Helpers';
 
@@ -18,8 +17,7 @@ export default class Draw extends React.Component {
   }
 
   state = {
-    controller: null,
-    showDebug: false
+    controller: null
   }
 
   componentDidMount() {
@@ -27,7 +25,7 @@ export default class Draw extends React.Component {
 
     this.canvas = document.getElementById('draw');
     document.addEventListener('keydown', this.handleKeyDown);
-    this.canvas.addEventListener('click', this.handleClick);
+    this.canvas.addEventListener('mousedown', this.handleClick);
 
     // If the model had already been created, immediately wire
     this.wire();
@@ -40,7 +38,7 @@ export default class Draw extends React.Component {
 
   componentWillUnmount() {
     document.removeEventListener('keydown', this.handleKeyDown);
-    this.canvas.removeEventListener('click', this.handleClick);
+    this.canvas.removeEventListener('mousedown', this.handleClick);
   }
 
   /**
@@ -101,11 +99,6 @@ export default class Draw extends React.Component {
       case 40: // down arrow
         controller.previousSlice();
         break;
-      case 80: // p
-        this.setState({
-          showDebug: !showDebug
-        });
-        break;
       default:
         break;
     }
@@ -123,14 +116,11 @@ export default class Draw extends React.Component {
   }
 
   render() {
-    const { controller, showDebug } = this.state;
-    const { model } = this.props;
     const { w, h } = SETTINGS;
 
     return (
       <div>
         <canvas id="draw" width={w} height={h} />
-        {showDebug && model && controller ? (<DebuggingDisplays controller={controller} model={model} />) : null}
       </div>
     );
   }

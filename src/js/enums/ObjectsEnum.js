@@ -2,7 +2,7 @@
 const ObjectsEnum = {
   CUBE: 0,
   ROOF: 1,
-  TREE: 2,
+  TRUNK: 2,
   FOLIAGE: 3,
   PERSON: 4,
 };

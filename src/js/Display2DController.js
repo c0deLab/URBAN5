@@ -48,7 +48,7 @@ export default class Display2DController {
         this.rotateLeft();
         break;
       case ActionsEnum.ADDTREE:
-        this.addObject(modelPosition, ObjectsEnum.TREE);
+        this.addObject(modelPosition, ObjectsEnum.TRUNK);
         break;
       case ActionsEnum.ADD_ROOF_EAST:
         this.addObject(modelPosition, ObjectsEnum.ROOF, 'e');
