@@ -19,7 +19,7 @@ export default class Topo extends React.Component {
     this.isWired = false;
 
     this.canvas = document.getElementById('display');
-    this.canvas.addEventListener('click', this.handleClick);
+    this.canvas.addEventListener('mousedown', this.handleClick);
 
     // If the model had already been created, immediately wire
     this.wire();
@@ -31,7 +31,7 @@ export default class Topo extends React.Component {
   }
 
   componentWillUnmount() {
-    this.canvas.removeEventListener('click', this.handleClick);
+    this.canvas.removeEventListener('mousedown', this.handleClick);
   }
 
   /**
