@@ -190,17 +190,21 @@ class Design {
         case 'Cube':
           object.area = 100;
           object.height = 10 * (z + 1 - gh);
+          object.ground = 10 * (z - gh);
           break;
         case 'Roof':
           object.height = 10 * (z + 1 - gh);
           // 0 if has building below, else 1
           object.noBase = b && b.constructor.name === 'Cube' ? 0 : 1;
+          object.ground = 10 * (z - gh);
           break;
         case 'Foliage':
           object.height = 10 * (z + 1 - gh);
+          object.ground = 10 * (z - gh);
           break;
         case 'Trunk':
           object.height = 10 * (z + 1 - gh);
+          object.ground = 10 * (z - gh);
           break;
         default:
           break;
@@ -305,9 +309,8 @@ class Design {
         if (part.height > height) {
           height = part.height;
         }
-        const partGround = part.height - 10;
-        if (partGround < ground) {
-          ground = partGround;
+        if (part.ground < ground) {
+          ground = part.ground;
         }
       });
       this._buildings.push({

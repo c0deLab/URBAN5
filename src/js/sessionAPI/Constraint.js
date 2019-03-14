@@ -51,18 +51,34 @@ class Constraint {
 
     return isViolated;
   }
+
+  isSameType = otherConstraint => {
+    return otherConstraint.fn === this.fn
+      && JSON.stringify(otherConstraint.type) === JSON.stringify(this.type)
+      && otherConstraint.prop === this.prop;
+  }
 }
 
+// result
 const no = ['no', 'not'];
+
+// fn
 const max = ['any', 'no'];
 const sum = ['total', 'all'];
+
+// type
 const building = ['building', 'structure'];
 const cube = ['cube', 'room'];
 const roof = ['roof'];
 const tree = ['tree'];
+
+// props
 const area = ['area', 'square footage', 'space', 'floorspace', 'size'];
 const height = ['tall', 'height', 'elevation'];
 const ground = ['ground'];
+const noBase = ['base', 'support'];
+
+// comp
 const gt = ['greater than', 'more than'];
 const lt = ['fewer than', 'less than'];
 
@@ -116,6 +132,8 @@ Constraint.parseText = text => {
     prop = 'height';
   } else if (textHas(text, ground)) {
     prop = 'ground';
+  } else if (textHas(text, noBase)) {
+    prop = 'noBase';
   }
 
   let comp = '===';

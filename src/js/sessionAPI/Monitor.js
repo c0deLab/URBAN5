@@ -46,7 +46,7 @@ class Monitor {
       // Does this override former constraint?
       const newConstraints = [];
       this.constraints.forEach(old => {
-        if (!this.isSameConstraintType(old, constraint)) {
+        if (!old.isSameConstraintType(constraint)) {
           newConstraints.push(old);
         }
       });
@@ -58,10 +58,6 @@ class Monitor {
     }
     return false;
   };
-
-  isSameConstraintType = (c0, c1) => c0.fn === c1.fn
-      && JSON.stringify(c0.type) === JSON.stringify(c1.type)
-      && c0.prop === c1.prop;
 
   /**
     * Conflict “An inconsistency discerned by the machine relating criteria specified by the designer
