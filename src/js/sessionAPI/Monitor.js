@@ -9,7 +9,7 @@ class Monitor {
         text: 'no building below ground',
         result: false,
         fn: 'MIN',
-        type: 'building',
+        type: 'Structure',
         prop: 'ground',
         comp: '<',
         value: '0'
@@ -18,7 +18,7 @@ class Monitor {
         text: 'no roof without base',
         result: false,
         fn: 'SUM',
-        type: [1],
+        type: 1,
         prop: 'noBase',
         comp: '>',
         value: '0' // the height of top of the building
@@ -27,7 +27,7 @@ class Monitor {
         text: 'no building floating',
         result: false,
         fn: 'SUM',
-        type: 'building',
+        type: 'Structure',
         prop: 'floating',
         comp: '>',
         value: '0' // the height of top of the building
@@ -42,22 +42,29 @@ class Monitor {
 
   addConstraint = text => {
     const constraint = Constraint.create(text);
-    if (constraint) {
-      // Does this override former constraint?
+    if (constraint.constructor.name === 'Constraint') {
+      // Check if this overrides former constraint
       const newConstraints = [];
       this.constraints.forEach(old => {
-        if (!old.isSameConstraintType(constraint)) {
+        if (!old.isSameType(constraint)) {
           newConstraints.push(old);
         }
       });
       newConstraints.push(constraint);
 
       this.constraints = newConstraints;
-      this.messages = [`Added constraint: ${JSON.stringify(constraint)}`];
+      this.messages = [`Added constraint: ${constraint.text}`];
       return true;
     }
+    console.log(`Constraint not valid: ${constraint}`);
+    this.messages = [`Constraint not valid: ${constraint}`];
     return false;
   };
+
+  clearConstraints = () => {
+    this.constraints = [];
+    this.messages = ['Cleared constraints'];
+  }
 
   /**
     * Conflict “An inconsistency discerned by the machine relating criteria specified by the designer
@@ -65,7 +72,7 @@ class Monitor {
     * Examples: max height, number of objects, light, blocking entrances, check access
     */
   checkConflicts = design => {
-    this.messages = [];
+    let newMessages = [];
     const conflicts = [];
     this.constraints.forEach(constraint => {
       if (constraint.isViolated(design)) {
@@ -82,14 +89,21 @@ class Monitor {
     });
 
     if (conflicts.length > 3) {
-      this.messages = ['Ted, many conflicts are occurring.'];
+      newMessages = ['Ted, many conflicts are occurring.'];
     } else if (conflicts.length > 0) {
       const messages = [];
       conflicts.forEach(conflict => {
         messages.push(`Violated constraint: ${conflict.constraint.text}`);
       });
-      this.messages = messages;
+      newMessages = messages;
+    } else if (this.conflicts.length > 0) {
+      newMessages = ['Conflicts were resolved.'];
     }
+
+    if (newMessages.length > 0) {
+      this.messages = newMessages;
+    }
+    this.conflicts = conflicts;
   };
 
   /**

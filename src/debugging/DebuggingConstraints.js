@@ -10,7 +10,8 @@ export default class DebuggingConstraints extends React.Component {
   state = {
     constraints: [],
     systemConstraints: [],
-    buildings: []
+    buildings: [],
+    objects: []
   };
 
   componentDidMount() {
@@ -20,15 +21,16 @@ export default class DebuggingConstraints extends React.Component {
       const systemConstraints = session._monitor.systemConstraints.slice();
 
       const buildings = session._design._buildings;
+      const objects = session._design.getObjects();
 
-      this.setState({ constraints, systemConstraints, buildings });
+      this.setState({ constraints, systemConstraints, buildings, objects });
       setTimeout(poll, 500);
     };
     poll();
   }
 
   render() {
-    const { constraints, systemConstraints, buildings } = this.state;
+    const { constraints, systemConstraints, buildings, objects } = this.state;
     return (
       <div style={{ position: 'absolute', left: '10px', top: '10px', color: '#000', width: '500px', wordWrap: 'break-word', fontSize: '16px' }}>
         <div>
@@ -43,6 +45,10 @@ export default class DebuggingConstraints extends React.Component {
           <h3>Buildings:</h3>
           <div>{ JSON.stringify(buildings) }</div>
         </div>
+        {/*<div style={{ marginTop: '20px' }}>
+          <h3>Objects:</h3>
+          <div>{ JSON.stringify(objects) }</div>
+        </div>*/}
       </div>
     );
   }

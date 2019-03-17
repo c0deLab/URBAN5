@@ -176,7 +176,20 @@ class Design {
     const objects = this.getObjects();
     this._objects = objects;
 
+    if (!objects) {
+      return;
+    }
+
     // Calculate individual object attributes
+    this.calculateObjectAttributes(objects, topo);
+    this.calculateAccess(objects);
+
+    // Check building attributes
+    const buildings = this.findBuildings(objects);
+    this._buildings = this.calculateBuildingAttributes(buildings); // save building attributes
+  }
+
+  calculateObjectAttributes = (objects, topo) => {
     objects.forEach(item => {
       const { position, object } = item;
       const { x, y, z } = position;
@@ -210,87 +223,67 @@ class Design {
           break;
       }
     });
+  }
 
-    // Get buildings
-    const buildings = {};
-    let nextIndex = 0;
-
-    const buildingParts = objects.filter(item => item.type === ObjectsEnum.CUBE || item.type === ObjectsEnum.ROOF);
-
-    buildingParts.forEach(item => {
-      const { position, object } = item;
-      const { x, y, z } = position;
-      const {
-        s, w, b
-      } = getCellContext3D(this.objects, { x, y, z });
-
-      // If connected to cube, add to same building
-      // Does adjacent cube have building, if so, add this cube to that building
-      const adjacentBuildings = [];
-
+  calculateAccess = objects => {
+    // Reset access
+    objects.forEach(item => {
       if (item.type === ObjectsEnum.CUBE) {
-        // Only check neighbors that were already check this pass
-        [b, s, w].forEach(neighbor => {
-          if (neighbor && neighbor.constructor.name === 'Cube' && neighbor.buildingIndex !== undefined) {
-            if (!adjacentBuildings.includes(neighbor.buildingIndex)) {
-              adjacentBuildings.push(neighbor.buildingIndex);
-            }
-          }
-        });
-      } else if (item.type === ObjectsEnum.ROOF) {
-        [b].forEach(neighbor => {
-          if (neighbor && neighbor.constructor.name === 'Cube' && neighbor.buildingIndex !== undefined) {
-            if (!adjacentBuildings.includes(neighbor.buildingIndex)) {
-              adjacentBuildings.push(neighbor.buildingIndex);
-            }
-          }
-        });
-      }
-
-
-      if (adjacentBuildings.length === 0) {
-        // console.log('create building: ' + nextIndex);
-        // If no adjacent building, create new building
-        buildings[nextIndex] = [object];
-        object.buildingIndex = nextIndex;
-        nextIndex += 1;
-      } else if (adjacentBuildings.length === 1) {
-        // If 1 adjacent building, add to that building
-        const buildingIndex = adjacentBuildings[0];
-        const adjacentBuilding = buildings[buildingIndex];
-        // console.log('add to building: ' + buildingIndex);
-        if (adjacentBuilding) {
-          adjacentBuilding.push(object);
-          object.buildingIndex = buildingIndex;
-        }
-      } else {
-        // If > 1, add to first, add other buildings to first, and remove them
-        const firstBuildingIndex = adjacentBuildings[0];
-        const firstAdjacentBuilding = buildings[firstBuildingIndex];
-        // console.log('add to building: ' + firstBuildingIndex);
-        if (firstAdjacentBuilding) {
-          firstAdjacentBuilding.push(object);
-          object.buildingIndex = firstBuildingIndex;
-          adjacentBuildings.splice(0, 1);
-
-          // Add other buildings contents to first and mark them as defunct
-          adjacentBuildings.forEach(i => {
-            buildings[firstBuildingIndex] = firstAdjacentBuilding.concat(buildings[i]);
-            // Remark the objects to update them
-            buildings[i].forEach(buildingItem => {
-              buildingItem.building = firstBuildingIndex;
-            });
-            // console.log('remove building: ' + i);
-            delete buildings[i];
-          });
-        }
+        const { object } = item;
+        object.distToAccess = Infinity;
       }
     });
 
+    // Get access points
+    const accessPoints = objects.filter(item => {
+      if (item.type === ObjectsEnum.CUBE) {
+        const { position, object } = item;
+        const { x, y, z } = position;
+        const context = getCellContext3D(this.objects, { x, y, z });
+        return object.hasAccessToOutside(context);
+      }
+      return false;
+    });
+
+    const checkAccess = (position, dist) => {
+      const { x, y, z } = position;
+      if (x < 0 || y < 0 || x >= SETTINGS.xMax || y >= SETTINGS.yMax) {
+        // out of bounds
+        return;
+      }
+      const object = this.objects[z][y][x];
+
+      if (object && (dist < object.distToAccess)) {
+        // Update access and continue flood fill of neighbors if this is the closest acces seen yet
+        object.distToAccess = dist;
+        const nextDist = dist + 10;
+
+        // check neigbors that open in this direction
+        if (object.hasAccessInDirection('n')) {
+          checkAccess({ x, y: y + 1, z }, nextDist);
+        }
+        if (object.hasAccessInDirection('s')) {
+          checkAccess({ x, y: y - 1, z }, nextDist);
+        }
+        if (object.hasAccessInDirection('e')) {
+          checkAccess({ x: x + 1, y, z }, nextDist);
+        }
+        if (object.hasAccessInDirection('w')) {
+          checkAccess({ x: x - 1, y, z }, nextDist);
+        }
+      }
+    };
+
+    // For each access points, flood fill building, replacing access distance if lower
+    accessPoints.forEach(item => {
+      const { position } = item;
+      checkAccess(position, 0);
+    });
+  }
+
+  calculateBuildingAttributes = buildings => {
     // Check building attributes
-    // console.log(Object.keys(buildings), buildings);
-    // Calculate buildings:
-    this._buildings = [];
+    const buildingAttributes = []; // save building attributes
     Object.keys(buildings).forEach(key => {
       const building = buildings[key];
       // building touches ground
@@ -299,9 +292,14 @@ class Design {
       let height = 0;
       let ground = Infinity;
       let area = 0;
+      let maxDistToAccess = 0;
       building.forEach(part => {
         if (part.constructor.name === 'Cube') {
           area += 100;
+
+          if (part.distToAccess > maxDistToAccess) {
+            maxDistToAccess = part.distToAccess;
+          }
         }
         if (part.height === 10) { // on ground
           floating = false;
@@ -313,15 +311,60 @@ class Design {
           ground = part.ground;
         }
       });
-      this._buildings.push({
+      buildingAttributes.push({
         area,
         floating: floating ? 1 : 0,
         height,
-        ground
+        ground,
+        maxDistToAccess
       });
     });
+
+    return buildingAttributes;
   }
 
+  findBuildings = objects => {
+    const buildingParts = objects.filter(item => item.type === ObjectsEnum.CUBE || item.type === ObjectsEnum.ROOF);
+    const buildings = {};
+
+    // Reset buildings
+    buildingParts.forEach(item => {
+      const { object } = item;
+      object.buildingIndex = null;
+    });
+
+    // get the next building part, if no building, flood fill
+    const floodFillBuildings = (position, buildingIndex) => {
+      const { x, y, z } = position;
+      if (x < 0 || y < 0 || z < 0 || x >= SETTINGS.xMax || y >= SETTINGS.yMax || z >= SETTINGS.zMax) {
+        // out of bounds
+        return;
+      }
+      const object = this.objects[z][y][x];
+      if (object && object.buildingIndex === null) {
+        object.buildingIndex = buildingIndex;
+        buildings[buildingIndex].push(object);
+        const neighborPositions = [{ x, y: y + 1, z }, { x, y: y - 1, z }, { x: x + 1, y, z },
+          { x: x - 1, y, z }, { x, y, z: z + 1 }, { x, y, z: z - 1 }];
+        neighborPositions.forEach(neighborPosition => floodFillBuildings(neighborPosition, buildingIndex));
+      }
+    };
+
+    // For each access points, flood fill building, replacing access distance if lower
+    let nextIndex = 0;
+    buildingParts.forEach(item => {
+      const { position, object } = item;
+      if (object.buildingIndex === null) {
+        buildings[nextIndex] = [];
+        floodFillBuildings(position, nextIndex);
+        nextIndex += 1;
+      }
+    });
+
+    return buildings;
+  }
+
+  // Given 2D side { t, b, l, r } and camera view, return the cardinal direction { t, b, n, s, e, w }
   getCardinalSide = (camera, side) => {
     let sideCardinal;
     if (side === 't' || side === 'b') {

@@ -50,7 +50,7 @@ export default class Debugging3D extends React.Component {
         this.view.setCameraPosition(origins[Math.floor((timer / updateSpeed)) % origins.length], target);
       }
 
-      setTimeout(poll, 500);
+      setTimeout(poll, 1000);
     };
     poll();
   }

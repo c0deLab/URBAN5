@@ -77,6 +77,10 @@ class U5Session {
       this._monitor.addConstraint(text);
       this.onUpdate();
     },
+    clearConstraints: () => {
+      this._monitor.clearConstraints();
+      this.onUpdate();
+    },
     getMessages: () => this._monitor.getMessages()
   };
 

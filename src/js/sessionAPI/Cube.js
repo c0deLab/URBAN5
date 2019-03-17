@@ -100,4 +100,29 @@ export default class Cube {
   setSurface = (sideCardinal, surface) => {
     this.surfaces[sideCardinal] = surface;
   };
+
+  // Check if any wall has no surface
+  hasAccessToOutside = context => {
+    const { n, s, e, w } = context;
+    if (this.surfaces.e === SurfacesEnum.NONE && e === null) {
+      return true;
+    }
+    if (this.surfaces.w === SurfacesEnum.NONE && w === null) {
+      return true;
+    }
+    if (this.surfaces.n === SurfacesEnum.NONE && n === null) {
+      return true;
+    }
+    if (this.surfaces.s === SurfacesEnum.NONE && s === null) {
+      return true;
+    }
+    return false;
+  };
+
+  hasAccessInDirection = direction => {
+    if (this.surfaces[direction] === SurfacesEnum.NONE) {
+      return true;
+    }
+    return false;
+  };
 }

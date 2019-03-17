@@ -41,16 +41,9 @@ export default class CameraPathView {
     this.topoRenderer3D = new TopoRenderer3D();
     const topoCorners = this.session.topo.getCorners();
     this.topoRenderer3D.draw(this.scene, topoCorners);
-
-    this.animate();
   }
 
-  animate = () => {
-    requestAnimationFrame(this.animate);
-    // Wait until the controller has set the position to start animating
-    if (!this.hasPosition) {
-      return;
-    }
+  render = () => {
     this.renderer.render(this.scene, this.camera);
   }
 
@@ -69,6 +62,7 @@ export default class CameraPathView {
     // Point camera at next point
     const np = this.getAdjustedPoint(nextP);
     this.camera.lookAt(np.x, np.y, np.z);
+    this.render();
   }
 
   /**

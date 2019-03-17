@@ -77,6 +77,10 @@ export default class MainPage extends React.Component {
             action: ActionsEnum.NO_SURFACE
           });
           break;
+        case 191: // /
+          const { session } = this.props;
+          session.monitor.clearConstraints();
+          break;
         default:
           break;
       }

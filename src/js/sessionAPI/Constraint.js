@@ -1,4 +1,4 @@
-import ObjectsEnum from '../enums/ObjectsEnum';
+import parseText from '../helpers/TextToConstraint';
 
 class Constraint {
   constructor(data) {
@@ -16,11 +16,11 @@ class Constraint {
 
   isViolated = design => {
     let objectsOfType;
-    if (this.type === 'building') {
+    if (this.type === 'Structure') {
       objectsOfType = design.getBuildings();
     } else {
       const objects = design.getObjects();
-      objectsOfType = objects.filter(item => this.type.includes(item.type));
+      objectsOfType = objects.filter(item => parseInt(this.type) === item.type);
       objectsOfType = objectsOfType.map(item => item.object);
     }
 
@@ -59,134 +59,39 @@ class Constraint {
   }
 }
 
-// result
-const no = ['no', 'not'];
-
-// fn
-const max = ['any', 'no'];
-const sum = ['total', 'all'];
-
-// type
-const building = ['building', 'structure'];
-const cube = ['cube', 'room'];
-const roof = ['roof'];
-const tree = ['tree'];
-
-// props
-const area = ['area', 'square footage', 'space', 'floorspace', 'size'];
-const height = ['tall', 'height', 'elevation'];
-const ground = ['ground'];
-const noBase = ['base', 'support'];
-
-// comp
-const gt = ['greater than', 'more than'];
-const lt = ['fewer than', 'less than'];
-
-const matchNumber = new RegExp(/[0-9]+/g);
-
-const textHas = (text, test) => {
-  let hasMatch = false;
-  test.forEach(str => {
-    hasMatch = hasMatch || text.includes(str);
-  });
-  return hasMatch;
-};
-
-Constraint.parseText = text => {
-  let result = true;
-  if (textHas(text, no)) {
-    result = false;
+const getError = constraintData => {
+  if (!constraintData) {
+    return 'There was an error';
   }
 
-  let fn = 'SUM';
-  if (textHas(text, max)) {
-    fn = 'MAX';
-  } else if (textHas(text, sum)) {
-    fn = 'SUM';
-  }
-
-  let type = [];
-  if (textHas(text, building)) {
-    type = 'building';
-  } else {
-    if (textHas(text, cube)) {
-      type.push(ObjectsEnum.CUBE);
-    }
-    if (textHas(text, roof)) {
-      type.push(ObjectsEnum.CUBE);
-    }
-    if (textHas(text, tree)) {
-      type.push(ObjectsEnum.FOLIAGE);
-      type.push(ObjectsEnum.TRUNK);
-    }
-  }
-  // Default to building structure
-  if (type.length === 0) {
-    type = [ObjectsEnum.CUBE, ObjectsEnum.ROOF];
-  }
-
-  let prop = null;
-  if (textHas(text, area)) {
-    prop = 'area';
-  } else if (textHas(text, height)) {
-    prop = 'height';
-  } else if (textHas(text, ground)) {
-    prop = 'ground';
-  } else if (textHas(text, noBase)) {
-    prop = 'noBase';
-  }
-
-  let comp = '===';
-  if (textHas(text, gt)) {
-    comp = '>';
-  } else if (textHas(text, lt)) {
-    comp = '<';
-  }
-
-  const numbers = text.match(matchNumber);
-  let value;
-  if (numbers && numbers.length > 0) {
-    [value] = numbers;
-  }
-
-  const constraintData = { text, result, fn, type, prop, comp, value }; // eslint-disable-line
-  // const constraintData = {
-  //   result: true,
-  //   fn: 'SUM',
-  //   type: [ObjectsEnum.CUBE],
-  //   prop: 'AREA',
-  //   comp: '<',
-  //   value: text
-  // };
-
-  console.log(JSON.stringify(constraintData));
-
+  const { fn, type, prop, value } = constraintData;
   if (!fn) {
-    return null;
+    return 'Ted, it is not clear what you want to test';
   }
-  if (type.length === 0) {
-    return null;
+  if (!type) {
+    return 'Ted, what type of object is this constraint for?';
   }
   if (!prop) {
-    return null;
+    return 'Ted, what object property is this constraint for?';
   }
   if (!value) {
-    return null;
+    return 'Ted, what value is this constraint using?';
   }
-  return constraintData;
+  return null;
 };
 
 Constraint.create = text => {
   if (!text) {
-    return null;
+    return 'No text provided';
   }
 
-  const constraintData = Constraint.parseText(text.toLowerCase());
-  if (!constraintData) {
-    return null;
+  const constraintData = parseText(text);
+  const error = getError(constraintData);
+  if (error === null) {
+    return new Constraint(constraintData);
   }
-
-  return new Constraint(constraintData);
+  console.log(`Bad Constraint: ${JSON.stringify(constraintData)}`);
+  return error;
 };
 
 export default Constraint;
