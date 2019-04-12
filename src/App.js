@@ -24,6 +24,14 @@ const SETTINGS = {
 window.SETTINGS = SETTINGS;
 
 const session = new U5SessionFactory().last();
+const cameraView = {
+  camera: 0,
+  slices: {
+    x: 0,
+    y: 0,
+    z: 6
+  }
+};
 // const session = new U5SessionFactory().test();
 
 export default class App extends React.Component {
@@ -42,15 +50,14 @@ export default class App extends React.Component {
   }
 
   render() {
-    console.log('render app');
     const { debug } = this.state;
     return (
       <div className="app">
-        <MainPage session={session} />
+        <MainPage session={session} cameraView={cameraView} />
         { debug && (
           <div>
             <DebuggingConstraints session={session} />
-            <Debugging3D session={session} />
+            <Debugging3D session={session} cameraView={cameraView} />
           </div>
         )}
       </div>

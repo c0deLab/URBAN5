@@ -14,20 +14,21 @@ class U5Session {
   }
 
   onUpdate = () => {
-    const t0 = new Date().getTime();
     // calculate totals
     this._design.calculateAttributes(this.topo);
-    const t1 = new Date().getTime();
 
     // monitor checks design
-    this._monitor.checkConflicts(this._design);
-    const t2 = new Date().getTime();
+    this._monitor.checkDesign(this._design);
 
     // save
     this.save();
-    const t3 = new Date().getTime();
+  };
 
-    console.log(t1 - t0, t2 - t1, t3 - t2);
+  clear = () => {
+    this._design.clear();
+    this._topo.clear();
+    this._monitor.clearConstraints();
+    this.onUpdate();
   };
 
   // Interface for the design model
@@ -74,8 +75,10 @@ class U5Session {
   // Interface for the monitor
   monitor = {
     addConstraint: text => {
-      this._monitor.addConstraint(text);
-      this.onUpdate();
+      const success = this._monitor.addConstraint(text);
+      if (success) {
+        this.onUpdate();
+      }
     },
     clearConstraints: () => {
       this._monitor.clearConstraints();

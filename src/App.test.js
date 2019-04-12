@@ -87,6 +87,7 @@ const testMaps = [
       'No cube should be more than 40 ft from access',
       'No room should be more than 40 ft from access',
       'No area should be more than 40 ft from access',
+      'No room farther than 40 ft from access',
     ]
   },
   {

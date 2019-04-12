@@ -1,7 +1,6 @@
 import { createjs } from '@createjs/easeljs';
 import CamerasEnum from '../enums/CamerasEnum';
 import SurfacesEnum from '../enums/SurfacesEnum';
-import { getEmpty2DArray } from '../helpers/ArrayHelpers';
 
 /* global SETTINGS */
 
@@ -33,10 +32,16 @@ export default class DesignRenderer2D {
               this.drawRoof(cell, camera, this.stage, x, y, isDashed);
               break;
             case 'Foliage':
-              this.drawFoliage(camera, this.stage, x, y, isDashed);
+              // Dont draw background trees
+              if (!isDashed) {
+                this.drawFoliage(camera, this.stage, x, y, isDashed);
+              }
               break;
             case 'Trunk':
-              this.drawTrunk(camera, this.stage, x, y, isDashed);
+              // Dont draw background trees
+              if (!isDashed) {
+                this.drawTrunk(camera, this.stage, x, y, isDashed);
+              }
               break;
             default:
               break;

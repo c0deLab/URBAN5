@@ -32,6 +32,10 @@ class Design {
 
   getAll = () => this.objects;
 
+  clear = () => {
+    this.objects = getEmpty3DArray(SETTINGS.xMax, SETTINGS.yMax, SETTINGS.zMax);
+  };
+
   /**
    * Add an object at a certain position.
    * @param {object} position - 3D position in the form {x:x,y:y,z:z}
@@ -271,13 +275,19 @@ class Design {
         if (object.hasAccessInDirection('w')) {
           checkAccess({ x: x - 1, y, z }, nextDist);
         }
+        if (object.hasAccessInDirection('t')) {
+          checkAccess({ x, y, z: z + 1 }, nextDist);
+        }
+        if (object.hasAccessInDirection('b')) {
+          checkAccess({ x, y, z: z - 1 }, nextDist);
+        }
       }
     };
 
     // For each access points, flood fill building, replacing access distance if lower
     accessPoints.forEach(item => {
       const { position } = item;
-      checkAccess(position, 0);
+      checkAccess(position, 10);
     });
   }
 

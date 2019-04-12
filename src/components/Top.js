@@ -51,7 +51,7 @@ export default class Top extends React.PureComponent {
     session.monitor.addConstraint(text);
 
     const textMessages = session.monitor.getMessages();
-    this.setState({ textMessages });
+    this.setState({ textMessages: textMessages.slice() });
   };
 
   render() {
@@ -65,7 +65,7 @@ export default class Top extends React.PureComponent {
     }
 
     const messageElements = textMessages.map(message => (
-      <div className="mono-text">{message}</div>
+      <div className="mono-text" key={message}>{message}</div>
     ));
 
     return (

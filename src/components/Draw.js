@@ -46,7 +46,7 @@ export default class Draw extends React.Component {
    * It sets up the rendering to the canvas.
    */
   wire = () => {
-    const { session } = this.props;
+    const { session, cameraView } = this.props;
     // Only wire once, and only do it once the model is ready
     if (this.isWired || !session) {
       return;
@@ -54,7 +54,7 @@ export default class Draw extends React.Component {
     this.isWired = true;
 
     // Create controller and 2D slice view
-    const controller = new Display2DController(session);
+    const controller = new Display2DController(session, cameraView);
     this.view = new Display2DView(this.canvas, session);
     controller.addListener(this.view);
     // Trigger initial render
@@ -67,7 +67,7 @@ export default class Draw extends React.Component {
 
   /** Add some hotkeys to make testing easier */
   handleKeyDown = event => {
-    const { controller, showDebug } = this.state;
+    const { controller } = this.state;
 
     const { action } = this.props;
     if (action === ActionsEnum.SPEAK_CONSTRAINT) {

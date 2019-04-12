@@ -42,7 +42,9 @@ class Monitor {
 
   addConstraint = text => {
     const constraint = Constraint.create(text);
-    if (constraint.constructor.name === 'Constraint') {
+    this.messages.push(text);
+
+    if (constraint && constraint.constructor.name === 'Constraint') {
       // Check if this overrides former constraint
       const newConstraints = [];
       this.constraints.forEach(old => {
@@ -53,17 +55,46 @@ class Monitor {
       newConstraints.push(constraint);
 
       this.constraints = newConstraints;
-      this.messages = [`Added constraint: ${constraint.text}`];
+      this.messages.push('I have understood.');
       return true;
     }
-    console.log(`Constraint not valid: ${constraint}`);
-    this.messages = [`Constraint not valid: ${constraint}`];
+    this.messages.push('I am sorry I do not understand.');
     return false;
   };
 
   clearConstraints = () => {
     this.constraints = [];
-    this.messages = ['Cleared constraints'];
+    this.messages.push('Cleared constraints');
+  }
+
+  checkDesign = design => {
+    const conflicts = this.checkConflicts(design);
+    const incompatibilities = this.checkIncompatibilities(design);
+
+    const newMessages = [];
+    if (conflicts.length > 3) {
+      newMessages.push('Don\'t you think you should stop, Ted?');
+    } else if (conflicts.length > 2) {
+      newMessages.push('Ted, many conflicts are occurring.');
+    } else if (conflicts.length > 0) {
+      // conflicts.forEach(conflict => {
+      //   newMessages.push(`Ted, a conflict has occurred, you said: ${conflict.constraint.text}. The present status is ${conflict.value}.`);
+      // });
+      newMessages.push(`Ted, a conflict has occurred, you said: ${conflicts[0].constraint.text}. The present status is ${conflicts[0].value}.`);
+    } else if (conflicts.length === 0 && this.conflicts.length > 0) {
+      newMessages.push('Conflicts were resolved.');
+    }
+
+    if (incompatibilities.length > 0) {
+      newMessages.push('Not structurally possible at this time.');
+    } else if (incompatibilities.length === 0 && this.incompatibilities.length > 0) {
+      newMessages.push('Incompatibilities were resolved.');
+    }
+
+    console.log(`Messages: [${newMessages.join(',')}]`);
+    this.messages = newMessages;
+    this.conflicts = conflicts;
+    this.incompatibilities = incompatibilities;
   }
 
   /**
@@ -72,38 +103,15 @@ class Monitor {
     * Examples: max height, number of objects, light, blocking entrances, check access
     */
   checkConflicts = design => {
-    let newMessages = [];
     const conflicts = [];
     this.constraints.forEach(constraint => {
-      if (constraint.isViolated(design)) {
+      if (constraint.isViolated(design).result) {
         console.log('violated constraint!');
-        conflicts.push({ constraint });
+        conflicts.push({ constraint, value: constraint.isViolated(design).value });
       }
     });
 
-    this.systemConstraints.forEach(constraint => {
-      if (constraint.isViolated(design)) {
-        console.log('violated system constraint!');
-        conflicts.push({ constraint });
-      }
-    });
-
-    if (conflicts.length > 3) {
-      newMessages = ['Ted, many conflicts are occurring.'];
-    } else if (conflicts.length > 0) {
-      const messages = [];
-      conflicts.forEach(conflict => {
-        messages.push(`Violated constraint: ${conflict.constraint.text}`);
-      });
-      newMessages = messages;
-    } else if (this.conflicts.length > 0) {
-      newMessages = ['Conflicts were resolved.'];
-    }
-
-    if (newMessages.length > 0) {
-      this.messages = newMessages;
-    }
-    this.conflicts = conflicts;
+    return conflicts;
   };
 
   /**
@@ -111,8 +119,16 @@ class Monitor {
     * Leads to a bell ringing and displaying the message on the top of the screen
     * Examples: underground, floating, clash
     */
-  checkIncompatibilities = actionEvent => {
+  checkIncompatibilities = design => {
+    const incompatibilities = [];
+    this.systemConstraints.forEach(constraint => {
+      if (constraint.isViolated(design).result) {
+        console.log('violated system constraint!');
+        incompatibilities.push({ constraint, value: constraint.isViolated(design).value });
+      }
+    });
 
+    return incompatibilities;
   };
 }
 

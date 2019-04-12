@@ -12,6 +12,7 @@ import Surface from './Surface';
 import DisplayWalkthrough from './DisplayWalkthrough';
 
 /* global document */
+/* global location */
 
 /** Class for the rendering the main view with top, menu, and center panels */
 export default class MainPage extends React.Component {
@@ -24,13 +25,14 @@ export default class MainPage extends React.Component {
     // displayType: 'CALC'
 
     action: ActionsEnum.ADDCUBE, // Default action is ADDCUBE
-    displayType: 'DRAW'
+    displayType: 'DRAW',
 
     // action: ActionsEnum.INCREASE_HEIGHT, // Default action is ADDCUBE
     // displayType: 'TOPO'
 
     // action: ActionsEnum.NO_SURFACE, // Default action is ADDCUBE
     // displayType: 'SURF'
+
   };
 
   componentDidMount() {
@@ -48,6 +50,7 @@ export default class MainPage extends React.Component {
   /** Add some hotkeys to make testing easier */
   handleKeyDown = event => {
     const { action } = this.state;
+    const { session } = this.props;
     if (action === ActionsEnum.SPEAK_CONSTRAINT) {
       // do nothing
     } else {
@@ -78,8 +81,11 @@ export default class MainPage extends React.Component {
           });
           break;
         case 191: // /
-          const { session } = this.props;
           session.monitor.clearConstraints();
+          break;
+        case 220: // \
+          session.clear();
+          location.reload(); // eslint-disable-line
           break;
         default:
           break;
@@ -90,7 +96,7 @@ export default class MainPage extends React.Component {
 
   getDisplay = () => {
     const { action, displayType } = this.state;
-    const { session } = this.props;
+    const { session, cameraView } = this.props;
 
     if (!session || !action) {
       return null;
@@ -98,13 +104,13 @@ export default class MainPage extends React.Component {
 
     switch (displayType) {
       case 'DRAW':
-        return (<Draw action={action} session={session} />);
+        return (<Draw action={action} session={session} cameraView={cameraView} />);
       case 'CALC':
         return (<DisplayWalkthrough session={session} />);
       case 'TOPO':
         return (<Topo action={action} session={session} />);
       case 'SURF':
-        return (<Surface action={action} session={session} />);
+        return (<Surface action={action} session={session} cameraView={cameraView} />);
       default:
         break;
     }

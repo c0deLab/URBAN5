@@ -8,7 +8,7 @@ import DesignRenderer3D from './renderers/DesignRenderer3D';
 
 /** Class responsible for drawing a 3D view of the model */
 export default class CameraPathView {
-  constructor(container, session) {
+  constructor(container, session, cameraView) {
     this.container = container;
     this.target = null;
     this.session = session;
@@ -25,6 +25,7 @@ export default class CameraPathView {
     this.renderer.setPixelRatio(0.6);
     this.renderer.setSize(SETTINGS.w, SETTINGS.h);
     this.container.appendChild(this.renderer.domElement);
+    this.cameraView = cameraView;
 
     this.draw();
   }
@@ -40,10 +41,11 @@ export default class CameraPathView {
 
     this.topoRenderer3D = new TopoRenderer3D();
     const topoCorners = this.session.topo.getCorners();
-    this.topoRenderer3D.draw(this.scene, topoCorners);
+    this.topoRenderer3D.draw(this.scene, topoCorners, this.cameraView);
   }
 
   render = () => {
+    this.draw();
     this.renderer.render(this.scene, this.camera);
   }
 

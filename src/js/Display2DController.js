@@ -7,7 +7,7 @@ import SurfacesEnum from './enums/SurfacesEnum';
 
 /** Class to control rotating to different slice angles and elevations and moving through slices */
 export default class Display2DController {
-  constructor(session) {
+  constructor(session, cameraView) {
     this.session = session;
 
     this.gridSize = SETTINGS.gridSize;
@@ -15,13 +15,11 @@ export default class Display2DController {
     this.yMax = SETTINGS.yMax;
     this.zMax = SETTINGS.zMax;
 
-    this.sliceXAxis = 0; // for W/E view
-    this.sliceYAxis = 0; // for N/S view
-    this.sliceZAxis = 6; // for TOP/BOTTOM view
+    this.cameraView = cameraView;
     this.views = [];
     this.isBackgroundDashed = true;
 
-    this.north(); // By default, set to view looking north
+    this.updateViews();
   }
 
   addListener = view => this.views.push(view)
@@ -66,16 +64,16 @@ export default class Display2DController {
         this.setTopoHeight(modelPosition);
         break;
       case ActionsEnum.NO_SURFACE:
-        this.setSurface(this.camera, modelPosition, modifier, SurfacesEnum.NONE);
+        this.setSurface(this.cameraView.camera, modelPosition, modifier, SurfacesEnum.NONE);
         break;
       case ActionsEnum.SOLID_SURFACE:
-        this.setSurface(this.camera, modelPosition, modifier, SurfacesEnum.SOLID);
+        this.setSurface(this.cameraView.camera, modelPosition, modifier, SurfacesEnum.SOLID);
         break;
       case ActionsEnum.TRANSPARENT_SURFACE:
-        this.setSurface(this.camera, modelPosition, modifier, SurfacesEnum.TRANS);
+        this.setSurface(this.cameraView.camera, modelPosition, modifier, SurfacesEnum.TRANS);
         break;
       case ActionsEnum.PARTITION_SURFACE:
-        this.setSurface(this.camera, modelPosition, modifier, SurfacesEnum.PART);
+        this.setSurface(this.cameraView.camera, modelPosition, modifier, SurfacesEnum.PART);
         break;
       default:
         // nothing
@@ -144,53 +142,53 @@ export default class Display2DController {
 
   /** Move the view to the next slice, without exceeding the last slice */
   nextSlice = () => {
-    switch (this.camera) {
+    switch (this.cameraView.camera) {
       case CamerasEnum.NORTH:
-        this._setSliceYAxis(this.sliceYAxis + 1);
+        this._setSliceYAxis(this.cameraView.slices.y + 1);
         break;
       case CamerasEnum.SOUTH:
-        this._setSliceYAxis(this.sliceYAxis - 1);
+        this._setSliceYAxis(this.cameraView.slices.y - 1);
         break;
       case CamerasEnum.EAST:
-        this._setSliceXAxis(this.sliceXAxis + 1);
+        this._setSliceXAxis(this.cameraView.slices.x + 1);
         break;
       case CamerasEnum.WEST:
-        this._setSliceXAxis(this.sliceXAxis - 1);
+        this._setSliceXAxis(this.cameraView.slices.x - 1);
         break;
       case CamerasEnum.TOP:
-        this._setSliceZAxis(this.sliceZAxis - 1);
+        this._setSliceZAxis(this.cameraView.slices.z - 1);
         break;
       case CamerasEnum.BOTTOM:
-        this._setSliceZAxis(this.sliceZAxis + 1);
+        this._setSliceZAxis(this.cameraView.slices.z + 1);
         break;
       default:
-        throw new Error(`camera ${this.camera} is not recognized!`);
+        throw new Error(`camera ${this.cameraView.camera} is not recognized!`);
     }
   }
 
   /** Move the view to the previous slice, without going past 0 */
   previousSlice = () => {
-    switch (this.camera) {
+    switch (this.cameraView.camera) {
       case CamerasEnum.NORTH:
-        this._setSliceYAxis(this.sliceYAxis - 1);
+        this._setSliceYAxis(this.cameraView.slices.y - 1);
         break;
       case CamerasEnum.SOUTH:
-        this._setSliceYAxis(this.sliceYAxis + 1);
+        this._setSliceYAxis(this.cameraView.slices.y + 1);
         break;
       case CamerasEnum.EAST:
-        this._setSliceXAxis(this.sliceXAxis - 1);
+        this._setSliceXAxis(this.cameraView.slices.x - 1);
         break;
       case CamerasEnum.WEST:
-        this._setSliceXAxis(this.sliceXAxis + 1);
+        this._setSliceXAxis(this.cameraView.slices.x + 1);
         break;
       case CamerasEnum.TOP:
-        this._setSliceZAxis(this.sliceZAxis + 1);
+        this._setSliceZAxis(this.cameraView.slices.z + 1);
         break;
       case CamerasEnum.BOTTOM:
-        this._setSliceZAxis(this.sliceZAxis - 1);
+        this._setSliceZAxis(this.cameraView.slices.z - 1);
         break;
       default:
-        throw new Error(`camera ${this.camera} is not recognized!`);
+        throw new Error(`camera ${this.cameraView.camera} is not recognized!`);
     }
   }
 
@@ -213,7 +211,7 @@ export default class Display2DController {
   bottom = () => this._setCamera('BOTTOM')
 
   rotateLeft = () => {
-    switch (this.camera) {
+    switch (this.cameraView.camera) {
       case CamerasEnum.NORTH:
         this._setCamera('EAST');
         break;
@@ -232,7 +230,7 @@ export default class Display2DController {
   }
 
   rotateRight = () => {
-    switch (this.camera) {
+    switch (this.cameraView.camera) {
       case CamerasEnum.NORTH:
         this._setCamera('WEST');
         break;
@@ -256,7 +254,7 @@ export default class Display2DController {
    */
   _setSliceZAxis = slice => {
     if (slice >= 0 && slice < this.zMax) {
-      this.sliceZAxis = slice;
+      this.cameraView.slices.z = slice;
       this.updateViews();
     }
   }
@@ -267,7 +265,7 @@ export default class Display2DController {
    */
   _setSliceXAxis = slice => {
     if (slice >= 0 && slice < this.xMax) {
-      this.sliceXAxis = slice;
+      this.cameraView.slices.x = slice;
       this.updateViews();
     }
   }
@@ -278,7 +276,7 @@ export default class Display2DController {
    */
   _setSliceYAxis = slice => {
     if (slice >= 0 && slice < this.yMax) {
-      this.sliceYAxis = slice;
+      this.cameraView.slices.y = slice;
       this.updateViews();
     }
   }
@@ -288,31 +286,31 @@ export default class Display2DController {
    * @param {String} camera - CamerasEnum name
    */
   _setCamera = camera => {
-    this.camera = CamerasEnum[camera];
+    this.cameraView.camera = CamerasEnum[camera];
     this.updateViews();
   }
 
   /** Draw the current view from the current camera angle and sliceIndex */
   updateViews = () => {
     let sliceIndex;
-    switch (this.camera) {
+    switch (this.cameraView.camera) {
       case CamerasEnum.NORTH:
       case CamerasEnum.SOUTH:
-        sliceIndex = this.sliceYAxis;
+        sliceIndex = this.cameraView.slices.y;
         break;
       case CamerasEnum.EAST:
       case CamerasEnum.WEST:
-        sliceIndex = this.sliceXAxis;
+        sliceIndex = this.cameraView.slices.x;
         break;
       case CamerasEnum.TOP:
       case CamerasEnum.BOTTOM:
-        sliceIndex = this.sliceZAxis;
+        sliceIndex = this.cameraView.slices.z;
         break;
       default:
-        throw new Error(`camera ${this.camera} is not recognized!`);
+        throw new Error(`camera ${this.cameraView.camera} is not recognized!`);
     }
 
-    this.views.forEach(v => v.draw(this.camera, sliceIndex, this.isBackgroundDashed));
+    this.views.forEach(v => v.draw(this.cameraView.camera, sliceIndex, this.isBackgroundDashed));
   }
 
   /**
@@ -322,7 +320,7 @@ export default class Display2DController {
    */
   getRelativePosition = (x, y) => {
     // Check that it is a legal 3D index
-    switch (this.camera) {
+    switch (this.cameraView.camera) {
       case CamerasEnum.NORTH:
       case CamerasEnum.SOUTH:
       case CamerasEnum.EAST:
@@ -336,21 +334,21 @@ export default class Display2DController {
     }
 
     // translate this position along with the current slice to the 3D model indeces
-    switch (this.camera) {
+    switch (this.cameraView.camera) {
       case CamerasEnum.NORTH:
-        return { x, y: this.sliceYAxis, z: y };
+        return { x, y: this.cameraView.slices.y, z: y };
       case CamerasEnum.SOUTH:
-        return { x: this.gridSize - 1 - x, y: this.sliceYAxis, z: y };
+        return { x: this.gridSize - 1 - x, y: this.cameraView.slices.y, z: y };
       case CamerasEnum.EAST:
-        return { x: this.sliceXAxis, y: this.gridSize - 1 - x, z: y };
+        return { x: this.cameraView.slices.x, y: this.gridSize - 1 - x, z: y };
       case CamerasEnum.WEST:
-        return { x: this.sliceXAxis, y: x, z: y };
+        return { x: this.cameraView.slices.x, y: x, z: y };
       case CamerasEnum.BOTTOM:
-        return { x, y: this.gridSize - 1 - y, z: this.sliceZAxis };
+        return { x, y: this.gridSize - 1 - y, z: this.cameraView.slices.z };
       case CamerasEnum.TOP:
-        return { x, y, z: this.sliceZAxis };
+        return { x, y, z: this.cameraView.slices.z };
       default:
-        throw new Error(`camera ${this.camera} is not recognized!`);
+        throw new Error(`camera ${this.cameraView.camera} is not recognized!`);
     }
   }
 }

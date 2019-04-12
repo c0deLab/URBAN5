@@ -1,10 +1,11 @@
 import * as THREE from 'three';
 import { getEmpty2DArray } from '../helpers/ArrayHelpers';
+import CamerasEnum from '../enums/CamerasEnum';
 
 /* global SETTINGS */
 
 export default class TopoRenderer3D {
-  draw = (scene, corners) => {
+  draw = (scene, corners, cameraView) => {
     if (!corners) {
       return;
     }
@@ -19,24 +20,44 @@ export default class TopoRenderer3D {
         adjustedCornerPoint.z -= 0.5;
         adjustedCorners[y][x] = adjustedCornerPoint;
 
+        // Add code for debugger to mark current camera view
+        let mark = false;
+        if (cameraView) {
+          if (cameraView.camera === CamerasEnum.NORTH || cameraView.camera === CamerasEnum.SOUTH) {
+            if (cameraView.slices.y === y - 1) {
+              mark = true;
+            }
+          } else if (cameraView.camera === CamerasEnum.WEST || cameraView.camera === CamerasEnum.EAST) {
+            if (cameraView.slices.x === x - 1) {
+              mark = true;
+            }
+          }
+        }
+
         // Connect down and right
         if (y > 0) {
           const downPoint = adjustedCorners[y - 1][x];
-          this._addLine(scene, adjustedCornerPoint, downPoint);
+          this._addLine(scene, adjustedCornerPoint, downPoint, mark);
         }
         if (x > 0) {
           const leftPoint = adjustedCorners[y][x - 1];
-          this._addLine(scene, adjustedCornerPoint, leftPoint);
+          this._addLine(scene, adjustedCornerPoint, leftPoint, mark);
         }
       }
     }
   }
 
-  _addLine = (scene, p0, p1) => {
+  _addLine = (scene, p0, p1, mark) => {
     const geometry = new THREE.Geometry();
     geometry.vertices.push(new THREE.Vector3(p0.x, p0.y, p0.z));
     geometry.vertices.push(new THREE.Vector3(p1.x, p1.y, p1.z));
-    const line = new THREE.Line(geometry, SETTINGS.material);
+    let line;
+    if (mark) {
+      line = new THREE.Line(geometry, new THREE.LineBasicMaterial({ color: 0x00EE00 }));
+    } else {
+      line = new THREE.Line(geometry, SETTINGS.material);
+    }
+
     scene.add(line);
   }
 

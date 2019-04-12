@@ -49,7 +49,10 @@ class Constraint {
     console.log(this.prop, calculatedValue, this.comp, this.value, calculatedResult, 'expected', this.result);
     const isViolated = calculatedResult !== this.result;
 
-    return isViolated;
+    return {
+      result: isViolated,
+      value: calculatedValue
+    };
   }
 
   isSameType = otherConstraint => {
@@ -59,25 +62,40 @@ class Constraint {
   }
 }
 
-const getError = constraintData => {
+const possibleConstraints = [
+  { fn: 'MAX', type: 'Structure', prop: 'height' }, // can compare the max structure height to anything
+  { fn: 'MIN', type: 'Structure', prop: 'height' }, // can compare the min structure height to anything
+  { fn: 'MAX', type: '0', prop: 'distToAccess' }, // can compare to dist to access for cubes
+  { fn: 'MAX', type: 'Structure', prop: 'area' }, // can compare the max structure area to anything
+  { fn: 'MIN', type: 'Structure', prop: 'area' }, // can compare the min structure area to anything
+];
+
+const hasError = constraintData => {
   if (!constraintData) {
-    return 'There was an error';
+    return true;
   }
 
-  const { fn, type, prop, value } = constraintData;
-  if (!fn) {
-    return 'Ted, it is not clear what you want to test';
+  const { fn, type, prop, value, comp, result } = constraintData;
+  if (!fn || !type || !prop || !value || !comp || result === null) {
+    return true;
   }
-  if (!type) {
-    return 'Ted, what type of object is this constraint for?';
+
+  let hasMatch = false;
+  // Check if they match a possible constraint
+  possibleConstraints.forEach(possibility => {
+    if ((possibility.fn === undefined || possibility.fn === fn)
+        && (possibility.type === undefined || possibility.type === type)
+        && (possibility.prop === undefined || possibility.prop === prop)
+        && (possibility.value === undefined || possibility.value === value)
+        && (possibility.comp === undefined || possibility.comp === comp)
+        && (possibility.result === undefined || possibility.result === result)) {
+      hasMatch = true; // if they match all the provided criteria
+    }
+  });
+  if (!hasMatch) {
+    return true;
   }
-  if (!prop) {
-    return 'Ted, what object property is this constraint for?';
-  }
-  if (!value) {
-    return 'Ted, what value is this constraint using?';
-  }
-  return null;
+  return false;
 };
 
 Constraint.create = text => {
@@ -86,12 +104,11 @@ Constraint.create = text => {
   }
 
   const constraintData = parseText(text);
-  const error = getError(constraintData);
-  if (error === null) {
+  if (!hasError(constraintData)) {
     return new Constraint(constraintData);
   }
   console.log(`Bad Constraint: ${JSON.stringify(constraintData)}`);
-  return error;
+  return null;
 };
 
 export default Constraint;

@@ -20,24 +20,24 @@ const REPLACE = {
 };
 
 const TYPES = {
-  Structure: ['structure', 'building', 'structures', 'buildings'],
-  0: ['cube', 'room', 'area', 'cubes', 'rooms', 'areas'], // ObjectsEnum.CUBE
-  1: ['roof', 'roofs', 'rooves'], // ObjectsEnum.ROOF
-  2: ['tree', 'plant', 'bush', 'trees', 'plants', 'bushes'], // ObjectsEnum.TRUNK
+  Structure: ['structure', 'building', 'structures', 'buildings', 'house', 'home', 'domicile', 'complex', 'design'],
+  0: ['cube', 'room', 'area', 'cubes', 'rooms', 'areas', 'elements'], // ObjectsEnum.CUBE
+  1: ['roof', 'roofs', 'rooves', 'covering', 'ceiling', 'gable', 'crown'], // ObjectsEnum.ROOF
+  2: ['tree', 'plant', 'bush', 'trees', 'plants', 'bushes', 'canopy'], // ObjectsEnum.TRUNK
 };
 
 const PROPS = {
-  area: ['area', 'square footage', 'sf', 'space', 'floor', 'floorspace', 'size'],
-  height: ['tall', 'height', 'elevation', 'taller', 'shorter'],
-  distToAccess: ['access']
+  area: ['area', 'square footage', 'sf', 'space', 'floor', 'floorspace', 'size', 'expanse', 'breadth', 'field'],
+  height: ['tall', 'height', 'elevation', 'taller', 'shorter', 'ceiling', 'peak', 'stature', 'crest', 'tip', 'zenith'],
+  distToAccess: ['access', 'entry', 'entrance', 'ingress', 'path', 'route', 'exit', 'way', 'door']
 };
 
 const COMPS = {
   '===': ['equals', 'same'],
-  '>': ['greater', 'more', 'bigger', 'taller', 'larger', 'above'],
-  '<': ['fewer', 'less', 'smaller', 'shorter', 'below'],
-  '>=': ['minimum', 'min'],
-  '<=': ['maximum', 'max'],
+  '>': ['greater', 'more', 'bigger', 'taller', 'larger', 'above', 'exceeding', 'over', 'further', 'farther'],
+  '<': ['fewer', 'less', 'smaller', 'shorter', 'below', 'under', 'lower', 'beneath'],
+  '>=': ['minimum', 'min', 'littlest', 'least', 'smallest'],
+  '<=': ['maximum', 'max', 'biggest', 'most', 'largest', 'greatest'],
 };
 
 function reverseMap(map) {
@@ -63,13 +63,13 @@ const REPLACE_REVERSE = reverseMap(REPLACE);
 //   SUM: ['total', 'any']
 // };
 
-function splitResults(results) {
-  const trueResults = [];
-  results.forEach(result => {
-    trueResults.push(...result.normal.split(' '));
-  });
-  return trueResults;
-}
+// function splitResults(results) {
+//   const trueResults = [];
+//   results.forEach(result => {
+//     trueResults.push(...result.normal.split(' '));
+//   });
+//   return trueResults;
+// }
 
 // const STOP_WORDS = [
 //   // source: https://nlp.stanford.edu/IR-book/html/htmledition/dropping-common-terms-stop-words-1.html
@@ -158,18 +158,13 @@ const getType = doc => {
 };
 
 const getComp = doc => {
-  const compWords = doc.match('(#Comparative|#Adverb|#Adjective)').out('array');
   let comp = null;
-  if (compWords.length > 0) {
-    const compKeys = Object.keys(COMPS_REVERSE);
-    compWords.forEach(compWord => {
-      // console.log('compWord', compWord);
-      if (compKeys.includes(compWord)) {
-        // Map the comparator word to its comparator symbol
-        comp = COMPS_REVERSE[compWord];
-      }
-    });
-  }
+  const compKeys = Object.keys(COMPS_REVERSE);
+  compKeys.forEach(key => {
+    if (doc.has(key)) {
+      comp = COMPS_REVERSE[key];
+    }
+  });
   return comp;
 };
 

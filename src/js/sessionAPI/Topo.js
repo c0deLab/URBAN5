@@ -14,6 +14,10 @@ class Topo {
     }
   }
 
+  clear = () => {
+    this.heights = getEmpty2DArray(SETTINGS.yMax, SETTINGS.xMax, 0);
+  };
+
   increase = position => {
     const height = this.heights[position.y][position.x] + 1;
     if (height <= SETTINGS.zMax) {
@@ -59,15 +63,14 @@ class Topo {
       case CamerasEnum.TOP:
         return null;
       default:
-        throw new Error(`camera ${camera} is not recogniyed!`);
+        throw new Error(`camera ${camera} is not recognized!`);
     }
 
-    let startHeight;
-    let endHeight;
-    const heightPairs = [];
+    const back = [];
+    const front = [];
 
     /*
-    For a given slice, get the highest corners of the current cube and
+    For a given slice, get the highest corners of the front of the current cube and
     the cubes in front and back and left and right. Imagine a sheet hung
     over stacks of cubes. That is what we represent. This is necessary
     because we set the heights of the cells, but we render the heights
@@ -80,12 +83,11 @@ class Topo {
         topLeft, top, topRight, left, center, right, bottomLeft, bottom, bottomRight
       } = context;
       // Find the heightest points
-      startHeight = Math.max(topLeft, top, left, center, bottomLeft, bottom);
-      endHeight = Math.max(top, topRight, center, right, bottom, bottomRight);
-      heightPairs.push({ startHeight, endHeight });
+      back.push([Math.max(topLeft, top, left, center), Math.max(top, topRight, center, right)]);
+      front.push([ Math.max(bottomLeft, bottom, left, center), Math.max(bottom, bottomRight, center, right) ]);
     }
 
-    return heightPairs;
+    return { front, back };
   };
 
   /**
