@@ -1,3 +1,7 @@
-export class Foliage {}
+export class Foliage {
+  static typeName = 'FOLIAGE'
+}
 
-export class Trunk {}
+export class Trunk {
+  static typeName = 'TRUNK'
+}

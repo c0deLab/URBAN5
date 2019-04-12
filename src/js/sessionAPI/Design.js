@@ -10,7 +10,6 @@ import Roof from './Roof';
 import { Foliage, Trunk } from './Tree';
 
 import TypeToConstructorEnum from '../enums/TypeToConstructorEnum';
-import ConstructorToTypeEnum from '../enums/ConstructorToTypeEnum';
 
 /* global SETTINGS */
 
@@ -632,8 +631,7 @@ Design.freeze = design => {
         if (objectData) {
           const jsonStr = JSON.stringify(objectData);
           const json = JSON.parse(jsonStr);
-          json.type = ConstructorToTypeEnum[objectData.constructor.name];
-          console.log(json);
+          json.typeName = objectData.constructor.typeName;
           objectsPacked[z][y][x] = json;
         }
       }
@@ -657,7 +655,8 @@ Design.thaw = json => {
         const objectData = objects[z][y][x];
         if (objectData) {
           let object = null;
-          const constructorFn = TypeToConstructorEnum[objectData.type];
+
+          const constructorFn = TypeToConstructorEnum[objectData.typeName];
           object = new constructorFn(objectData);
 
           objectsUnpacked[z][y][x] = object;

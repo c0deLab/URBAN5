@@ -2,6 +2,8 @@ import SurfacesEnum from '../enums/SurfacesEnum';
 import Cube from '../sessionAPI/Cube';
 
 export default class Roof {
+  static typeName = 'ROOF'
+
   constructor(roofData) {
     if (roofData) {
       const { direction, hasSideSurface } = roofData;
