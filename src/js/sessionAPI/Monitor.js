@@ -44,7 +44,7 @@ class Monitor {
     const constraint = Constraint.create(text);
     this.messages.push(text);
 
-    if (constraint && constraint.constructor.name === 'Constraint') {
+    if (constraint && constraint instanceof Constraint) {
       // Check if this overrides former constraint
       const newConstraints = [];
       this.constraints.forEach(old => {

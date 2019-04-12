@@ -24,6 +24,7 @@ const SETTINGS = {
 window.SETTINGS = SETTINGS;
 
 const session = new U5SessionFactory().last();
+console.log('loaded session: ', session);
 const cameraView = {
   camera: 0,
   slices: {

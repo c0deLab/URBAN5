@@ -9,6 +9,9 @@ import Cube from './Cube';
 import Roof from './Roof';
 import { Foliage, Trunk } from './Tree';
 
+import TypeToConstructorEnum from '../enums/TypeToConstructorEnum';
+import ConstructorToTypeEnum from '../enums/ConstructorToTypeEnum';
+
 /* global SETTINGS */
 
 /**
@@ -83,8 +86,8 @@ class Design {
       return;
     }
 
-    switch (obj.constructor.name) {
-      case 'Trunk':
+    switch (obj.constructor) {
+      case Trunk:
         if (position.z < (SETTINGS.zMax - 1)) {
           this._setCell(position, null);
           const { x, y } = position;
@@ -93,7 +96,7 @@ class Design {
           this._setCell({ x, y, z }, null);
         }
         break;
-      case 'Foliage':
+      case Foliage:
         if (position.z > 0) {
           this._setCell(position, null);
           const { x, y } = position;
@@ -140,17 +143,17 @@ class Design {
           const object = this.objects[z][y][x];
           if (object) {
             let type = null;
-            switch (object.constructor.name) {
-              case 'Cube':
+            switch (object.constructor) {
+              case Cube:
                 type = ObjectsEnum.CUBE;
                 break;
-              case 'Roof':
+              case Roof:
                 type = ObjectsEnum.ROOF;
                 break;
-              case 'Foliage':
+              case Foliage:
                 type = ObjectsEnum.FOLIAGE;
                 break;
-              case 'Trunk':
+              case Trunk:
                 type = ObjectsEnum.TRUNK;
                 break;
               default:
@@ -203,23 +206,23 @@ class Design {
       // } = getCellContext3D(this.objects, { x, y, z });
       const { b } = getCellContext3D(this.objects, { x, y, z });
 
-      switch (object.constructor.name) {
-        case 'Cube':
+      switch (object.constructor) {
+        case Cube:
           object.area = 100;
           object.height = 10 * (z + 1 - gh);
           object.ground = 10 * (z - gh);
           break;
-        case 'Roof':
+        case Roof:
           object.height = 10 * (z + 1 - gh);
           // 0 if has building below, else 1
-          object.noBase = b && b.constructor.name === 'Cube' ? 0 : 1;
+          object.noBase = b && b.constructor === Cube ? 0 : 1;
           object.ground = 10 * (z - gh);
           break;
-        case 'Foliage':
+        case Foliage:
           object.height = 10 * (z + 1 - gh);
           object.ground = 10 * (z - gh);
           break;
-        case 'Trunk':
+        case Trunk:
           object.height = 10 * (z + 1 - gh);
           object.ground = 10 * (z - gh);
           break;
@@ -304,7 +307,7 @@ class Design {
       let area = 0;
       let maxDistToAccess = 0;
       building.forEach(part => {
-        if (part.constructor.name === 'Cube') {
+        if (part.constructor === Cube) {
           area += 100;
 
           if (part.distToAccess > maxDistToAccess) {
@@ -629,7 +632,8 @@ Design.freeze = design => {
         if (objectData) {
           const jsonStr = JSON.stringify(objectData);
           const json = JSON.parse(jsonStr);
-          json.type = objectData.constructor.name;
+          json.type = ConstructorToTypeEnum[objectData.constructor.name];
+          console.log(json);
           objectsPacked[z][y][x] = json;
         }
       }
@@ -653,22 +657,8 @@ Design.thaw = json => {
         const objectData = objects[z][y][x];
         if (objectData) {
           let object = null;
-          switch (objectData.type) {
-            case 'Cube':
-              object = new Cube(objectData);
-              break;
-            case 'Roof':
-              object = new Roof(objectData);
-              break;
-            case 'Foliage':
-              object = new Foliage(objectData);
-              break;
-            case 'Trunk':
-              object = new Trunk(objectData);
-              break;
-            default:
-              break;
-          }
+          const constructorFn = TypeToConstructorEnum[objectData.type];
+          object = new constructorFn(objectData);
 
           objectsUnpacked[z][y][x] = object;
         }

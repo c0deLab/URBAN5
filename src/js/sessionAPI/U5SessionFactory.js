@@ -80,7 +80,7 @@ export default class U5SessionFactory {
   _getNextID = () => {
     let currentID = localStorage.getItem('U5SessionIDCount');
     if (!currentID) {
-      currentID = -1;
+      currentID = 0;
     }
     currentID = parseInt(currentID, 10) + 1;
     localStorage.setItem('U5SessionIDCount', currentID);

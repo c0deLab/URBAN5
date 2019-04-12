@@ -1,5 +1,8 @@
 import * as THREE from 'three';
 import SurfacesEnum from '../enums/SurfacesEnum';
+import Cube from '../sessionAPI/Cube';
+import { Trunk, Foliage } from '../sessionAPI/Tree';
+import Roof from '../sessionAPI/Roof';
 
 /* global SETTINGS */
 
@@ -15,17 +18,17 @@ class DesignRenderer3D {
           const object = objects[z][y][x];
           const position = { x, y, z };
           if (object) {
-            switch (object.constructor.name) {
-              case 'Cube':
+            switch (object.constructor) {
+              case Cube:
                 this.drawCube(scene, object, position);
                 break;
-              case 'Roof':
+              case Roof:
                 this.drawRoof(scene, object, position);
                 break;
-              case 'Foliage':
+              case Foliage:
                 this.drawFoliage(scene, position);
                 break;
-              case 'Trunk':
+              case Trunk:
                 this.drawTrunk(scene, position);
                 break;
               default:

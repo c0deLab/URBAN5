@@ -1,6 +1,9 @@
 import { createjs } from '@createjs/easeljs';
 import CamerasEnum from '../enums/CamerasEnum';
 import SurfacesEnum from '../enums/SurfacesEnum';
+import Cube from '../sessionAPI/Cube';
+import { Trunk, Foliage } from '../sessionAPI/Tree';
+import Roof from '../sessionAPI/Roof';
 
 /* global SETTINGS */
 
@@ -24,20 +27,20 @@ export default class DesignRenderer2D {
         const cell = row[x];
 
         if (cell) {
-          switch (cell.constructor.name) {
-            case 'Cube':
+          switch (cell.constructor) {
+            case Cube:
               this.drawCube(cell, camera, this.stage, x, y, isDashed);
               break;
-            case 'Roof':
+            case Roof:
               this.drawRoof(cell, camera, this.stage, x, y, isDashed);
               break;
-            case 'Foliage':
+            case Foliage:
               // Dont draw background trees
               if (!isDashed) {
                 this.drawFoliage(camera, this.stage, x, y, isDashed);
               }
               break;
-            case 'Trunk':
+            case Trunk:
               // Dont draw background trees
               if (!isDashed) {
                 this.drawTrunk(camera, this.stage, x, y, isDashed);
