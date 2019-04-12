@@ -571,53 +571,20 @@ class Design {
 
   fill = () => {
     const addObject = (pos, type, mod) => {
-        this.add(type, pos, mod);
+      this.add(type, pos, mod);
     };
 
-    addObject({ x: 11, y: 3, z: 0 }, 0);
-    addObject({ x: 11, y: 3, z: 1 }, 0);
-    addObject({ x: 11, y: 3, z: 2 }, 1, 'w');
+    addObject({ x: 11, y: 0, z: 0 }, 0);
+    addObject({ x: 12, y: 0, z: 0 }, 0);
+    addObject({ x: 11, y: 0, z: 1 }, 0);
+    addObject({ x: 12, y: 0, z: 1 }, 0);
+    addObject({ x: 11, y: 0, z: 2 }, 1, 'w');
+    addObject({ x: 12, y: 0, z: 2 }, 1, 'e');
 
-    addObject({ x: 12, y: 3, z: 0 }, 0);
-    addObject({ x: 12, y: 3, z: 1 }, 0);
-    addObject({ x: 12, y: 3, z: 2 }, 1, 'e');
+    addObject({ x: 14, y: 0, z: 0 }, 2);
 
-    addObject({ x: 13, y: 3, z: 0 }, 0);
-    addObject({ x: 13, y: 3, z: 1 }, 1, 'e');
-
-    addObject({ x: 14, y: 3, z: 0 }, 0);
-
-    addObject({ x: 15, y: 3, z: 0 }, 0);
-
-    addObject({ x: 16, y: 3, z: 0 }, 2);
-
-    addObject({ x: 9, y: 13, z: 0 }, 0);
-    addObject({ x: 9, y: 13, z: 1 }, 1, 's');
-
-    addObject({ x: 9, y: 14, z: 0 }, 0);
-    addObject({ x: 9, y: 14, z: 1 }, 1, 'n');
-
-
-    addObject({ x: 13, y: 5, z: 4 }, 1, 'e');
-
-    addObject({ x: 5, y: 0, z: 1 }, 1, 'e');
-    addObject({ x: 7, y: 0, z: 0 }, 0);
-    addObject({ x: 9, y: 0, z: 0 }, 0);
-    addObject({ x: 10, y: 0, z: 0 }, 0);
-
-
-    addObject({ x: 1, y: 1, z: 2 }, 0);
-    addObject({ x: 2, y: 1, z: 2 }, 0);
-    addObject({ x: 1, y: 2, z: 2 }, 0);
-    addObject({ x: 2, y: 2, z: 2 }, 0);
-    addObject({ x: 1, y: 2, z: 3 }, 0);
-    addObject({ x: 2, y: 2, z: 3 }, 0);
-
-    addObject({ x: 4, y: 2, z: 5 }, 1, 's');
-    addObject({ x: 4, y: 2, z: 5 }, 1, 'n');
-
-    addObject({ x: 4, y: 2, z: 5 }, 1, 's');
-    addObject({ x: 4, y: 2, z: 5 }, 1, 'n');
+    this.setSurface(0, { x: 11, y: 0, z: 0 }, 'l', 1);
+    this.setSurface(0, { x: 12, y: 0, z: 1 }, 'b', 1);
   }
 }
 
