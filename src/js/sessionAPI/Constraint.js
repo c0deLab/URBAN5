@@ -107,7 +107,7 @@ Constraint.create = text => {
   if (!hasError(constraintData)) {
     return new Constraint(constraintData);
   }
-  console.log(`Bad Constraint: ${JSON.stringify(constraintData)}`);
+
   return null;
 };
 

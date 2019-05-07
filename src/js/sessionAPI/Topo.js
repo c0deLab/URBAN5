@@ -68,6 +68,7 @@ class Topo {
 
     const back = [];
     const front = [];
+    const all = [];
 
     /*
     For a given slice, get the highest corners of the front of the current cube and
@@ -83,12 +84,61 @@ class Topo {
         topLeft, top, topRight, left, center, right, bottomLeft, bottom, bottomRight
       } = context;
       // Find the heightest points
+      all.push([Math.max(bottomLeft, bottom, topLeft, top, left, center), Math.max(bottom, bottomRight, top, topRight, center, right)]);
       back.push([Math.max(topLeft, top, left, center), Math.max(top, topRight, center, right)]);
       front.push([ Math.max(bottomLeft, bottom, left, center), Math.max(bottom, bottomRight, center, right) ]);
     }
 
-    return { front, back };
+    return { all, front, back };
   };
+
+  getBackgroundSlices = (camera, sliceIndex, max = 17) => {
+    let backgroundSliceIndex = sliceIndex;
+    let backgroundSliceIndices = [];
+    switch (camera) {
+      case CamerasEnum.NORTH:
+        while (backgroundSliceIndex < (SETTINGS.yMax - 1)) {
+          backgroundSliceIndex += 1;
+          backgroundSliceIndices.push(backgroundSliceIndex);
+        }
+        break;
+      case CamerasEnum.SOUTH:
+        while (backgroundSliceIndex > 0) {
+          backgroundSliceIndex -= 1;
+          backgroundSliceIndices.push(backgroundSliceIndex);
+        }
+        break;
+      case CamerasEnum.EAST:
+        while (backgroundSliceIndex < (SETTINGS.xMax - 1)) {
+          backgroundSliceIndex += 1;
+          backgroundSliceIndices.push(backgroundSliceIndex);
+        }
+        break;
+      case CamerasEnum.WEST:
+        while (backgroundSliceIndex > 0) {
+          backgroundSliceIndex -= 1;
+          backgroundSliceIndices.push(backgroundSliceIndex);
+        }
+        break;
+      case CamerasEnum.BOTTOM:
+        while (backgroundSliceIndex < (SETTINGS.zMax - 1)) {
+          backgroundSliceIndex += 1;
+          backgroundSliceIndices.push(backgroundSliceIndex);
+        }
+        break;
+      case CamerasEnum.TOP:
+        while (backgroundSliceIndex > 0) {
+          backgroundSliceIndex -= 1;
+          backgroundSliceIndices.push(backgroundSliceIndex);
+        }
+        break;
+      default:
+        throw new Error(`camera ${camera} is not recognized!`);
+    }
+    backgroundSliceIndices = backgroundSliceIndices.slice(0, max);
+    const backgroundSlices = backgroundSliceIndices.map(i => this.getSlice(camera, i));
+    return backgroundSlices;
+  }
 
   /**
    * Get 2D array of all the corner heights (at each corner use the highest adjacent tile)

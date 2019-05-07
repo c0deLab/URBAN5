@@ -23,9 +23,15 @@ export default class Top extends React.PureComponent {
     const poll = () => {
       const textMessages = session.monitor.getMessages();
       this.setState({ textMessages });
-      setTimeout(poll, 100);
+      this.pollTimeout = setTimeout(poll, 100);
     };
     poll();
+  }
+
+  componentWillUnmount() {
+    if (this.pollTimeout) {
+      clearTimeout(this.pollTimeout);
+    }
   }
 
   onMessage = newMessage => {

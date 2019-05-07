@@ -10,6 +10,12 @@ export default class TopoRenderer3D {
       return;
     }
 
+    // Add code for debugger to mark current camera view
+    if (cameraView) {
+      const pointLists = this._getArrows(cameraView);
+      this._addArrows(scene, pointLists);
+    }
+
     // calculate the corners of all the topography and connect them
     const adjustedCorners = getEmpty2DArray(SETTINGS.xMax + 1, SETTINGS.yMax + 1, null);
     for (let y = 0; y <= SETTINGS.yMax; y += 1) {
@@ -20,37 +26,88 @@ export default class TopoRenderer3D {
         adjustedCornerPoint.z -= 0.5;
         adjustedCorners[y][x] = adjustedCornerPoint;
 
-        // Add code for debugger to mark current camera view
-        let mark = false;
-        if (cameraView) {
-          if (cameraView.camera === CamerasEnum.NORTH || cameraView.camera === CamerasEnum.SOUTH) {
-            if (cameraView.slices.y === y - 1) {
-              mark = true;
-            }
-          } else if (cameraView.camera === CamerasEnum.WEST || cameraView.camera === CamerasEnum.EAST) {
-            if (cameraView.slices.x === x - 1) {
-              mark = true;
-            }
-          }
-        }
-
         // Connect down and right
         if (y > 0) {
           const downPoint = adjustedCorners[y - 1][x];
-          this._addLine(scene, adjustedCornerPoint, downPoint, mark);
+          this._addLine(scene, adjustedCornerPoint, downPoint);
         }
         if (x > 0) {
           const leftPoint = adjustedCorners[y][x - 1];
-          this._addLine(scene, adjustedCornerPoint, leftPoint, mark);
+          this._addLine(scene, adjustedCornerPoint, leftPoint);
         }
       }
     }
+  }
+
+  _addArrows = (scene, pointLists) => {
+    pointLists.forEach(points => {
+      const geometry = new THREE.Geometry();
+      points.forEach(p => {
+        const adjP = this._getAdjustedPoint(p);
+        const { x, y, z } = adjP;
+        geometry.vertices.push(new THREE.Vector3(x, y, z));
+      });
+      const arrow = new THREE.Line(geometry, new THREE.LineBasicMaterial({ color: 0x00EE00 }));
+      scene.add(arrow);
+    });
+  }
+
+  _getArrows = cameraView => {
+    let { x, y, z } = cameraView.slices;
+    let pointLists;
+
+    switch (cameraView.camera) {
+      case CamerasEnum.TOP:
+      case CamerasEnum.BOTTOM:
+        pointLists = [
+          [{ x: -1, y: 0, z }, { x: 0, y: 0, z }, { x: 0, y: -1, z }, { x: -1, y: 0, z }],
+          [{ x: SETTINGS.xMax + 1, y: SETTINGS.yMax, z }, { x: SETTINGS.xMax, y: SETTINGS.yMax, z }, { x: SETTINGS.xMax, y: SETTINGS.yMax + 1, z }, { x: SETTINGS.xMax + 1, y: SETTINGS.yMax, z }],
+          [{ x: SETTINGS.xMax + 1, y: 0, z }, { x: SETTINGS.xMax, y: 0, z }, { x: SETTINGS.xMax, y: -1, z }, { x: SETTINGS.xMax + 1, y: 0, z }],
+          [{ x: -1, y: SETTINGS.yMax, z }, { x: 0, y: SETTINGS.yMax, z }, { x: 0, y: SETTINGS.yMax + 1, z }, { x: -1, y: SETTINGS.yMax, z }],
+        ];
+        break;
+      case CamerasEnum.WEST:
+        x -= 0.5;
+        pointLists = [
+          [{ x: x + 1, y: -1, z: -0.5 }, { x, y: -0.5, z: -0.5 }, { x: x + 1, y: 0, z: -0.5 }, { x: x + 1, y: -1, z: -0.5 }],
+          [{ x: x + 1, y: SETTINGS.yMax + 1, z: -0.5 }, { x, y: SETTINGS.yMax + 0.5, z: -0.5 }, { x: x + 1, y: SETTINGS.yMax, z: -0.5 }, { x: x + 1, y: SETTINGS.yMax + 1, z: -0.5 }]
+        ];
+        break;
+      case CamerasEnum.EAST:
+        x += 0.5;
+        pointLists = [
+          [{ x, y: -1, z: -0.5 }, { x: x + 1, y: -0.5, z: -0.5 }, { x, y: 0, z: -0.5 }, { x, y: -1, z: -0.5 }],
+          [{ x, y: SETTINGS.yMax + 1, z: -0.5 }, { x: x + 1, y: SETTINGS.yMax + 0.5, z: -0.5 }, { x, y: SETTINGS.yMax, z: -0.5 }, { x, y: SETTINGS.yMax + 1, z: -0.5 }]
+        ];
+        break;
+      case CamerasEnum.NORTH:
+        y += 0.5;
+        pointLists = [
+          [{ x: -1, y, z: -0.5 }, { x: -0.5, y: y + 1, z: -0.5 }, { x: 0, y, z: -0.5 }, { x: -1, y, z: -0.5 }],
+          [{ x: SETTINGS.xMax + 1, y, z: -0.5 }, { x: SETTINGS.xMax + 0.5, y: y + 1, z: -0.5 }, { x: SETTINGS.xMax, y, z: -0.5 }, { x: SETTINGS.xMax + 1, y, z: -0.5 }]
+        ];
+        break;
+      case CamerasEnum.SOUTH:
+        y -= 0.5;
+        pointLists = [
+          [{ x: -1, y: y + 1, z: -0.5 }, { x: -0.5, y, z: -0.5 }, { x: 0, y: y + 1, z: -0.5 }, { x: -1, y: y + 1, z: -0.5 }],
+          [{ x: SETTINGS.xMax + 1, y: y + 1, z: -0.5 }, { x: SETTINGS.xMax + 0.5, y, z: -0.5 }, { x: SETTINGS.xMax, y: y + 1, z: -0.5 }, { x: SETTINGS.xMax + 1, y: y + 1, z: -0.5 }]
+        ];
+        break;
+      default:
+        pointLists = [];
+        break;
+    }
+
+    return pointLists;
   }
 
   _addLine = (scene, p0, p1, mark) => {
     const geometry = new THREE.Geometry();
     geometry.vertices.push(new THREE.Vector3(p0.x, p0.y, p0.z));
     geometry.vertices.push(new THREE.Vector3(p1.x, p1.y, p1.z));
+    // geometry.vertices.push(new THREE.Vector3(p1.x, p1.y + 100, p1.z));
+    // console.log(p1.x, p1.y + 100, p1.z);
     let line;
     if (mark) {
       line = new THREE.Line(geometry, new THREE.LineBasicMaterial({ color: 0x00EE00 }));

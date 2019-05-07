@@ -34,6 +34,8 @@ class Design {
 
   getAll = () => this.objects;
 
+  getAt = p => this.objects[p.z][p.y][p.x];
+
   clear = () => {
     this.objects = getEmpty3DArray(SETTINGS.xMax, SETTINGS.yMax, SETTINGS.zMax);
   };
@@ -479,9 +481,9 @@ class Design {
     }
   }
 
-  getBackgroundSlices = (camera, sliceIndex) => {
+  getBackgroundSlices = (camera, sliceIndex, max = 17) => {
     let backgroundSliceIndex = sliceIndex;
-    const backgroundSliceIndices = [];
+    let backgroundSliceIndices = [];
     switch (camera) {
       case CamerasEnum.NORTH:
         while (backgroundSliceIndex < (SETTINGS.yMax - 1)) {
@@ -522,6 +524,7 @@ class Design {
       default:
         throw new Error(`camera ${camera} is not recognized!`);
     }
+    backgroundSliceIndices = backgroundSliceIndices.slice(0, max);
     const backgroundSlices = backgroundSliceIndices.map(i => this.getSlice(camera, i));
     return backgroundSlices;
   }

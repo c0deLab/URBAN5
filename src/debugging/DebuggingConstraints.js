@@ -24,16 +24,22 @@ export default class DebuggingConstraints extends React.Component {
       const objects = session._design.getObjects();
 
       this.setState({ constraints, systemConstraints, buildings, objects });
-      setTimeout(poll, 500);
+      this.pollTimeout = setTimeout(poll, 500);
     };
     poll();
   }
 
+  componentWillUnmount() {
+    if (this.pollTimeout) {
+      clearTimeout(this.pollTimeout);
+    }
+  }
+
   getStringsFromConstraints = c => {
     let type;
-    if (parseInt(c.type) === 0) {
+    if (parseInt(c.type, 10) === 0) {
       type = 'room';
-    } else if (parseInt(c.type) === 1) {
+    } else if (parseInt(c.type, 10) === 1) {
       type = 'roof';
     } else {
       type = 'structure';
@@ -46,7 +52,7 @@ export default class DebuggingConstraints extends React.Component {
     const { constraints, systemConstraints, buildings } = this.state;
 
     return (
-      <div style={{ position: 'absolute', left: '20px', top: '20px', width: '500px', wordWrap: 'break-word', border: '1px solid #E8E8DA', padding: '10px 10px 40px 10px', fontSize: '16px' }}>
+      <div>
         <div>
           <h3>User Constraints:</h3>
           <div>{ constraints.map(c => (<div key={c.text} style={{ whiteSpace: 'pre' }}>{ this.getStringsFromConstraints(c) }</div>)) }</div>

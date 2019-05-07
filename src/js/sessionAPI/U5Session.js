@@ -1,6 +1,7 @@
 import Monitor from './Monitor';
 import Design from './Design';
 import Topo from './Topo';
+import beep from '../Sounds';
 
 /* global localStorage */
 
@@ -18,7 +19,10 @@ class U5Session {
     this._design.calculateAttributes(this.topo);
 
     // monitor checks design
-    this._monitor.checkDesign(this._design);
+    const newProblems = this._monitor.checkDesign(this._design);
+    if (newProblems) {
+      beep();
+    }
 
     // save
     this.save();
@@ -45,11 +49,14 @@ class U5Session {
       this._design.setSurface(camera, xyz, side, surface);
       this.onUpdate();
     },
-    // Get the 3D array of objects
+    // Get the 3D array of design
     getAll: () => this._design.getAll(),
+    getAt: p => this._design.getAt(p),
+    // Get array of objects
+    getObjects: () => this._design.getObjects(),
     // Get the 2D array of objects for a given slice
     getSlice: (camera, slice) => this._design.getSlice(camera, slice),
-    getBackgroundSlices: (camera, slice) => this._design.getBackgroundSlices(camera, slice)
+    getBackgroundSlices: (camera, slice, max) => this._design.getBackgroundSlices(camera, slice, max)
   };
 
   // Interface for the topography model
@@ -69,7 +76,8 @@ class U5Session {
     // Get the 2D array of heights for the topography
     getAt: xy => this._topo.getAt(xy),
     // Get a list of heights for the topography at the corners for a line representing it in a slice
-    getSlice: (camera, slice) => this._topo.getSlice(camera, slice)
+    getSlice: (camera, slice) => this._topo.getSlice(camera, slice),
+    getBackgroundSlices: (camera, slice, max) => this._topo.getBackgroundSlices(camera, slice, max)
   };
 
   // Interface for the monitor

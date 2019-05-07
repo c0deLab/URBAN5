@@ -36,7 +36,10 @@ export default class Display2DView {
 
     // Draw the background slices
     if (this.drawBackground) {
-      const backgroundSlices = this.session.design.getBackgroundSlices(camera, sliceIndex);
+      const topoBackgroundSlices = this.session.topo.getBackgroundSlices(camera, sliceIndex, SETTINGS.clippingMax);
+      topoBackgroundSlices.forEach(s => this.topoRenderer.draw(s, isBackgroundDashed));
+
+      const backgroundSlices = this.session.design.getBackgroundSlices(camera, sliceIndex, SETTINGS.clippingMax);
       backgroundSlices.forEach(s => this.designRenderer.drawSlice(camera, s, isBackgroundDashed));
     }
 
@@ -171,4 +174,33 @@ export default class Display2DView {
 
     this.stage.addChild(circle);
   };
+
+  animateX = (path, position, speed, callback) => {
+    if (position >= path.length) {
+      callback();
+      return;
+    }
+
+    const p = path[position];
+    const xObj = this.drawX(p.xNoise, p.yNoise);
+    this.update();
+    setTimeout(() => {
+      this.stage.removeChild(xObj);
+      this.animateX(path, position + 1, speed, callback);
+    }, speed);
+  };
+
+  drawX = (x, y) => {
+    const line = new createjs.Shape();
+    line.graphics.beginStroke(SETTINGS.color).setStrokeStyle(SETTINGS.stroke);
+    const offset = 0.2;
+    const cornerX = (x + offset) * SETTINGS.r;
+    const cornerY = SETTINGS.h - ((y + offset) * SETTINGS.r);
+    line.graphics.moveTo(cornerX, cornerY).lineTo(cornerX + ((1 - (2 * offset)) * SETTINGS.r), cornerY - ((1 - (2 * offset)) * SETTINGS.r));
+
+    const cornerX2 = (x + 1 - offset) * SETTINGS.r;
+    const cornerY2 = SETTINGS.h - ((y + offset) * SETTINGS.r);
+    line.graphics.moveTo(cornerX2, cornerY2).lineTo(cornerX2 - ((1 - (2 * offset)) * SETTINGS.r), cornerY2 - ((1 - (2 * offset)) * SETTINGS.r));
+    return this.stage.addChild(line);
+  }
 }

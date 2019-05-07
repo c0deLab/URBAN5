@@ -41,23 +41,24 @@ class Monitor {
   getMessages = () => this.messages;
 
   addConstraint = text => {
-    const constraint = Constraint.create(text);
+    const constraintToAdd = Constraint.create(text);
     this.messages.push(text);
 
-    if (constraint && constraint instanceof Constraint) {
+    if (constraintToAdd && constraintToAdd instanceof Constraint) {
       // Check if this overrides former constraint
       const newConstraints = [];
       this.constraints.forEach(old => {
-        if (!old.isSameType(constraint)) {
+        if (!old.isSameType(constraintToAdd)) {
           newConstraints.push(old);
         }
       });
-      newConstraints.push(constraint);
+      newConstraints.push(constraintToAdd);
 
       this.constraints = newConstraints;
       this.messages.push('I have understood.');
       return true;
     }
+
     this.messages.push('I am sorry I do not understand.');
     return false;
   };
@@ -72,9 +73,9 @@ class Monitor {
     const incompatibilities = this.checkIncompatibilities(design);
 
     const newMessages = [];
-    if (conflicts.length > 3) {
+    if (conflicts.length > 2) {
       newMessages.push('Don\'t you think you should stop, Ted?');
-    } else if (conflicts.length > 2) {
+    } else if (conflicts.length > 1) {
       newMessages.push('Ted, many conflicts are occurring.');
     } else if (conflicts.length > 0) {
       // conflicts.forEach(conflict => {
@@ -93,8 +94,16 @@ class Monitor {
 
     console.log(`Messages: [${newMessages.join(',')}]`);
     this.messages = newMessages;
+
+    let newProblems = false;
+    if (conflicts.length > this.conflicts.length || incompatibilities.length > this.incompatibilities.length) {
+      newProblems = true;
+    }
+
     this.conflicts = conflicts;
     this.incompatibilities = incompatibilities;
+
+    return newProblems;
   }
 
   /**

@@ -3,6 +3,7 @@ import PropTypes from 'prop-types';
 
 import Display2DView from '../js/Display2DView';
 import { getGridPointInModelSpace } from '../js/helpers/Helpers';
+import calculatePath from '../js/helpers/CalculatePath';
 
 /* global document */
 /* global SETTINGS */
@@ -11,8 +12,7 @@ import { getGridPointInModelSpace } from '../js/helpers/Helpers';
 export default class ChoosePath extends React.Component {
   static propTypes = {
     session: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
-    onSelectStart: PropTypes.func.isRequired, // eslint-disable-line react/forbid-prop-types
-    onSelectEnd: PropTypes.func.isRequired, // eslint-disable-line react/forbid-prop-types
+    onSelectPath: PropTypes.func.isRequired, // eslint-disable-line react/forbid-prop-types
   }
 
   state = {
@@ -24,6 +24,8 @@ export default class ChoosePath extends React.Component {
 
     this.canvas = document.getElementById('display');
     this.canvas.addEventListener('mousedown', this.handleClick);
+    this.start = null;
+    this.end = null;
 
     // If the model had already been created, immediately wire
     this.wire();
@@ -57,7 +59,7 @@ export default class ChoosePath extends React.Component {
 
   handleClick = event => {
     const { hasStart } = this.state;
-    const { onSelectStart, onSelectEnd } = this.props;
+    const { onSelectPath, session } = this.props;
 
     const point = getGridPointInModelSpace(event.offsetX, event.offsetY);
     if (!point) {
@@ -65,16 +67,33 @@ export default class ChoosePath extends React.Component {
     }
 
     if (!hasStart) {
-      onSelectStart(point);
       this.setState({ hasStart: true });
       this.view.drawCircle(point.x, point.y);
       this.view.update();
+      this.start = point;
     } else {
       this.view.drawCircle(point.x, point.y);
       this.view.update();
-      setTimeout(() => {
-        onSelectEnd(point);
-      }, 1000);
+      this.end = point;
+      const path = calculatePath(session, this.start, this.end);
+
+      if (!path) {
+        console.log('No path');
+        this.start = null;
+        this.end = null;
+        this.setState({ hasStart: false });
+        return;
+      }
+
+      // do 2D walkthrough
+      const callback = () => {
+        this.start = null;
+        this.end = null;
+        this.setState({ hasStart: false });
+        onSelectPath(path);
+      };
+      const speed = 100;
+      this.view.animateX(path, 0, speed, callback);
     }
   }
 

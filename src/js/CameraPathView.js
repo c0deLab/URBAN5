@@ -4,11 +4,10 @@ import TopoRenderer3D from './renderers/TopoRenderer3D';
 import DesignRenderer3D from './renderers/DesignRenderer3D';
 
 /* global SETTINGS */
-/* global requestAnimationFrame */
 
 /** Class responsible for drawing a 3D view of the model */
 export default class CameraPathView {
-  constructor(container, session, cameraView) {
+  constructor(container, session, cameraView, fov = 75) {
     this.container = container;
     this.target = null;
     this.session = session;
@@ -19,7 +18,7 @@ export default class CameraPathView {
     // Setup Three.js scene, camera, and renderer
     this.scene = new THREE.Scene();
     this.scene.background = new THREE.Color(0x000000);
-    this.camera = new THREE.PerspectiveCamera(75, SETTINGS.w / SETTINGS.h, 1, 2000);
+    this.camera = new THREE.PerspectiveCamera(fov, SETTINGS.w / SETTINGS.h, 1, 8000);
     this.scene.add(this.camera);
     this.renderer = new THREE.WebGLRenderer({ antialias: true });
     this.renderer.setPixelRatio(0.6);
@@ -73,6 +72,6 @@ export default class CameraPathView {
    */
   getAdjustedPoint = p => {
     const { x, y, z } = p;
-    return { x: x * SETTINGS.r, y: z * SETTINGS.r + (SETTINGS.r / 2), z: -y * SETTINGS.r };
+    return { x: x * SETTINGS.r + (SETTINGS.r / 2), y: z * SETTINGS.r + (SETTINGS.r * 0.75), z: -y * SETTINGS.r - (SETTINGS.r / 2) };
   }
 }
