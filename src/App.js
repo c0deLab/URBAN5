@@ -38,7 +38,7 @@ const cameraView = {
 
 // set view to first plane with object
 const objects = session.design.getObjects();
-if (objects) {
+if (objects.length > 0) {
   let minY = SETTINGS.yMax;
   objects.forEach(object => {
     if (object.position.y < minY) {

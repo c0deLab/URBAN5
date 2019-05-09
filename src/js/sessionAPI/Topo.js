@@ -121,16 +121,8 @@ class Topo {
         }
         break;
       case CamerasEnum.BOTTOM:
-        while (backgroundSliceIndex < (SETTINGS.zMax - 1)) {
-          backgroundSliceIndex += 1;
-          backgroundSliceIndices.push(backgroundSliceIndex);
-        }
-        break;
       case CamerasEnum.TOP:
-        while (backgroundSliceIndex > 0) {
-          backgroundSliceIndex -= 1;
-          backgroundSliceIndices.push(backgroundSliceIndex);
-        }
+        // no background topo for top view
         break;
       default:
         throw new Error(`camera ${camera} is not recognized!`);

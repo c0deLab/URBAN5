@@ -66,12 +66,16 @@ export default class ChoosePath extends React.Component {
       return;
     }
 
+    if (session.design.getAt({ x: point.x, y: point.y, z: 0 })) {
+      return;
+    }
+
     if (!hasStart) {
       this.setState({ hasStart: true });
       this.view.drawCircle(point.x, point.y);
       this.view.update();
       this.start = point;
-    } else {
+    } else if (this.start.x !== point.x || this.start.y !== point.y) {
       this.view.drawCircle(point.x, point.y);
       this.view.update();
       this.end = point;
@@ -92,7 +96,7 @@ export default class ChoosePath extends React.Component {
         this.setState({ hasStart: false });
         onSelectPath(path);
       };
-      const speed = 100;
+      const speed = 75;
       this.view.animateX(path, 0, speed, callback);
     }
   }

@@ -25,7 +25,7 @@ export default class CameraPathController {
       const p = this.path[this.i];
       const nextP = this.path[this.i + 1];
       this.views.forEach(v => v.setCameraPosition(p, nextP));
-      setTimeout(() => this.animateCameraPath(), 300);
+      setTimeout(() => this.animateCameraPath(), 150);
     } else {
       this.onWalkthroughEnd();
     }
