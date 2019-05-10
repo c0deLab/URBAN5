@@ -54,8 +54,8 @@ export default class Top extends React.PureComponent {
   onSpeak = text => {
     const { session } = this.props;
 
+    debugger;
     session.monitor.addConstraint(text);
-
     const textMessages = session.monitor.getMessages();
     this.setState({ textMessages: textMessages.slice() });
   };
@@ -67,9 +67,16 @@ export default class Top extends React.PureComponent {
     let textInput = null;
 
     if (action === ActionsEnum.SPEAK_CONSTRAINT) {
-      textInput = (<TextInput onSubmit={this.onSpeak} />);
+      textInput = (
+        <div>
+          <span>Enter a constraint:</span>
+          &nbsp;
+          <TextInput onSubmit={this.onSpeak} />
+        </div>
+      );
     }
 
+    console.log('textMessages', textMessages);
     const messageElements = textMessages.map(message => (
       <div className="mono-text" key={message}>{message}</div>
     ));

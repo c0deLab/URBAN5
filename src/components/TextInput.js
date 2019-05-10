@@ -27,17 +27,10 @@ export default class TextInput extends React.PureComponent {
     if (event.keyCode === 13) { // Is 'Enter'
       this.handleSubmit();
     }
-    switch (event.keyCode) {
-      default:
-        break;
-    }
   };
 
   handleChange = event => {
     const val = event.target.value;
-    // const last = val[val.length - 1];
-    // const start = val.substring(0, val.length - 2);
-    // const actualVal = `${start}${last}_`;
     const actualVal = val;
     this.setState({ value: actualVal });
   };
@@ -46,8 +39,8 @@ export default class TextInput extends React.PureComponent {
     const { onSubmit } = this.props;
     const { value } = this.state;
 
-    onSubmit(value);
     this.setState({ value: '' });
+    onSubmit(value);
   };
 
   render() {

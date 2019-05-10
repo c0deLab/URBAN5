@@ -41,23 +41,24 @@ export default class Debugging3D extends React.Component {
     let lastTotalHeight = 0;
     const poll = () => {
       this.pollTimeout = setTimeout(() => {
-        const numObjects = session._design._objects.length;
-        const totalHeight = session._topo.heights.reduce((total, num) => total + num);
-        if (cameraView.camera !== lastCameraView.camera || cameraView.slices.x !== lastCameraView.slices.x
-            || cameraView.slices.y !== lastCameraView.slices.y || cameraView.slices.z !== lastCameraView.slices.z || numObjects !== lastNumObjects || totalHeight !== lastTotalHeight) {
-          this.view.render();
-          lastCameraView = {
-            camera: cameraView.camera,
-            slices: {
-              x: cameraView.slices.x,
-              y: cameraView.slices.y,
-              z: cameraView.slices.z,
-            }
-          };
-          lastNumObjects = numObjects;
-          lastTotalHeight = totalHeight;
+        if (session && session._design && session._design._objects) {
+          const numObjects = session._design._objects.length;
+          const totalHeight = session._topo.heights.reduce((total, num) => total + num);
+          if (cameraView.camera !== lastCameraView.camera || cameraView.slices.x !== lastCameraView.slices.x
+              || cameraView.slices.y !== lastCameraView.slices.y || cameraView.slices.z !== lastCameraView.slices.z || numObjects !== lastNumObjects || totalHeight !== lastTotalHeight) {
+            this.view.render();
+            lastCameraView = {
+              camera: cameraView.camera,
+              slices: {
+                x: cameraView.slices.x,
+                y: cameraView.slices.y,
+                z: cameraView.slices.z,
+              }
+            };
+            lastNumObjects = numObjects;
+            lastTotalHeight = totalHeight;
+          }
         }
-
         poll();
       }, 100);
     };

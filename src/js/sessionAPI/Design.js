@@ -577,17 +577,19 @@ class Design {
       this.add(type, pos, mod);
     };
 
-    addObject({ x: 11, y: 0, z: 0 }, 0);
-    addObject({ x: 12, y: 0, z: 0 }, 0);
-    addObject({ x: 11, y: 0, z: 1 }, 0);
-    addObject({ x: 12, y: 0, z: 1 }, 0);
-    addObject({ x: 11, y: 0, z: 2 }, 1, 'w');
-    addObject({ x: 12, y: 0, z: 2 }, 1, 'e');
+    addObject({ x: 7, y: 8, z: 0 }, 0);
+    addObject({ x: 8, y: 8, z: 0 }, 0);
+    addObject({ x: 7, y: 8, z: 1 }, 0);
+    addObject({ x: 8, y: 8, z: 1 }, 0);
+    addObject({ x: 7, y: 8, z: 2 }, 1, 'w');
+    addObject({ x: 8, y: 8, z: 2 }, 1, 'e');
+    addObject({ x: 7, y: 9, z: 0 }, 0);
+    addObject({ x: 8, y: 9, z: 0 }, 0);
 
-    addObject({ x: 14, y: 0, z: 0 }, 2);
+    addObject({ x: 12, y: 8, z: 1 }, 2);
 
-    this.setSurface(0, { x: 11, y: 0, z: 0 }, 'l', 1);
-    this.setSurface(0, { x: 12, y: 0, z: 1 }, 'b', 1);
+    this.setSurface(0, { x: 7, y: 8, z: 0 }, 'l', 1);
+    this.setSurface(0, { x: 8, y: 8, z: 1 }, 'b', 1);
   }
 }
 

@@ -1,5 +1,7 @@
 import Constraint from './Constraint';
 
+/* global SETTINGS */
+
 /** Class to monitor the actions of the user */
 class Monitor {
   constructor() {
@@ -74,14 +76,14 @@ class Monitor {
 
     const newMessages = [];
     if (conflicts.length > 2) {
-      newMessages.push('Don\'t you think you should stop, Ted?');
+      newMessages.push(`Don't you think you should stop, ${SETTINGS.userName}?`);
     } else if (conflicts.length > 1) {
-      newMessages.push('Ted, many conflicts are occurring.');
+      newMessages.push(`${SETTINGS.userName}, many conflicts are occurring.`);
     } else if (conflicts.length > 0) {
       // conflicts.forEach(conflict => {
       //   newMessages.push(`Ted, a conflict has occurred, you said: ${conflict.constraint.text}. The present status is ${conflict.value}.`);
       // });
-      newMessages.push(`Ted, a conflict has occurred, you said: ${conflicts[0].constraint.text}. The present status is ${conflicts[0].value}.`);
+      newMessages.push(`${SETTINGS.userName}, a conflict has occurred, you said: ${conflicts[0].constraint.text}. The present status is ${conflicts[0].value}.`);
     } else if (conflicts.length === 0 && this.conflicts.length > 0) {
       newMessages.push('Conflicts were resolved.');
     }

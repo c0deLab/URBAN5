@@ -99,6 +99,7 @@ class U5Session {
     // console.log('save!');
     const ice = U5Session.freeze(this);
     localStorage.setItem(this._id, JSON.stringify(ice));
+    localStorage.setItem(`${this._id}_date`, Date.now());
   };
 }
 
@@ -126,7 +127,7 @@ U5Session.freeze = session => {
 };
 
 U5Session.thaw = json => {
-  const { id, design, topo, monitor } = json;  // eslint-disable-line
+  const { id, design, topo, monitor, date } = json;  // eslint-disable-line
   const session = new U5Session(id);
   session._design = Design.thaw(design);  // eslint-disable-line
   session._topo = Topo.thaw(topo);  // eslint-disable-line

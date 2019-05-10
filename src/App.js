@@ -2,12 +2,15 @@ import React from 'react';
 import './App.css';
 import * as THREE from 'three';
 
+import StartPage from './components/StartPage';
+import LoadPage from './components/LoadPage';
 import MainPage from './components/MainPage';
 import DebuggingConstraints from './debugging/DebuggingConstraints';
 import Debugging3D from './debugging/Debugging3D';
 import U5SessionFactory from './js/sessionAPI/U5SessionFactory';
 
 /* global window */
+/* global document */
 
 const SETTINGS = {
   w: 852,
@@ -20,38 +23,18 @@ const SETTINGS = {
   r: 50,
   material: new THREE.LineBasicMaterial({ color: 0xE8E8DA }),
   stroke: 3.5,
-  clippingMax: 1
+  clippingMax: 1,
+  userName: null
 };
 window.SETTINGS = SETTINGS;
-
-const session = new U5SessionFactory().last();
-console.log('loaded session: ', session);
-const cameraView = {
-  camera: 0,
-  slices: {
-    x: 0,
-    y: 0,
-    z: 0
-  }
-};
-// const session = new U5SessionFactory().test();
-
-// set view to first plane with object
-const objects = session.design.getObjects();
-if (objects.length > 0) {
-  let minY = SETTINGS.yMax;
-  objects.forEach(object => {
-    if (object.position.y < minY) {
-      minY = object.position.y;
-    }
-  });
-  cameraView.slices.y = minY;
-}
 
 export default class App extends React.Component {
 
   state = {
-    view: 4
+    view: 4,
+    session: null,
+    cameraView: null,
+    restartIndex: 0,
   }
 
   componentDidMount() {
@@ -70,13 +53,74 @@ export default class App extends React.Component {
         case 'F4':
           this.setState({ view: 4 });
           break;
+        case 'Escape':
+          this.reset();
+          break;
         default:
           break;
       }
     });
+
+    document.addEventListener('keydown', () => {
+      clearTimeout(this.resetTimer);
+      this.resetTimer = setTimeout(this.reset, 60000);
+    });
+    document.addEventListener('mousedown', () => {
+      clearTimeout(this.resetTimer);
+      this.resetTimer = setTimeout(this.reset, 60000);
+    });
+    this.resetTimer = setTimeout(this.reset, 60000);
+
+    // test start
+    this.startSession(new U5SessionFactory().last());
+  }
+
+  startSession = session => {
+    // const session = new U5SessionFactory().last();
+    console.log('loaded session: ', session);
+    const cameraView = this.getCameraView(session);
+
+    this.setState({ session, cameraView });
+  }
+
+  getCameraView = session => {
+    const cameraView = {
+      camera: 0,
+      slices: {
+        x: 0,
+        y: 0,
+        z: 0
+      }
+    };
+
+    // set view to first plane with object
+    const objects = session.design.getObjects();
+    if (objects.length > 0) {
+      let minY = SETTINGS.yMax;
+      let minX = SETTINGS.xMax;
+      objects.forEach(object => {
+        if (object.position.y < minY) {
+          minY = object.position.y;
+        }
+        if (object.position.x < minX) {
+          minX = object.position.x;
+        }
+      });
+      cameraView.slices.y = minY;
+      cameraView.slices.x = minX;
+    }
+    return cameraView;
+  }
+
+  reset = () => {
+    const { restartIndex } = this.state;
+    SETTINGS.userName = null;
+    this.setState({ session: null, cameraView: null, restartIndex: restartIndex + 1 });
   }
 
   renderBody = view => {
+    const { session, cameraView } = this.state;
+
     switch (view) {
       case 1:
         return (<MainPage session={session} cameraView={cameraView} />);
@@ -106,10 +150,10 @@ export default class App extends React.Component {
   }
 
   render() {
-    const { view } = this.state;
+    const { view, session, restartIndex } = this.state;
     return (
       <div className="app">
-        { this.renderBody(view) }
+        { session === null ? (<StartPage key={restartIndex} onSelectSession={this.startSession} />) : this.renderBody(view) }
       </div>
     );
   }

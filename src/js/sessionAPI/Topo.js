@@ -11,6 +11,7 @@ class Topo {
       this.heights = heights;
     } else {
       this.heights = getEmpty2DArray(SETTINGS.yMax, SETTINGS.xMax, 0);
+      this.fill();
     }
   }
 
@@ -155,6 +156,10 @@ class Topo {
     // console.dir(corners);
     return corners;
   };
+
+  fill = () => {
+    this.heights[8][12] = 1;
+  }
 }
 
 Topo.freeze = topo => {

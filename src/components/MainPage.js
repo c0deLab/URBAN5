@@ -21,11 +21,11 @@ export default class MainPage extends React.Component {
   }
 
   state = {
-    action: ActionsEnum.ADDCUBE, // Default action is ADDCUBE
-    displayType: 'CALC'
-
     // action: ActionsEnum.ADDCUBE, // Default action is ADDCUBE
-    // displayType: 'DRAW',
+    // displayType: 'CALC'
+
+    action: ActionsEnum.ADDCUBE, // Default action is ADDCUBE
+    displayType: 'DRAW',
 
     // action: ActionsEnum.INCREASE_HEIGHT, // Default action is ADDCUBE
     // displayType: 'TOPO'
@@ -124,12 +124,13 @@ export default class MainPage extends React.Component {
     switch (displayType) {
       case 'DRAW':
         return [
+          ActionsEnum.STEPIN,
+          ActionsEnum.STEPOUT,
+          ActionsEnum.ROTATELT,
+          ActionsEnum.ROTATERT,
           ActionsEnum.ADDCUBE,
           ActionsEnum.ADDTREE,
-          ActionsEnum.ADD_ROOF_EAST,
-          ActionsEnum.ADD_ROOF_WEST,
-          ActionsEnum.ADD_ROOF_NORTH,
-          ActionsEnum.ADD_ROOF_SOUTH,
+          ActionsEnum.ADDROOF,
           ActionsEnum.REMOVE,
           ActionsEnum.SPEAK_CONSTRAINT
         ];

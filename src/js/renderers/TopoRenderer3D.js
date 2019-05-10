@@ -15,6 +15,7 @@ export default class TopoRenderer3D {
       const pointLists = this._getArrows(cameraView);
       this._addArrows(scene, pointLists);
     }
+    const isDebug = !!cameraView;
 
     // calculate the corners of all the topography and connect them
     const adjustedCorners = getEmpty2DArray(SETTINGS.xMax + 1, SETTINGS.yMax + 1, null);
@@ -29,11 +30,11 @@ export default class TopoRenderer3D {
         // Connect down and right
         if (y > 0) {
           const downPoint = adjustedCorners[y - 1][x];
-          this._addLine(scene, adjustedCornerPoint, downPoint);
+          this._addLine(scene, adjustedCornerPoint, downPoint, isDebug);
         }
         if (x > 0) {
           const leftPoint = adjustedCorners[y][x - 1];
-          this._addLine(scene, adjustedCornerPoint, leftPoint);
+          this._addLine(scene, adjustedCornerPoint, leftPoint, isDebug);
         }
       }
     }
@@ -102,15 +103,14 @@ export default class TopoRenderer3D {
     return pointLists;
   }
 
-  _addLine = (scene, p0, p1, mark) => {
+  _addLine = (scene, p0, p1, isDebug) => {
     const geometry = new THREE.Geometry();
     geometry.vertices.push(new THREE.Vector3(p0.x, p0.y, p0.z));
     geometry.vertices.push(new THREE.Vector3(p1.x, p1.y, p1.z));
-    // geometry.vertices.push(new THREE.Vector3(p1.x, p1.y + 100, p1.z));
-    // console.log(p1.x, p1.y + 100, p1.z);
+
     let line;
-    if (mark) {
-      line = new THREE.Line(geometry, new THREE.LineBasicMaterial({ color: 0x00EE00 }));
+    if (isDebug) {
+      line = new THREE.Line(geometry, new THREE.LineBasicMaterial({ color: 0x666666 }));
     } else {
       line = new THREE.Line(geometry, SETTINGS.material);
     }

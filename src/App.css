@@ -58,3 +58,7 @@ input[type="text"] {
   /*caret-color: transparent;*/
   width: 864px;
 }
+
+ul {
+  list-style: none;
+}

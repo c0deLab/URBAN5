@@ -24,7 +24,7 @@ export default class Menu extends React.PureComponent {
               e.preventDefault();
               onClick(item);
             }}
-            style={{ display: 'block' }}
+            style={{ display: 'block', whiteSpace: 'pre' }}
           >
             {item.label + (item.id === action.id ? '_' : '')}
           </button>

@@ -45,8 +45,27 @@ export default class Display2DController {
       case ActionsEnum.ROTATELT:
         this.rotateLeft();
         break;
+      case ActionsEnum.ROTATERT:
+        this.rotateRight();
+        break;
       case ActionsEnum.ADDTREE:
         this.addObject(modelPosition, ObjectsEnum.TRUNK);
+        break;
+      case ActionsEnum.ADDROOF:
+        const object = this.session.design.getAt(modelPosition);
+        if (object && object.constructor.typeName === 'ROOF') {
+          if (object.direction === 'e') {
+            this.addObject(modelPosition, ObjectsEnum.ROOF, 'n');
+          } else if (object.direction === 'n') {
+            this.addObject(modelPosition, ObjectsEnum.ROOF, 'w');
+          } else if (object.direction === 'w') {
+            this.addObject(modelPosition, ObjectsEnum.ROOF, 's');
+          } else if (object.direction === 's') {
+            this.addObject(modelPosition, ObjectsEnum.ROOF, 'e');
+          }
+        } else {
+          this.addObject(modelPosition, ObjectsEnum.ROOF, 'e');
+        }
         break;
       case ActionsEnum.ADD_ROOF_EAST:
         this.addObject(modelPosition, ObjectsEnum.ROOF, 'e');
