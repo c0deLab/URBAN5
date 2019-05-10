@@ -57,28 +57,6 @@ const PROPS_REVERSE = reverseMap(PROPS);
 const TYPES_REVERSE = reverseMap(TYPES);
 const REPLACE_REVERSE = reverseMap(REPLACE);
 
-// const FNS = {
-//   // 'MAX': ['', 'same'],
-//   // 'MIN': ['greater', 'more', 'bigger', 'taller', 'larger'],
-//   SUM: ['total', 'any']
-// };
-
-// function splitResults(results) {
-//   const trueResults = [];
-//   results.forEach(result => {
-//     trueResults.push(...result.normal.split(' '));
-//   });
-//   return trueResults;
-// }
-
-// const STOP_WORDS = [
-//   // source: https://nlp.stanford.edu/IR-book/html/htmledition/dropping-common-terms-stop-words-1.html
-//   'a', 'an', 'and', 'are', 'as', 'at', 'be', 'by', 'for', 'from', 'has', 'he', 'in',
-//   'is', 'it', 'its', 'of', 'on', 'that', 'the', 'to', 'was', 'were', 'will', 'with',
-//   // others
-//   'should', 'there'
-// ];
-
 const getResult = doc => !doc.has('no');
 
 const getValue = doc => {
@@ -95,32 +73,6 @@ const getValue = doc => {
 };
 
 const getProp = doc => {
-  // const nounParts = doc.nouns().data();
-
-  // console.log('nounParts', nounParts);
-  // let prop = null;
-  // if (nounParts.length > 0) {
-  //   const propKeys = Object.keys(PROPS_REVERSE);
-
-  //   nounParts.forEach(nounPart => {
-  //     const noun = nounPart.singular;
-  //     if (propKeys.includes(noun)) {
-  //       prop = PROPS_REVERSE[noun];
-  //     }
-  //   });
-  // }
-
-  // const compWords = doc.match('(#Comparative|#Adverb|#Adjective)').out('array');
-  // if (compWords.length > 0) {
-  //   const propKeys = Object.keys(PROPS_REVERSE);
-  //   compWords.forEach(compWord => {
-  //     console.log('compWord', compWord);
-  //     if (propKeys.includes(compWord)) {
-  //       prop = PROPS_REVERSE[compWord];
-  //     }
-  //   });
-  // }
-
   let prop = null;
   const propKeys = Object.keys(PROPS_REVERSE);
   propKeys.forEach(key => {
@@ -133,20 +85,6 @@ const getProp = doc => {
 };
 
 const getType = doc => {
-  // const nounParts = doc.nouns().data();
-  // let type = '0';
-  // // split multipart nouns into parts
-  // const nouns = splitResults(doc.nouns().data());
-  // if (nouns.length > 0) {
-  //   const typeKeys = Object.keys(TYPES_REVERSE);
-
-  //   nouns.forEach(noun => {
-  //     if (typeKeys.includes(noun)) {
-  //       type = TYPES_REVERSE[noun];
-  //     }
-  //   });
-  // }
-
   let type = '0';
   const propKeys = Object.keys(TYPES_REVERSE);
   propKeys.forEach(key => {

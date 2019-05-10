@@ -1,5 +1,5 @@
 import SurfacesEnum from '../enums/SurfacesEnum';
-import Cube from '../sessionAPI/Cube';
+import Cube from './Cube';
 
 export default class Roof {
   static typeName = 'ROOF'

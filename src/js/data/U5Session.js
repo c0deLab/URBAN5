@@ -1,7 +1,7 @@
 import Monitor from './Monitor';
 import Design from './Design';
 import Topo from './Topo';
-import beep from '../Sounds';
+import beep from '../helpers/Sounds';
 
 /* global localStorage */
 

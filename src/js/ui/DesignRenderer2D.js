@@ -1,9 +1,9 @@
 import { createjs } from '@createjs/easeljs';
 import CamerasEnum from '../enums/CamerasEnum';
 import SurfacesEnum from '../enums/SurfacesEnum';
-import Cube from '../sessionAPI/Cube';
-import { Trunk, Foliage } from '../sessionAPI/Tree';
-import Roof from '../sessionAPI/Roof';
+import Cube from '../data/Cube';
+import { Trunk, Foliage } from '../data/Tree';
+import Roof from '../data/Roof';
 
 /* global SETTINGS */
 

@@ -2,8 +2,7 @@ import Array2D from 'array2d';
 import ObjectsEnum from '../enums/ObjectsEnum';
 import CamerasEnum from '../enums/CamerasEnum';
 
-import { getEmpty2DArray, getEmpty3DArray, getCellContext3D } from '../helpers/ArrayHelpers';
-import { getOppositeDirection } from '../helpers/Helpers';
+import { getOppositeDirection, getEmpty2DArray, getEmpty3DArray, getCellContext3D } from '../helpers/Helpers';
 
 import Cube from './Cube';
 import Roof from './Roof';

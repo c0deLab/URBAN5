@@ -1,10 +1,10 @@
 import { createjs } from '@createjs/easeljs';
 
-import EditTopoRenderer2D from './renderers/EditTopoRenderer2D';
+import EditTopoRenderer2D from './EditTopoRenderer2D';
 
 /* global SETTINGS */
 
-/** Class responsible for rednering a 2D slice */
+/** Class responsible for rendering a 2D slice of topography */
 export default class TopoView {
   constructor(canvas, session) {
     this.session = session;

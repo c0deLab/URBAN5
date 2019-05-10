@@ -1,6 +1,6 @@
 import React from 'react';
 
-import U5SessionFactory from '../js/sessionAPI/U5SessionFactory';
+import U5SessionFactory from '../js/data/U5SessionFactory';
 import LoadPage from './LoadPage';
 import TextInput from './TextInput';
 

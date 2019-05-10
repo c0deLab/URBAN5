@@ -53,8 +53,6 @@ export default class Top extends React.PureComponent {
 
   onSpeak = text => {
     const { session } = this.props;
-
-    debugger;
     session.monitor.addConstraint(text);
     const textMessages = session.monitor.getMessages();
     this.setState({ textMessages: textMessages.slice() });

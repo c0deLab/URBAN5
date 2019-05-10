@@ -1,7 +1,7 @@
 import * as THREE from 'three';
 
-import TopoRenderer3D from './renderers/TopoRenderer3D';
-import DesignRenderer3D from './renderers/DesignRenderer3D';
+import TopoRenderer3D from './TopoRenderer3D';
+import DesignRenderer3D from './DesignRenderer3D';
 
 /* global SETTINGS */
 

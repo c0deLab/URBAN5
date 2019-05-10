@@ -1,7 +1,7 @@
-import CamerasEnum from './enums/CamerasEnum';
-import ActionsEnum from './enums/ActionsEnum';
-import ObjectsEnum from './enums/ObjectsEnum';
-import SurfacesEnum from './enums/SurfacesEnum';
+import CamerasEnum from '../enums/CamerasEnum';
+import ActionsEnum from '../enums/ActionsEnum';
+import ObjectsEnum from '../enums/ObjectsEnum';
+import SurfacesEnum from '../enums/SurfacesEnum';
 
 /* global SETTINGS */
 
@@ -98,9 +98,6 @@ export default class Display2DController {
         // nothing
         break;
     }
-    // if (modelPosition) {
-    //   this.actionsAPI.onAction(action, { modelPosition });
-    // }
   };
 
   /**
@@ -133,31 +130,6 @@ export default class Display2DController {
       this.updateViews();
     }
   }
-
-  // /**
-  //  * Set the topo height at the normalized position. If there is no ground where you click, raise
-  //  * to fill that area. If there is ground there, remove down to the base of that point
-  //  * @param {object} modelPosition - {x,y,z}
-  //  */
-  // setTopoHeight = modelPosition => {
-  //   if (modelPosition) {
-  //     const { x, y, z } = modelPosition;
-  //     const { topo } = this.model;
-
-  //     let height;
-
-  //     const currentHeight = topo.getTopoHeight({ x, y });
-  //     if (z < currentHeight) {
-  //       // If ground was previous full, Drop height down to base of click grid square
-  //       height = z;
-  //     } else {
-  //       // Raise height to fill up the grid square if it was empty
-  //       height = z + 1;
-  //     }
-  //     this.session.topo.setTopoHeight({ x, y }, height);
-  //     this.updateViews();
-  //   }
-  // }
 
   /** Move the view to the next slice, without exceeding the last slice */
   nextSlice = () => {

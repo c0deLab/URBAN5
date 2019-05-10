@@ -1,8 +1,8 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
-import Display2DView from '../js/Display2DView';
-import Display2DController from '../js/Display2DController';
+import Display2DView from '../js/ui/Display2DView';
+import Display2DController from '../js/ui/Display2DController';
 import ActionsEnum from '../js/enums/ActionsEnum';
 import { getGridPointInModelSpace } from '../js/helpers/Helpers';
 

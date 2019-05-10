@@ -3,15 +3,15 @@ import './App.css';
 import * as THREE from 'three';
 
 import StartPage from './components/StartPage';
-import LoadPage from './components/LoadPage';
 import MainPage from './components/MainPage';
 import DebuggingConstraints from './debugging/DebuggingConstraints';
 import Debugging3D from './debugging/Debugging3D';
-import U5SessionFactory from './js/sessionAPI/U5SessionFactory';
+import U5SessionFactory from './js/data/U5SessionFactory';
 
 /* global window */
 /* global document */
 
+// Create a global settings object for shared settings across the project
 const SETTINGS = {
   w: 852,
   h: 852,
@@ -27,6 +27,7 @@ const SETTINGS = {
   userName: null
 };
 window.SETTINGS = SETTINGS;
+
 
 export default class App extends React.Component {
 
@@ -61,6 +62,7 @@ export default class App extends React.Component {
       }
     });
 
+    // Add timer that checks for no activity, reset system after one minute
     document.addEventListener('keydown', () => {
       clearTimeout(this.resetTimer);
       this.resetTimer = setTimeout(this.reset, 60000);
@@ -71,18 +73,17 @@ export default class App extends React.Component {
     });
     this.resetTimer = setTimeout(this.reset, 60000);
 
-    // test start
+    // For testing purposes, load the last saved session at app load
     this.startSession(new U5SessionFactory().last());
   }
 
   startSession = session => {
-    // const session = new U5SessionFactory().last();
-    console.log('loaded session: ', session);
     const cameraView = this.getCameraView(session);
-
     this.setState({ session, cameraView });
   }
 
+  // Get a fresh camera view for the session
+  // The view moves its x and y cameras to be on the first object it encounters in the design, or 0 if no objects
   getCameraView = session => {
     const cameraView = {
       camera: 0,
@@ -112,6 +113,7 @@ export default class App extends React.Component {
     return cameraView;
   }
 
+  // Reset the system to the start of the start menu
   reset = () => {
     const { restartIndex } = this.state;
     SETTINGS.userName = null;
@@ -133,6 +135,7 @@ export default class App extends React.Component {
       case 3:
         return (<DebuggingConstraints session={session} />);
       case 4:
+        // Render all 3
         return (
           <div>
             <MainPage session={session} cameraView={cameraView} />
