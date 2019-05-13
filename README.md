@@ -8,33 +8,50 @@ URBAN5 (1970), a project by Nicholas Negroponte, was started with the goal to �
 
 Demo: [https://c0delab.github.io/URBAN5/](https://c0delab.github.io/URBAN5/)
 
+&nbsp;
 ## Controls
 
-A user can select the light buttons on the right menu to choose what their action is, however, there are also hotkeys for quicker testing:
+A user can select the light buttons on the right menu to choose what their action is, however, there are also hotkeys for quicker use:
 
-Switch View:
+#### Switch View:
+
 f1: Main View
+
 f2: DEBUG: Perspective View
+
 f3: DEBUG: View Constraints and Metrics
+
 f4: Combined View
 
-Swith Mode:
+#### Swith Mode:
+
 1: DRAW
+
 2: SURFACE
+
 3: TOPO
+
 4: CALCULATE
 
-Move Camera:
+#### Move Camera:
+
 x: North 
+
 w: South
+
 a: East
+
 d: West 
+
 s: Top
+
 c: Bottom
+
 ↑: Step In
+
 ↓: Step Out
 
-
+&nbsp;
 ## Annotated Guide to URBAN5
 
 ### Menu
@@ -42,8 +59,6 @@ c: Bottom
 >Associated with each mode is a string of machine-defined or user-defined text (verbs) that appears as a menu of “light buttons.” Each mode has its own set of light buttons that denote related operations.
 
 ![](https://github.com/c0deLab/URBAN5/raw/master/docs/readme/imgs/Image_0.png)
-
-&nbsp;
 
 Light buttons for DRAW, TOPO, and SURF modes:
 
@@ -81,9 +96,9 @@ In DRAW mode, when two cubes are place tangent to each other, **the adjoining su
 
 >For example, in CIRCULation mode a designer can have **the machine simulate pedestrian travel between two points on the site**. **An x, the pedestrian, will prance across the screen trying to get from one point to the next**, searching for a reasonable or at least feasible path. **The machine will report the pedestrian's distance** and time of travel or **else the impossibility of the trip** through lack of enough elements with "access.”
 
-![](https://github.com/c0deLab/URBAN5/raw/master/docs/readme/imgs/Image_8.png)
 ![](https://github.com/c0deLab/URBAN5/raw/master/docs/readme/imgs/Image_9.png)
 ![](https://github.com/c0deLab/URBAN5/raw/master/docs/readme/imgs/Image_10.png)
+![](https://github.com/c0deLab/URBAN5/raw/master/docs/readme/imgs/Image_8.png)
 
 &nbsp;
 ![](https://github.com/c0deLab/URBAN5/raw/master/docs/readme/imgs/circulation.gif)
