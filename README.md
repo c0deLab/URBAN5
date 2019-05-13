@@ -3,7 +3,8 @@
 ## Archaeology of CAD: URBAN 5
 
 &nbsp;
-| | |
+
+| &nbsp; | &nbsp; |
 |---|---|
 | ![](https://github.com/c0deLab/URBAN5/blob/master/docs/readme/imgs/hardware.png?raw=true) | ![](https://github.com/c0deLab/URBAN5/blob/master/docs/readme/imgs/scrnsht.png?raw=true) |
 
