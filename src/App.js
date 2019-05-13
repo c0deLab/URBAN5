@@ -24,7 +24,7 @@ const SETTINGS = {
   material: new THREE.LineBasicMaterial({ color: 0xE8E8DA }),
   stroke: 3.5,
   clippingMax: 1,
-  userName: null
+  userName: 'Ted'
 };
 window.SETTINGS = SETTINGS;
 
@@ -63,15 +63,15 @@ export default class App extends React.Component {
     });
 
     // Add timer that checks for no activity, reset system after one minute
-    document.addEventListener('keydown', () => {
-      clearTimeout(this.resetTimer);
-      this.resetTimer = setTimeout(this.reset, 60000);
-    });
-    document.addEventListener('mousedown', () => {
-      clearTimeout(this.resetTimer);
-      this.resetTimer = setTimeout(this.reset, 60000);
-    });
-    this.resetTimer = setTimeout(this.reset, 60000);
+    // document.addEventListener('keydown', () => {
+    //   clearTimeout(this.resetTimer);
+    //   this.resetTimer = setTimeout(this.reset, 60000);
+    // });
+    // document.addEventListener('mousedown', () => {
+    //   clearTimeout(this.resetTimer);
+    //   this.resetTimer = setTimeout(this.reset, 60000);
+    // });
+    // this.resetTimer = setTimeout(this.reset, 60000);
 
     // For testing purposes, load the last saved session at app load
     this.startSession(new U5SessionFactory().last());

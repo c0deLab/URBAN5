@@ -124,8 +124,8 @@ export default class MainPage extends React.Component {
     switch (displayType) {
       case 'DRAW':
         return [
-          ActionsEnum.STEPIN,
           ActionsEnum.STEPOUT,
+          ActionsEnum.STEPIN,
           ActionsEnum.ROTATELT,
           ActionsEnum.ROTATERT,
           ActionsEnum.ADDCUBE,

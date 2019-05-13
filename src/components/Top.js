@@ -67,8 +67,6 @@ export default class Top extends React.PureComponent {
     if (action === ActionsEnum.SPEAK_CONSTRAINT) {
       textInput = (
         <div>
-          <span>Enter a constraint:</span>
-          &nbsp;
           <TextInput onSubmit={this.onSpeak} />
         </div>
       );

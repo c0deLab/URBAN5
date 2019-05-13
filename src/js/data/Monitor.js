@@ -42,6 +42,8 @@ class Monitor {
 
   getMessages = () => this.messages;
 
+  setMessages = messages => this.messages = messages;
+
   addConstraint = text => {
     const constraintToAdd = Constraint.create(text);
     this.messages.push(text);
@@ -49,15 +51,24 @@ class Monitor {
     if (constraintToAdd && constraintToAdd instanceof Constraint) {
       // Check if this overrides former constraint
       const newConstraints = [];
+      let removedConstraint = null;
       this.constraints.forEach(old => {
         if (!old.isSameType(constraintToAdd)) {
           newConstraints.push(old);
+        } else {
+          removedConstraint = old;
         }
       });
-      newConstraints.push(constraintToAdd);
+      // If remove flag is set, it will cancel out the old, and we don't want to add
+      if (!constraintToAdd.removeFlag) {
+        newConstraints.push(constraintToAdd);
+        this.messages.push(`I have understood. The constraint: '${constraintToAdd.text}' was added.`);
+      } else if (removedConstraint) {
+        // remove constraint removed something
+        this.messages.push(`Removed the constraint: '${removedConstraint.text}'`);
+      }
 
       this.constraints = newConstraints;
-      this.messages.push('I have understood.');
       return true;
     }
 

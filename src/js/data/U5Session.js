@@ -85,14 +85,15 @@ class U5Session {
     addConstraint: text => {
       const success = this._monitor.addConstraint(text);
       if (success) {
-        this.onUpdate();
+        setTimeout(this.onUpdate, 4000);
       }
     },
     clearConstraints: () => {
       this._monitor.clearConstraints();
       this.onUpdate();
     },
-    getMessages: () => this._monitor.getMessages()
+    getMessages: () => this._monitor.getMessages(),
+    setMessages: messages => this._monitor.setMessages(messages)
   };
 
   save = () => {

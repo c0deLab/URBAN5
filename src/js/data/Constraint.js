@@ -3,7 +3,7 @@ import parseText from '../helpers/TextToConstraint';
 class Constraint {
   constructor(data) {
     if (data) {
-      const { text, result, fn, type, prop, comp, value } = data;  // eslint-disable-line
+      const { text, result, fn, type, prop, comp, value, removeFlag } = data;  // eslint-disable-line
       this.text = text;
       this.result = result;
       this.fn = fn;
@@ -11,6 +11,7 @@ class Constraint {
       this.prop = prop;
       this.comp = comp;
       this.value = value;
+      this.removeFlag = removeFlag;
     }
   }
 
@@ -56,8 +57,7 @@ class Constraint {
   }
 
   isSameType = otherConstraint => {
-    return otherConstraint.fn === this.fn
-      && JSON.stringify(otherConstraint.type) === JSON.stringify(this.type)
+    return JSON.stringify(otherConstraint.type) === JSON.stringify(this.type)
       && otherConstraint.prop === this.prop;
   }
 }
@@ -75,7 +75,12 @@ const hasError = constraintData => {
     return true;
   }
 
-  const { fn, type, prop, value, comp, result } = constraintData;
+  const { fn, type, prop, value, comp, result, removeFlag } = constraintData;
+  // If remove flag is set, try to cancel one out
+  if (removeFlag) {
+    return false;
+  }
+
   if (!fn || !type || !prop || !value || !comp || result === null) {
     return true;
   }

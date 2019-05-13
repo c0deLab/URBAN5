@@ -40,6 +40,8 @@ const COMPS = {
   '<=': ['maximum', 'max', 'biggest', 'most', 'largest', 'greatest'],
 };
 
+const REMOVE_KEYS = ['any', 'whatever', 'infinity', 'remove', 'allow'];
+
 function reverseMap(map) {
   const reverse = {};
   Object.keys(map).forEach(key => {
@@ -128,6 +130,17 @@ const getFn = (result, comp) => {
   return fn;
 };
 
+const isRemove = doc => {
+  let removeFlag = false;
+  REMOVE_KEYS.forEach(key => {
+    if (doc.has(key)) {
+      removeFlag = true;
+    }
+  });
+
+  return removeFlag;
+};
+
 export default function parseText(text) {
   console.log('Original text: ' + text);
 
@@ -158,9 +171,11 @@ export default function parseText(text) {
   const prop = getProp(doc);
   const comp = getComp(doc);
 
+  const removeFlag = isRemove(doc);
+
   const fn = getFn(result, comp);
 
-  const constraintData = { text, result, fn, type, prop, comp, value }; // eslint-disable-line
+  const constraintData = { text, result, fn, type, prop, comp, value, removeFlag }; // eslint-disable-line
   // It should look something like this
   // const constraintData = {
   //   result: true,
@@ -168,7 +183,8 @@ export default function parseText(text) {
   //   type: 'Cube',
   //   prop: 'area',
   //   comp: '<',
-  //   value: 50
+  //   value: 50,
+  //   removeFlag: false
   // };
 
   console.log(`Constraint result: \n${JSON.stringify(constraintData)}`);

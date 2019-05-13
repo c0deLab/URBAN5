@@ -81,13 +81,18 @@ export default class ChoosePath extends React.Component {
       this.end = point;
       const path = calculatePath(session, this.start, this.end);
 
-      if (!path) {
-        console.log('No path');
+      if (!path || path.length === 0) {
+        session.monitor.setMessages([`${SETTINGS.userName}, No path could be found.`]);
         this.start = null;
         this.end = null;
         this.setState({ hasStart: false });
+        onSelectPath(path);
         return;
       }
+
+      // Currently 3 steps per 10 feet
+      const distance = ((path.length - 1) / 3) * 10;
+      session.monitor.setMessages([`${SETTINGS.userName}, I have arrived at the destination point`, `the trip distance (in feet) is ${distance}.`]);
 
       // do 2D walkthrough
       const callback = () => {

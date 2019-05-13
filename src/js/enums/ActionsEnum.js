@@ -10,7 +10,7 @@ const ActionsEnum = {
   ADD_ROOF_SOUTH: { id: 8, label: 'ADDROOFS' }, // Add Angled Roof down towards south
   WALKTHRU: { id: 9, label: 'WALKTHRU' }, // Start walkthrough
   // EDITTOPO: { id: 10, label: 'EDITTOPO' }, // Edit topo mode
-  SPEAK_CONSTRAINT: { id: 11, label: 'CONSTRNT' }, // Enter text constraint
+  SPEAK_CONSTRAINT: { id: 11, label: 'SPEAK' }, // Enter text constraint
   INCREASE_HEIGHT: { id: 12, label: 'INCRS HT' },
   DECREASE_HEIGHT: { id: 13, label: 'DECRS HT' },
   SOLID_SURFACE: { id: 14, label: 'SOLIDSRF' },
