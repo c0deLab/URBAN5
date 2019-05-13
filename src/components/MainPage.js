@@ -57,36 +57,36 @@ export default class MainPage extends React.Component {
       console.log(event.keyCode);
       switch (event.keyCode) {
         // Switch between views
-        case 66: // b
+        case 49: // 1
           this.setState({
             displayType: 'DRAW',
             action: ActionsEnum.ADDCUBE
           });
           break;
-        case 86: // v
-          this.setState({
-            displayType: 'CALC'
-          });
-          break;
-        case 67: // c
-          this.setState({
-            displayType: 'TOPO',
-            action: ActionsEnum.INCREASE_HEIGHT
-          });
-          break;
-        case 78: // n
+        case 50: // 2
           this.setState({
             displayType: 'SURF',
             action: ActionsEnum.NO_SURFACE
           });
           break;
-        case 191: // /
-          session.monitor.clearConstraints();
+        case 51: // 3
+          this.setState({
+            displayType: 'TOPO',
+            action: ActionsEnum.INCREASE_HEIGHT
+          });
           break;
-        case 220: // \
-          session.clear();
-          location.reload(); // eslint-disable-line
+        case 52: // 3
+          this.setState({
+            displayType: 'CALC'
+          });
           break;
+        // case 191: // /
+        //   session.monitor.clearConstraints();
+        //   break;
+        // case 220: // \
+        //   session.clear();
+        //   location.reload(); // eslint-disable-line
+        //   break;
         default:
           break;
       }
