@@ -57,6 +57,8 @@ c: Bottom
 &nbsp;
 ## Annotated Guide to URBAN5
 
+Below is a guide that connects descriptions of URBAN5 from *The Architecture Machine* (Negroponte, 1973) and the corresponding implementation in this recreation.
+
 ### Menu
 
 >Associated with each mode is a string of machine-defined or user-defined text (verbs) that appears as a menu of “light buttons.” Each mode has its own set of light buttons that denote related operations.
