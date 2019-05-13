@@ -32,7 +32,7 @@ window.SETTINGS = SETTINGS;
 export default class App extends React.Component {
 
   state = {
-    view: 4,
+    view: 1,
     session: null,
     cameraView: null,
     restartIndex: 0,
@@ -63,18 +63,18 @@ export default class App extends React.Component {
     });
 
     // Add timer that checks for no activity, reset system after one minute
-    // document.addEventListener('keydown', () => {
-    //   clearTimeout(this.resetTimer);
-    //   this.resetTimer = setTimeout(this.reset, 60000);
-    // });
-    // document.addEventListener('mousedown', () => {
-    //   clearTimeout(this.resetTimer);
-    //   this.resetTimer = setTimeout(this.reset, 60000);
-    // });
-    // this.resetTimer = setTimeout(this.reset, 60000);
+    document.addEventListener('keydown', () => {
+      clearTimeout(this.resetTimer);
+      this.resetTimer = setTimeout(this.reset, 60000);
+    });
+    document.addEventListener('mousedown', () => {
+      clearTimeout(this.resetTimer);
+      this.resetTimer = setTimeout(this.reset, 60000);
+    });
+    this.resetTimer = setTimeout(this.reset, 60000);
 
     // For testing purposes, load the last saved session at app load
-    this.startSession(new U5SessionFactory().last());
+    // this.startSession(new U5SessionFactory().last());
   }
 
   startSession = session => {
