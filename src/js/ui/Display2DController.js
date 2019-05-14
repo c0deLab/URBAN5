@@ -279,9 +279,9 @@ export default class Display2DController {
   _setCamera = camera => {
     this.cameraView.camera = CamerasEnum[camera];
 
-    let minX = SETTINGS.xMax;
-    let minY = SETTINGS.yMax;
-    let minZ = SETTINGS.zMax;
+    let minX = SETTINGS.xMax - 1;
+    let minY = SETTINGS.yMax - 1;
+    let minZ = SETTINGS.zMax - 1;
     let maxX = 0;
     let maxY = 0;
     let maxZ = 0;
