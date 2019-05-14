@@ -171,7 +171,10 @@ export default function parseText(text) {
   const prop = getProp(doc);
   const comp = getComp(doc);
 
-  const removeFlag = isRemove(doc);
+  let removeFlag = false;
+  if (!value) {
+    removeFlag = isRemove(doc);
+  }
 
   const fn = getFn(result, comp);
 

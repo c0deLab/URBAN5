@@ -47,14 +47,17 @@ class Design {
   add = (obj, position, modifier) => {
     const context = getCellContext3D(this.objects, position);
     let newObject;
+
     switch (obj) {
       case ObjectsEnum.TRUNK:
-        if (position.y < (SETTINGS.yMax - 1)) {
+        if (position.z < (SETTINGS.zMax - 1)) {
           const { x, y } = position;
           let { z } = position;
           z += 1;
           const foliagePosition = { x, y, z };
           // Check placement spot and placement spot above
+          this.remove(position);
+          this.remove(foliagePosition);
           this._setCell(position, new Trunk(position));
           this._setCell(foliagePosition, new Foliage(foliagePosition));
           return true;
@@ -62,11 +65,13 @@ class Design {
         return false;
       case ObjectsEnum.CUBE:
         newObject = new Cube();
+        this.remove(position);
         this._setCell(position, newObject);
         newObject.hookAfterInsert(context);
         return true;
       case ObjectsEnum.ROOF:
         newObject = new Roof();
+        this.remove(position);
         this._setCell(position, newObject);
         newObject.hookAfterInsert(modifier, context);
         return true;

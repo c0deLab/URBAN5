@@ -94,22 +94,6 @@ export default class App extends React.Component {
       }
     };
 
-    // set view to first plane with object
-    const objects = session.design.getObjects();
-    if (objects.length > 0) {
-      let minY = SETTINGS.yMax;
-      let minX = SETTINGS.xMax;
-      objects.forEach(object => {
-        if (object.position.y < minY) {
-          minY = object.position.y;
-        }
-        if (object.position.x < minX) {
-          minX = object.position.x;
-        }
-      });
-      cameraView.slices.y = minY;
-      cameraView.slices.x = minX;
-    }
     return cameraView;
   }
 

@@ -19,7 +19,7 @@ export default class Display2DController {
     this.views = [];
     this.isBackgroundDashed = true;
 
-    this.updateViews();
+    this.north();
   }
 
   addListener = view => this.views.push(view)
@@ -278,6 +278,63 @@ export default class Display2DController {
    */
   _setCamera = camera => {
     this.cameraView.camera = CamerasEnum[camera];
+
+    let minX = SETTINGS.xMax;
+    let minY = SETTINGS.yMax;
+    let minZ = SETTINGS.zMax;
+    let maxX = 0;
+    let maxY = 0;
+    let maxZ = 0;
+
+    // set camera to first object on update
+    const objects = this.session.design.getObjects();
+    if (objects.length > 0) {
+      objects.forEach(object => {
+        const { x, y, z } = object.position;
+        if (x < minX) {
+          minX = x;
+        }
+        if (x > maxX) {
+          maxX = x;
+        }
+        if (y < minY) {
+          minY = y;
+        }
+        if (y > maxY) {
+          maxY = y;
+        }
+        if (z < minZ) {
+          minZ = z;
+        }
+        if (z > maxZ) {
+          maxZ = z;
+        }
+      });
+    }
+
+    switch (this.cameraView.camera) {
+      case CamerasEnum.NORTH:
+        this.cameraView.slices.y = minY;
+        break;
+      case CamerasEnum.SOUTH:
+        this.cameraView.slices.y = maxY;
+        break;
+      case CamerasEnum.EAST:
+        this.cameraView.slices.x = minX;
+        break;
+      case CamerasEnum.WEST:
+        this.cameraView.slices.x = maxX;
+        break;
+      case CamerasEnum.TOP:
+        this.cameraView.slices.z = maxZ;
+        break;
+      case CamerasEnum.BOTTOM:
+        this.cameraView.slices.z = minZ;
+        break;
+      default:
+        throw new Error(`camera ${this.cameraView.camera} is not recognized!`);
+    }
+
     this.updateViews();
   }
 

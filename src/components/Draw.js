@@ -90,9 +90,6 @@ export default class Draw extends React.Component {
       case 83: // s
         controller.top();
         break;
-      case 67: // f
-        controller.bottom();
-        break;
       case 38: // up arrow
         controller.nextSlice();
         break;

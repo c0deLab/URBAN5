@@ -48,8 +48,6 @@ d: West
 
 s: Top
 
-c: Bottom
-
 ↑: Step In
 
 ↓: Step Out

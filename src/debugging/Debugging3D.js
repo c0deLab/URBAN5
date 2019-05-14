@@ -35,14 +35,25 @@ export default class Debugging3D extends React.Component {
 
     this.location = -1;
     this.nextRotation();
+  }
+
+  componentWillUnmount() {
+    if (this.pollTimeout) {
+      clearTimeout(this.pollTimeout);
+    }
+  }
+
+  startPoll = () => {
+    const { session, cameraView } = this.props;
+    clearTimeout(this.pollTimeout);
 
     let lastCameraView = {};
     let lastNumObjects = 0;
     let lastTotalHeight = 0;
     const poll = () => {
       this.pollTimeout = setTimeout(() => {
-        if (session && session._design && session._design._objects) {
-          const numObjects = session._design._objects.length;
+        if (session) {
+          const numObjects = session.design.getObjects().length;
           const totalHeight = session._topo.heights.reduce((total, num) => total + num);
           if (cameraView.camera !== lastCameraView.camera || cameraView.slices.x !== lastCameraView.slices.x
               || cameraView.slices.y !== lastCameraView.slices.y || cameraView.slices.z !== lastCameraView.slices.z || numObjects !== lastNumObjects || totalHeight !== lastTotalHeight) {
@@ -65,18 +76,14 @@ export default class Debugging3D extends React.Component {
     poll();
   }
 
-  componentWillUnmount() {
-    if (this.pollTimeout) {
-      clearTimeout(this.pollTimeout);
-    }
-  }
-
   nextRotation = () => {
     this.location = (this.location + 1) % this.origins.length;
     this.view.setCameraPosition(this.origins[this.location], this.target);
   }
 
   render() {
+    this.startPoll();
+
     return (
       <div>
         <div id="debuggingDisplay3D" style={{ textAlign: 'center' }}/>

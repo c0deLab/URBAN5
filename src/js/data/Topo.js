@@ -21,7 +21,7 @@ class Topo {
 
   increase = position => {
     const height = this.heights[position.y][position.x] + 1;
-    if (height <= SETTINGS.zMax) {
+    if (height < SETTINGS.zMax) {
       this.heights[position.y][position.x] = height;
     }
   };
