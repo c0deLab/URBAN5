@@ -76,7 +76,7 @@ export default class StartPage extends React.Component {
             <br />
             <br />
             <div style={{ textAlign: 'center', margin: '40px' }}>
-              <img src="/imgs/zoomscrn.png" alt="original" />
+              <img src="imgs/zoomscrn.png" alt="original" />
             </div>
           </div>
         );
