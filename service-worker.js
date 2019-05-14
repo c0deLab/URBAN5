@@ -14,7 +14,7 @@
 importScripts("https://storage.googleapis.com/workbox-cdn/releases/3.6.3/workbox-sw.js");
 
 importScripts(
-  "/URBAN5/precache-manifest.5a082c9dd029ad089c6726c79ddbe51b.js"
+  "/URBAN5/precache-manifest.ffaf333712501b1788cbeb781e46356d.js"
 );
 
 workbox.clientsClaim();
