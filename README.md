@@ -34,7 +34,7 @@ f4: Combined View
 
 3: TOPO
 
-4: CALCULATE
+4: CIRCULation
 
 #### Move Camera:
 
