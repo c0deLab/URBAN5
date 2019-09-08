@@ -79,6 +79,7 @@ Light buttons for DRAW, TOPO, and SURF modes:
 
 >DRAW, a separate mode, allows the manipulation of (1) viewing mode (orthographic, perspective), (2) viewing plane (scale, **rotation, translation**)
 
+![](https://github.com/c0deLab/URBAN5/raw/master/docs/readme/imgs/draw.jpg)
 ![](https://github.com/c0deLab/URBAN5/raw/master/docs/readme/imgs/rotatetranslate.gif)
 
 &nbsp;
