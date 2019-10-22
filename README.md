@@ -1,6 +1,4 @@
-# [URBAN5](https://c0delab.github.io/URBAN5/)
-
-## Software Reconstruction of URBAN 5
+# [Software Reconstruction of URBAN5](https://c0delab.github.io/URBAN5/)
 
 &nbsp;
 ![](https://github.com/c0deLab/URBAN5/blob/master/docs/readme/imgs/hardware2.png?raw=true) ![](https://github.com/c0deLab/URBAN5/blob/master/docs/readme/imgs/scrnsht2.png?raw=true)
