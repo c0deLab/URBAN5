@@ -7,11 +7,11 @@
 
 &nbsp;
 
-URBAN5 is an experimental software for urban design developed by Nicholas Negroponte in 1968 at MIT. It was originally programmed in FORTRAN and ran on an IBMXXX machine. It was meant to test the feasibility of language input in a process of urban design, seeking to enact a sort of intelligent design assistant able to converse with users and thus help "democratize" design and planning. However, by its author's own admission, URBAN5 was never functional and "inexhaustibly printed garbage." 
+URBAN5 is an experimental software for urban design developed by Nicholas Negroponte in 1968 at MIT. It was originally programmed in FORTRAN and ran on an IBM2250 computer. URBAN5 was meant to test the feasibility of language input in a process of urban design. It sought to enact a sort of intelligent design assistant able to converse with users and thus help "democratize" design and planning. However, by its author's own admission, URBAN5 was never functional and "inexhaustibly printed garbage." 
 
-This software reconstruction approximates some of this system's functionality and intent as documented by its author across several publications, highlighting its intent to bring contemporary ideas about language processing and artificial intelligence into the realm of architecture and urban desing. 
+This software reconstruction approximates some of this system's functionality and intent, piecing together the system from descriptions by its author across several publications. The reconstruction offers access to the author's ambition to bring contemporary ideas about language processing and artificial intelligence into the realm of architecture and urban desing — and to the difficulties of its implementation. 
 
-This URBAN5 reconstruction was developed by Erik Ulberg (MSCD '20) in 2019 at the Computational Design Laboratory at Carnegie Mellon University as part of "Experimental Archaeology of CAD," a research project initiated and supervised by Daniel Cardoso Llach in 2017 combining historical research and technology prototyping in order to explore the origins and speculate about the future of computing in design.
+This URBAN5 reconstruction was developed by Erik Ulberg (MSCD '20) in 2019 under the supervision of Prof. Daniel Cardoso Llach at the Computational Design Laboratory at Carnegie Mellon University. The reconstruction is part of "Experimental Archaeology of CAD," a research project combining historical research and technology prototyping in order to examine the origins and speculate about the future of computation in design initiated by Prof. Cardoso in 2017.
 
 Demo: [https://c0delab.github.io/URBAN5/](https://c0delab.github.io/URBAN5/)
 
