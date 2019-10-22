@@ -57,7 +57,7 @@ s: Top
 &nbsp;
 ## Annotated Guide to URBAN5
 
-Below is a guide that connects descriptions of URBAN5 from *The Architecture Machine* (Negroponte, 1973) and the corresponding implementation in this recreation.
+What follows shows correlations between descriptions of specific URBAN5 functions (excerpted from *The Architecture Machine* (Negroponte, 1971)) and our reconstruction.
 
 ### Menu
 
