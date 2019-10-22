@@ -1,13 +1,17 @@
 # [URBAN5](https://c0delab.github.io/URBAN5/)
 
-## Archaeology of CAD: URBAN 5
+## Software Reconstruction of URBAN 5
 
 &nbsp;
 ![](https://github.com/c0deLab/URBAN5/blob/master/docs/readme/imgs/hardware2.png?raw=true) ![](https://github.com/c0deLab/URBAN5/blob/master/docs/readme/imgs/scrnsht2.png?raw=true)
 
 &nbsp;
 
-URBAN5 (1970), a project by Nicholas Negroponte, was started with the goal to “study the desirability and feasibility of conversing with a machine about an environmental design project.” The purpose of this project is not an exact replica of the original with the same hardware and software, but rather an approximation using modern tools to enrich our understanding of the device. As foundational research in the field of computational design, URBAN5 helped shape the way we approach the topic today. By digging into this piece of our past, we can uncover the unconscious assumptions and practices built into our modern systems, thus allowing us to reimagine our methods and discover new ones.  
+URBAN5 is an experimental software for urban design developed by Nicholas Negroponte in 1968 at MIT. It was originally programmed in FORTRAN and ran on an IBMXXX machine. It was meant to test the feasibility of language input in a process of urban design, seeking to enact a sort of intelligent design assistant able to converse with users and thus help "democratize" design and planning. However, by its author's own admission, URBAN5 was never functional and "inexhaustibly printed garbage." 
+
+This software reconstruction approximates some of this system's functionality and intent as documented by its author across several publications, highlighting its intent to bring contemporary ideas about language processing and artificial intelligence into the realm of architecture and urban desing. 
+
+This URBAN5 reconstruction was developed by Erik Ulberg (MSCD '20) in 2019 at the Computational Design Laboratory at Carnegie Mellon University as part of "Experimental Archaeology of CAD," a research project initiated and supervised by Daniel Cardoso Llach in 2017 combining historical research and technology prototyping in order to explore the origins and speculate about the future of computing in design.
 
 Demo: [https://c0delab.github.io/URBAN5/](https://c0delab.github.io/URBAN5/)
 
