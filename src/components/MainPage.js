@@ -12,6 +12,7 @@ import Surface from './Surface';
 import DisplayWalkthrough from './DisplayWalkthrough';
 
 /* global document */
+/* global window */
 /* global location */
 
 /** Class for the rendering the main view with top, menu, and center panels */
@@ -37,10 +38,15 @@ export default class MainPage extends React.Component {
 
   componentDidMount() {
     document.addEventListener('keydown', this.handleKeyDown);
+    window.addEventListener('gamepadconnected', this.addControlPad);
   }
 
   componentWillUnmount() {
     document.removeEventListener('keydown', this.handleKeyDown);
+    window.removeEventListener('gamepadconnected', this.addControlPad);
+    if (this.controlPadTimeout) {
+      clearTimeout(this.controlPadTimeout);
+    }
   }
 
   onMenuClick = action => {
@@ -50,7 +56,6 @@ export default class MainPage extends React.Component {
   /** Add some hotkeys to make testing easier */
   handleKeyDown = event => {
     const { action } = this.state;
-    const { session } = this.props;
     if (action === ActionsEnum.SPEAK_CONSTRAINT) {
       // do nothing
     } else {
@@ -91,7 +96,64 @@ export default class MainPage extends React.Component {
           break;
       }
     }
+  }
 
+  addControlPad = event => {
+    this.controlPad = event.gamepad;
+    this.controlPadButtonPressMap = {};
+    const inputLoop = () => {
+      if (this.controlPad && this.controlPad.buttons) {
+        for (let i = 0; i < this.controlPad.buttons.length; i += 1) {
+          const isPressed = this.controlPad.buttons[i].pressed;
+          if (isPressed && !this.controlPadButtonPressMap[i]) {
+            // button down (fires once per press)
+            this.handleControlPadButtonPress(i);
+          }
+          this.controlPadButtonPressMap[i] = isPressed;
+        }
+      }
+
+      this.controlPadTimeout = setTimeout(inputLoop, 20);
+    };
+    inputLoop();
+  }
+
+  handleControlPadButtonPress = i => {
+    console.log(i + ' is pressed');
+    switch (i) {
+      // Switch between views
+      case 0:
+        this.setState({
+          displayType: 'DRAW',
+          action: ActionsEnum.ADDCUBE
+        });
+        break;
+      case 2:
+        this.setState({
+          displayType: 'SURF',
+          action: ActionsEnum.NO_SURFACE
+        });
+        break;
+      case 3:
+        this.setState({
+          displayType: 'TOPO',
+          action: ActionsEnum.INCREASE_HEIGHT
+        });
+        break;
+      case 5:
+        this.setState({
+          displayType: 'CALC'
+        });
+        break;
+      case 9:
+        this.setState({
+          displayType: 'DRAW',
+          action: ActionsEnum.SPEAK_CONSTRAINT
+        });
+        break;
+      default:
+        break;
+    }
   }
 
   getDisplay = () => {
