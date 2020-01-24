@@ -4,6 +4,7 @@ import PropTypes from 'prop-types';
 import Menu from './Menu';
 import Top from './Top';
 import ActionsEnum from '../js/enums/ActionsEnum';
+import ControlPad from '../js/helpers/ControlPad';
 
 import Draw from './Draw';
 import Topo from './Topo';
@@ -12,8 +13,6 @@ import Surface from './Surface';
 import DisplayWalkthrough from './DisplayWalkthrough';
 
 /* global document */
-/* global window */
-/* global location */
 
 /** Class for the rendering the main view with top, menu, and center panels */
 export default class MainPage extends React.Component {
@@ -38,15 +37,13 @@ export default class MainPage extends React.Component {
 
   componentDidMount() {
     document.addEventListener('keydown', this.handleKeyDown);
-    window.addEventListener('gamepadconnected', this.addControlPad);
+    this.controlPad = new ControlPad();
+    this.controlPad.init(i => this.handleControlPadButtonPress(i));
   }
 
   componentWillUnmount() {
     document.removeEventListener('keydown', this.handleKeyDown);
-    window.removeEventListener('gamepadconnected', this.addControlPad);
-    if (this.controlPadTimeout) {
-      clearTimeout(this.controlPadTimeout);
-    }
+    this.controlPad.remove();
   }
 
   onMenuClick = action => {
@@ -96,26 +93,6 @@ export default class MainPage extends React.Component {
           break;
       }
     }
-  }
-
-  addControlPad = event => {
-    this.controlPad = event.gamepad;
-    this.controlPadButtonPressMap = {};
-    const inputLoop = () => {
-      if (this.controlPad && this.controlPad.buttons) {
-        for (let i = 0; i < this.controlPad.buttons.length; i += 1) {
-          const isPressed = this.controlPad.buttons[i].pressed;
-          if (isPressed && !this.controlPadButtonPressMap[i]) {
-            // button down (fires once per press)
-            this.handleControlPadButtonPress(i);
-          }
-          this.controlPadButtonPressMap[i] = isPressed;
-        }
-      }
-
-      this.controlPadTimeout = setTimeout(inputLoop, 20);
-    };
-    inputLoop();
   }
 
   handleControlPadButtonPress = i => {
