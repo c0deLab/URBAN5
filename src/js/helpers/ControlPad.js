@@ -2,16 +2,14 @@
 /* global navigator */
 
 export default class ControlPad {
-  constructor() {
-    this.controlPadButtonPressMap = {};
-  }
-
-  init(onButtonPress) {
+  constructor(onButtonPress) {
+    this.buttonCache = {};
     this.onButtonPress = onButtonPress;
-    this.eventListener = e => this._addControlPad(e);
+    this.eventListener = () => this._loop();
     window.addEventListener('gamepadconnected', this.eventListener);
   }
 
+  // clean up the event listener and
   remove() {
     window.removeEventListener('gamepadconnected', this.eventListener);
     if (this.controlPadTimeout) {
@@ -19,24 +17,26 @@ export default class ControlPad {
     }
   }
 
-  _addControlPad(e) {
-    this._inputLoop();
-  }
-
-  _inputLoop() {
-    const gamepads = navigator.getGamepads(); // need to retrieve every time for Chrome
-    if (gamepads && gamepads.length > 0 && gamepads[0].buttons) {
-      const controlPad = gamepads[0];
-      for (let i = 0; i < controlPad.buttons.length; i += 1) {
-        const isPressed = controlPad.buttons[i].pressed;
-        if (isPressed && !this.controlPadButtonPressMap[i]) {
-          // button down (fires once per press)
-          this.onButtonPress(i);
-        }
-        this.controlPadButtonPressMap[i] = isPressed;
-      }
+  _loop() {
+    // make sure there is only one loop being called
+    if (this.controlPadTimeout) {
+      clearTimeout(this.controlPadTimeout);
     }
 
-    this.controlPadTimeout = setTimeout(() => this._inputLoop(), 20);
+    // need to retrieve every time for Chrome
+    const gamepads = navigator.getGamepads();
+    // assume there is only one gamepad hooked up
+    if (gamepads && gamepads.length === 1 && gamepads[0].buttons) {
+      gamepads[0].buttons.forEach((button, i) => {
+        // if currently pressed and cache doesn't show that it was being pressed, fire event
+        if (button.pressed && !this.buttonCache[i]) {
+          // fires once per press
+          this.onButtonPress(i);
+        }
+        this.buttonCache[i] = button.pressed;
+      });
+    }
+
+    this.controlPadTimeout = setTimeout(() => this._loop(), 20);
   }
 }

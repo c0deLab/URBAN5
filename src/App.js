@@ -6,7 +6,6 @@ import StartPage from './components/StartPage';
 import MainPage from './components/MainPage';
 import DebuggingConstraints from './debugging/DebuggingConstraints';
 import Debugging3D from './debugging/Debugging3D';
-import U5SessionFactory from './js/data/U5SessionFactory';
 
 /* global window */
 /* global document */
@@ -55,6 +54,10 @@ export default class App extends React.Component {
         case 'F4':
           this.setState({ view: 4 });
           break;
+        case 'F5':
+          // clear session -> go to start menu
+          this.setState({ session: null });
+          break;
         case 'Escape':
           this.reset();
           break;
@@ -75,7 +78,7 @@ export default class App extends React.Component {
     this.resetTimer = setTimeout(this.reset, timeout);
 
     // For testing purposes, load the last saved session at app load
-    this.startSession(new U5SessionFactory().newSession());
+    // this.startSession(new U5SessionFactory().newSession());
   }
 
   startSession = session => {

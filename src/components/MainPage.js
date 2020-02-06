@@ -37,8 +37,7 @@ export default class MainPage extends React.Component {
 
   componentDidMount() {
     document.addEventListener('keydown', this.handleKeyDown);
-    this.controlPad = new ControlPad();
-    this.controlPad.init(i => this.handleControlPadButtonPress(i));
+    this.controlPad = new ControlPad(i => this.handleControlPadButtonPress(i));
   }
 
   componentWillUnmount() {

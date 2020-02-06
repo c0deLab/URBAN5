@@ -27,7 +27,7 @@ class Design {
     } else {
       // init empty world
       this.objects = getEmpty3DArray(SETTINGS.xMax, SETTINGS.yMax, SETTINGS.zMax);
-      this.fill();
+      // this.fill(); // can be enable to fill with a default design
     }
   }
 
