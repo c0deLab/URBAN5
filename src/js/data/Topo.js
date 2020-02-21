@@ -11,7 +11,7 @@ class Topo {
       this.heights = heights;
     } else {
       this.heights = getEmpty2DArray(SETTINGS.yMax, SETTINGS.xMax, 0);
-      this.fill();
+      // this.fill(); // can be enable to fill with a default design
     }
   }
 

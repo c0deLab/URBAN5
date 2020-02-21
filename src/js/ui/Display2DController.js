@@ -310,29 +310,31 @@ export default class Display2DController {
           maxZ = z;
         }
       });
-    }
 
-    switch (this.cameraView.camera) {
-      case CamerasEnum.NORTH:
-        this.cameraView.slices.y = minY;
-        break;
-      case CamerasEnum.SOUTH:
-        this.cameraView.slices.y = maxY;
-        break;
-      case CamerasEnum.EAST:
-        this.cameraView.slices.x = minX;
-        break;
-      case CamerasEnum.WEST:
-        this.cameraView.slices.x = maxX;
-        break;
-      case CamerasEnum.TOP:
-        this.cameraView.slices.z = maxZ;
-        break;
-      case CamerasEnum.BOTTOM:
-        this.cameraView.slices.z = minZ;
-        break;
-      default:
-        throw new Error(`camera ${this.cameraView.camera} is not recognized!`);
+      switch (this.cameraView.camera) {
+        case CamerasEnum.NORTH:
+          this.cameraView.slices.y = minY;
+          break;
+        case CamerasEnum.SOUTH:
+          this.cameraView.slices.y = maxY;
+          break;
+        case CamerasEnum.EAST:
+          this.cameraView.slices.x = minX;
+          break;
+        case CamerasEnum.WEST:
+          this.cameraView.slices.x = maxX;
+          break;
+        case CamerasEnum.TOP:
+          this.cameraView.slices.z = maxZ;
+          break;
+        case CamerasEnum.BOTTOM:
+          this.cameraView.slices.z = minZ;
+          break;
+        default:
+          throw new Error(`camera ${this.cameraView.camera} is not recognized!`);
+      }
+    } else {
+      // use default on new session that is empty
     }
 
     this.updateViews();
@@ -340,6 +342,7 @@ export default class Display2DController {
 
   /** Draw the current view from the current camera angle and sliceIndex */
   updateViews = () => {
+    console.log('update view', this.cameraView.slices.y);
     let sliceIndex;
     switch (this.cameraView.camera) {
       case CamerasEnum.NORTH:

@@ -23,9 +23,6 @@ class U5Session {
     if (newProblems) {
       beep();
     }
-
-    // save
-    this.save();
   };
 
   clear = () => {
@@ -97,7 +94,7 @@ class U5Session {
   };
 
   save = () => {
-    // console.log('save!');
+    console.log('save session!');
     const ice = U5Session.freeze(this);
     localStorage.setItem(this._id, JSON.stringify(ice));
     localStorage.setItem(`${this._id}_date`, Date.now());
@@ -110,7 +107,6 @@ U5Session.create = id => {
   session._topo = new Topo();  // eslint-disable-line
   session._monitor = new Monitor();  // eslint-disable-line
 
-  session.save();
   return session;
 };
 

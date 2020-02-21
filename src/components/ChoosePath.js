@@ -76,30 +76,28 @@ export default class ChoosePath extends React.Component {
       this.view.update();
       this.start = point;
     } else if (this.start.x !== point.x || this.start.y !== point.y) {
+      session.monitor.setMessages([]);
       this.view.drawCircle(point.x, point.y);
       this.view.update();
       this.end = point;
       const path = calculatePath(session, this.start, this.end);
 
       if (!path || path.length === 0) {
-        session.monitor.setMessages([`${SETTINGS.userName}, No path could be found.`]);
         this.start = null;
         this.end = null;
         this.setState({ hasStart: false });
-        onSelectPath(path);
+        onSelectPath(path, -1);
         return;
       }
-
-      // Currently 3 steps per 10 feet
-      const distance = ((path.length - 1) / 3) * 10;
-      session.monitor.setMessages([`${SETTINGS.userName}, I have arrived at the destination point`, `the trip distance (in feet) is ${distance}.`]);
 
       // do 2D walkthrough
       const callback = () => {
         this.start = null;
         this.end = null;
         this.setState({ hasStart: false });
-        onSelectPath(path);
+        // Currently 3 steps per 10 feet
+        const distance = ((path.length - 1) / 3) * 10;
+        onSelectPath(path, distance);
       };
       const speed = 75;
       this.view.animateX(path, 0, speed, callback);

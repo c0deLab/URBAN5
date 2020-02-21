@@ -11,7 +11,12 @@
     "rules": {
       "comma-dangle": [2, "only-multiline"],
       "arrow-parens": [2, "as-needed"],
-      "no-underscore-dangle": [2, { "allowAfterThis": true }],
+      "no-underscore-dangle": "off",
+      "no-shadow": "off",
+      "object-curly-newline": "off",
+      "prefer-template": "off",
+      "max-len": "off",
+      "react/no-string-refs": "off",
       "react/jsx-filename-extension": [1, { "extensions": [".js", ".jsx"] }]
     }
 }

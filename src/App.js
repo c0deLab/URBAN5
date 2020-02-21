@@ -3,9 +3,13 @@ import './App.css';
 import * as THREE from 'three';
 
 import StartPage from './components/StartPage';
-import MainPage from './components/MainPage';
+import SessionPageContainer from './components/SessionPageContainer';
+import HelpPage from './components/HelpPage';
 import DebuggingConstraints from './debugging/DebuggingConstraints';
 import Debugging3D from './debugging/Debugging3D';
+import ActionsEnum from './js/enums/ActionsEnum';
+import ControlPad from './js/helpers/ControlPad';
+import U5SessionFactory from './js/data/U5SessionFactory';
 
 /* global window */
 /* global document */
@@ -29,122 +33,281 @@ window.SETTINGS = SETTINGS;
 
 const timeout = 60000 * 10; // 10 minutes
 
-export default class App extends React.Component {
+const defaultMainPageSettings = {
+  action: ActionsEnum.ADDCUBE, // Default action is ADDCUBE
+  displayType: 'DRAW',
+};
 
+const defaultCameraView = () => (
+  {
+    camera: 0,
+    slices: {
+      x: 0,
+      y: 7,
+      z: 0
+    }
+  }
+);
+
+export default class App extends React.Component {
   state = {
-    view: 1,
+    debugView: 0,
     session: null,
-    cameraView: null,
+    cameraView: defaultCameraView(),
     restartIndex: 0,
+    isPanic: false,
+    displayType: 'START',
+    action: null,
+    aboutToRestart: false
   }
 
   componentDidMount() {
-    document.addEventListener('keydown', event => {
-      console.log('event.key', event.key);
-      switch (event.key) {
-        case 'F1':
-          this.setState({ view: 1 });
-          break;
-        case 'F2':
-          this.setState({ view: 2 });
-          break;
-        case 'F3':
-          this.setState({ view: 3 });
-          break;
-        case 'F4':
-          this.setState({ view: 4 });
-          break;
-        case 'F5':
-          // clear session -> go to start menu
-          this.setState({ session: null });
-          break;
-        case 'Escape':
-          this.reset();
-          break;
-        default:
-          break;
-      }
-    });
+    document.addEventListener('keydown', this.handleKeyDown);
+    this.controlPad = new ControlPad(i => this.handleControlPadButtonPress(i));
 
     // Add timer that checks for no activity, reset system after one minute
     document.addEventListener('keydown', () => {
       clearTimeout(this.resetTimer);
-      this.resetTimer = setTimeout(this.reset, timeout);
+      this.resetTimer = setTimeout(this.restart, timeout);
     });
     document.addEventListener('mousedown', () => {
       clearTimeout(this.resetTimer);
-      this.resetTimer = setTimeout(this.reset, timeout);
+      this.resetTimer = setTimeout(this.restart, timeout);
     });
-    this.resetTimer = setTimeout(this.reset, timeout);
+    this.resetTimer = setTimeout(this.restart, timeout);
 
-    // For testing purposes, load the last saved session at app load
-    // this.startSession(new U5SessionFactory().newSession());
+    this.startSession(new U5SessionFactory().newSession());
+  }
+
+  componentWillUnmount() {
+    document.removeEventListener('keydown', this.handleKeyDown);
+    this.controlPad.remove();
+  }
+
+  // Hot keys for testing purposes
+  handleKeyDown = event => {
+    const { action, aboutToRestart, session } = this.state;
+    if (aboutToRestart) {
+      if (event.keyCode === 89 && aboutToRestart) { // if y
+        this.restart();
+      }
+      // exit mode
+      session.monitor.setMessages([]);
+      this.setState({ aboutToRestart: false });
+      return;
+    }
+
+    if (action === ActionsEnum.SPEAK_CONSTRAINT) {
+      // do nothing, trying to type message
+      return;
+    }
+
+    // Map keys 1-8 to actions for testing purposes
+    if (event.keyCode >= 49 && event.keyCode <= 56) {
+      this.handleActions(event.keyCode - 49);
+    }
+
+    switch (event.keyCode) {
+      case 112: // F1
+        this.setState({ debugView: 0 });
+        break;
+      case 113: // F2
+        this.setState({ debugView: 1 });
+        break;
+      case 114: // F3
+        this.setState({ debugView: 2 });
+        break;
+      case 115: // F4
+        this.setState({ debugView: 3 });
+        break;
+      case 27: // ESC
+        this.restart();
+        break;
+      case 191: // /
+        this.state.session.monitor.clearConstraints(); // eslint-disable-line
+        break;
+      case 220: // \
+        this.state.session.clear(); // eslint-disable-line
+        location.reload(); // eslint-disable-line
+        break;
+      default:
+        break;
+    }
+  }
+
+  handleControlPadButtonPress = i => {
+    console.log(`Control Pad: ${i} pressed`); // eslint-disable-line
+    this.handleActions(i);
   }
 
   startSession = session => {
-    const cameraView = this.getCameraView(session);
-    this.setState({ session, cameraView });
+    const cameraView = defaultCameraView();
+    this.setState({ session, cameraView, ...defaultMainPageSettings });
   }
 
-  // Get a fresh camera view for the session
-  // The view moves its x and y cameras to be on the first object it encounters in the design, or 0 if no objects
-  getCameraView = session => {
-    const cameraView = {
-      camera: 0,
-      slices: {
-        x: 0,
-        y: 0,
-        z: 0
-      }
-    };
-
-    return cameraView;
-  }
-
-  // Reset the system to the start of the start menu
-  reset = () => {
+  // Reset the system for a new user
+  restart = () => {
     const { restartIndex } = this.state;
-    SETTINGS.userName = null;
-    this.setState({ session: null, cameraView: null, restartIndex: restartIndex + 1 });
+    const newSession = new U5SessionFactory().newSession();
+    this.setState({
+      session: newSession,
+      cameraView: defaultCameraView(),
+      restartIndex: restartIndex + 1,
+      isPanic: false,
+      ...defaultMainPageSettings
+    });
   }
 
-  renderBody = view => {
-    const { session, cameraView } = this.state;
+  // handles all the button actions possible for this app
+  handleActions(i) {
+    const { session, isPanic, aboutToRestart } = this.state;
+    console.log(`Do action ${i}`); // eslint-disable-line
+    // 0: graphical -> START (go to start menu to load session)
+    // 1: graphical -> TOPO (go to TOPO page for current session)
+    // 2: graphical -> DRAW (go to DRAW page for current session)
+    // 3: graphical -> SURF (go to SURF page for current session)
+    // 4: operational -> circul. (go to path selection and 3D walkthrough page)
+    // 5: theraputic -> PANIC (pull up contextual help menu for current page)
+    // 6: procedural -> RESTA. (start new session, go to DRAW page)
+    // 7: procedural -> STORE (save current sess)
 
-    switch (view) {
+    if (i === 6) { // (procedural -> RESTA.)
+      console.log('procedural -> RESTA.'); // eslint-disable-line
+      // TODO: add a confirmation?
+      session.monitor.setMessages(['Are you sure you want to restart (y)?']);
+      this.setState({ aboutToRestart: true });
+      return;
+    }
+
+    if (i === 5) { // (theraputic -> PANIC)
+      console.log('theraputic -> PANIC'); // eslint-disable-line
+      this.setState({
+        isPanic: !isPanic
+      });
+      return;
+    }
+    this.setState({
+      isPanic: false
+    });
+
+    if (!session) {
+      // disable all other actions when no session
+      return;
+    }
+
+    switch (i) {
+      case 0: // (graphical -> START)
+        console.log('graphical -> START'); // eslint-disable-line
+        this.setState({
+          displayType: 'START'
+        });
+        break;
+      case 1: // (graphical -> TOPO)
+        console.log('graphical -> TOPO'); // eslint-disable-line
+        this.setState({
+          displayType: 'TOPO',
+          action: ActionsEnum.INCREASE_HEIGHT
+        });
+        break;
+      case 2: // (graphical -> DRAW)
+        console.log('graphical -> DRAW'); // eslint-disable-line
+        this.setState({
+          displayType: 'DRAW',
+          action: ActionsEnum.ADDCUBE
+        });
+        break;
+      case 3: // (graphical -> SURF)
+        console.log('graphical -> SURF'); // eslint-disable-line
+        this.setState({
+          displayType: 'SURF',
+          action: ActionsEnum.NO_SURFACE
+        });
+        break;
+      case 4: // (operational -> circul.)
+        console.log('operational -> circul.'); // eslint-disable-line
+        this.setState({
+          displayType: 'CALC'
+        });
+        break;
+      case 7: // (procedural -> STORE)
+        console.log('procedural -> STORE'); // eslint-disable-line
+        session.save();
+        session.monitor.setMessages(['Session saved.']);
+        break;
+      default:
+        break;
+    }
+  }
+
+  renderDebug = () => {
+    const { session, cameraView, debugView } = this.state;
+    switch (debugView) {
       case 1:
-        return (<MainPage session={session} cameraView={cameraView} />);
-      case 2:
-        return (
-          <div style={{ width: '100%' }}>
-            <Debugging3D session={session} cameraView={cameraView} size={962} />
-          </div>
-        );
-      case 3:
-        return (<DebuggingConstraints session={session} />);
-      case 4:
         // Render all 3
         return (
           <div>
-            <MainPage session={session} cameraView={cameraView} />
+            { this.renderSessionPage() }
             <div style={{ position: 'absolute', right: '20px', top: '20px', color: '#000', border: '1px solid #E8E8DA', width: '500px' }}>
-              <Debugging3D session={session} cameraView={cameraView} size={500} />
+              <Debugging3D key={`debug3d_${session._id}`} session={session} cameraView={cameraView} size={500} />
             </div>
             <div style={{ position: 'absolute', left: '20px', top: '20px', width: '500px', wordWrap: 'break-word', border: '1px solid #E8E8DA', padding: '10px 10px 40px 10px', fontSize: '16px' }}>
-              <DebuggingConstraints session={session} />
+              <DebuggingConstraints key={`debug_con_${session._id}`} session={session} />
             </div>
           </div>
         );
+      case 2:
+        return (
+          <div style={{ width: '100%' }}>
+            <Debugging3D key={`debug3d_${session._id}`} session={session} cameraView={cameraView} size={962} />
+          </div>
+        );
+      case 3:
+        return (<DebuggingConstraints key={`debug_con_${session._id}`} session={session} />);
       default:
         return null;
     }
   }
 
+  renderSessionPage = () => {
+    const { session, action, displayType, cameraView } = this.state;
+    return (
+      <SessionPageContainer
+        key={`session_${session._id}`}
+        session={session}
+        action={action}
+        displayType={displayType}
+        cameraView={cameraView}
+        setAction={action => this.setState({ action })}
+      />
+    );
+  }
+
+  renderContent() {
+    const { session, restartIndex, displayType, isPanic, debugView } = this.state;
+
+    // first of all if isPanic, render panic page
+    if (isPanic) {
+      return <HelpPage displayType={displayType} />;
+    }
+
+    // render start page if no session
+    if (session === null || displayType === 'START') {
+      return <StartPage key={restartIndex} onSelectSession={this.startSession} />;
+    }
+
+    // if debug enabled, render
+    if (debugView !== 0) {
+      return this.renderDebug();
+    }
+
+    // render session
+    return this.renderSessionPage();
+  }
+
   render() {
-    const { view, session, restartIndex } = this.state;
     return (
       <div className="app">
-        { session === null ? (<StartPage key={restartIndex} onSelectSession={this.startSession} />) : this.renderBody(view) }
+        { this.renderContent() }
       </div>
     );
   }

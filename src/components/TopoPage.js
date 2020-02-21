@@ -9,7 +9,7 @@ import ActionsEnum from '../js/enums/ActionsEnum';
 /* global SETTINGS */
 
 /** Class for t */
-export default class Topo extends React.Component {
+export default class TopoPage extends React.Component {
   static propTypes = {
     session: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
     action: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types

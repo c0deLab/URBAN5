@@ -80,10 +80,31 @@ export default class Display2DView {
       }
     }
 
+    // draw dots at corners?
+    this.drawGridPoints(masterSlice);
+
     this.designRenderer.drawSlice(CamerasEnum.TOP, masterSlice);
 
     // Render to the screen
     this.stage.update();
+  };
+
+  /**
+   * Draw points that match the size of the current slice
+   * @param {int[][]} slice - 2D array representing slice to add
+   */
+  drawGridPoints = slice => {
+    for (let y = 0; y < slice.length; y += 1) {
+      const row = slice[y];
+      for (let x = 0; x < row.length; x += 1) {
+        const point = new createjs.Shape();
+        const contextX = (x + 0.5) * SETTINGS.r;
+        const contextY = SETTINGS.h - ((y + 0.5) * SETTINGS.r);
+
+        point.graphics.beginStroke(SETTINGS.color).setStrokeStyle(SETTINGS.stroke - 1).drawRect(contextX, contextY, 2, -2);
+        this.stage.addChild(point);
+      }
+    }
   };
 
   /** Update the screen */

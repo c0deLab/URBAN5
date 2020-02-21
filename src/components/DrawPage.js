@@ -3,15 +3,18 @@ import PropTypes from 'prop-types';
 
 import Display2DView from '../js/ui/Display2DView';
 import Display2DController from '../js/ui/Display2DController';
-import { getClosestEdgeInModelSpace } from '../js/helpers/Helpers';
+import ActionsEnum from '../js/enums/ActionsEnum';
+import { getGridPointInModelSpace } from '../js/helpers/Helpers';
 
 /* global document */
 /* global SETTINGS */
 
-export default class Surface extends React.Component {
+/** Class for the 2D slice views */
+export default class DrawPage extends React.Component {
   static propTypes = {
     action: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
     session: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
+    cameraView: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
   }
 
   state = {
@@ -21,9 +24,9 @@ export default class Surface extends React.Component {
   componentDidMount() {
     this.isWired = false;
 
-    this.canvas = document.getElementById('surface');
+    this.canvas = document.getElementById('draw');
     document.addEventListener('keydown', this.handleKeyDown);
-    this.canvas.addEventListener('click', this.handleClick);
+    this.canvas.addEventListener('mousedown', this.handleClick);
 
     // If the model had already been created, immediately wire
     this.wire();
@@ -36,7 +39,7 @@ export default class Surface extends React.Component {
 
   componentWillUnmount() {
     document.removeEventListener('keydown', this.handleKeyDown);
-    this.canvas.removeEventListener('click', this.handleClick);
+    this.canvas.removeEventListener('mousedown', this.handleClick);
   }
 
   /**
@@ -66,6 +69,11 @@ export default class Surface extends React.Component {
   /** Add some hotkeys to make testing easier */
   handleKeyDown = event => {
     const { controller } = this.state;
+
+    const { action } = this.props;
+    if (action === ActionsEnum.SPEAK_CONSTRAINT) {
+      return; // text area has control
+    }
 
     switch (event.keyCode) {
       case 87: // w
@@ -97,21 +105,19 @@ export default class Surface extends React.Component {
   handleClick = event => {
     const { controller } = this.state;
     const { action } = this.props;
-
-    const edge = getClosestEdgeInModelSpace(event.offsetX, event.offsetY);
-    if (!edge) {
+    const point = getGridPointInModelSpace(event.offsetX, event.offsetY);
+    if (!point) {
       return;
     }
-
-    const { x, y, side } = edge;
-    controller.doAction(action, x, y, side);
+    controller.doAction(action, point.x, point.y);
   }
 
   render() {
     const { w, h } = SETTINGS;
+
     return (
       <div>
-        <canvas id="surface" width={w} height={h} />
+        <canvas id="draw" width={w} height={h} />
       </div>
     );
   }

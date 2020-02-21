@@ -8,6 +8,8 @@ import CameraPathView from '../js/ui/CameraPathView';
 export default class Debugging3D extends React.Component {
   static propTypes = {
     session: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
+    cameraView: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
+    size: PropTypes.number.isRequired
   }
 
   componentDidMount() {
@@ -86,8 +88,8 @@ export default class Debugging3D extends React.Component {
 
     return (
       <div>
-        <div id="debuggingDisplay3D" style={{ textAlign: 'center' }}/>
-        <button style={{ border: '1px solid #E8E8DA', margin: '10px', padding: '4px 10px', color: '#E8E8DA' }} onMouseDown={this.nextRotation}>Toggle Rotate</button>
+        <div id="debuggingDisplay3D" style={{ textAlign: 'center' }} />
+        <button type="button" style={{ border: '1px solid #E8E8DA', margin: '10px', padding: '4px 10px', color: '#E8E8DA' }} onMouseDown={this.nextRotation}>Toggle Rotate</button>
       </div>
     );
   }

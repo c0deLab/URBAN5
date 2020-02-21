@@ -3,17 +3,16 @@ import PropTypes from 'prop-types';
 
 import Display2DView from '../js/ui/Display2DView';
 import Display2DController from '../js/ui/Display2DController';
-import ActionsEnum from '../js/enums/ActionsEnum';
-import { getGridPointInModelSpace } from '../js/helpers/Helpers';
+import { getClosestEdgeInModelSpace } from '../js/helpers/Helpers';
 
 /* global document */
 /* global SETTINGS */
 
-/** Class for the 2D slice views */
-export default class Draw extends React.Component {
+export default class SurfacePage extends React.Component {
   static propTypes = {
     action: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
     session: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
+    cameraView: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
   }
 
   state = {
@@ -23,9 +22,9 @@ export default class Draw extends React.Component {
   componentDidMount() {
     this.isWired = false;
 
-    this.canvas = document.getElementById('draw');
+    this.canvas = document.getElementById('surface');
     document.addEventListener('keydown', this.handleKeyDown);
-    this.canvas.addEventListener('mousedown', this.handleClick);
+    this.canvas.addEventListener('click', this.handleClick);
 
     // If the model had already been created, immediately wire
     this.wire();
@@ -38,7 +37,7 @@ export default class Draw extends React.Component {
 
   componentWillUnmount() {
     document.removeEventListener('keydown', this.handleKeyDown);
-    this.canvas.removeEventListener('mousedown', this.handleClick);
+    this.canvas.removeEventListener('click', this.handleClick);
   }
 
   /**
@@ -68,11 +67,6 @@ export default class Draw extends React.Component {
   /** Add some hotkeys to make testing easier */
   handleKeyDown = event => {
     const { controller } = this.state;
-
-    const { action } = this.props;
-    if (action === ActionsEnum.SPEAK_CONSTRAINT) {
-      return; // text area has control
-    }
 
     switch (event.keyCode) {
       case 87: // w
@@ -104,20 +98,21 @@ export default class Draw extends React.Component {
   handleClick = event => {
     const { controller } = this.state;
     const { action } = this.props;
-    console.log(action);
-    const point = getGridPointInModelSpace(event.offsetX, event.offsetY);
-    if (!point) {
+
+    const edge = getClosestEdgeInModelSpace(event.offsetX, event.offsetY);
+    if (!edge) {
       return;
     }
-    controller.doAction(action, point.x, point.y);
+
+    const { x, y, side } = edge;
+    controller.doAction(action, x, y, side);
   }
 
   render() {
     const { w, h } = SETTINGS;
-
     return (
       <div>
-        <canvas id="draw" width={w} height={h} />
+        <canvas id="surface" width={w} height={h} />
       </div>
     );
   }
