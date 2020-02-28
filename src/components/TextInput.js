@@ -19,6 +19,10 @@ export default class TextInput extends React.PureComponent {
     this.input.focus();
   }
 
+  componentDidUpdate() {
+    this.refs.input.focus();
+  }
+
   componentWillUnmount() {
     this.input.removeEventListener('keydown', this.handleKeyDown);
   }
@@ -48,7 +52,7 @@ export default class TextInput extends React.PureComponent {
 
     return (
       <div>
-        <input type="text" id="speak" autoComplete="off" spellCheck="false" value={value} onChange={this.handleChange} />
+        <input ref="input" type="text" id="speak" autoComplete="off" autoFocus={true} spellCheck="false" value={value} onChange={this.handleChange} />
       </div>
     );
   }

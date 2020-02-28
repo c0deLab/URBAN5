@@ -288,6 +288,7 @@ export default class Display2DController {
 
     // set camera to first object on update
     const objects = this.session.design.getObjects();
+    const highestNonZeroPoint = this.session.topo.getHighestNonZeroPoint();
     if (objects.length > 0) {
       objects.forEach(object => {
         const { x, y, z } = object.position;
@@ -333,6 +334,31 @@ export default class Display2DController {
         default:
           throw new Error(`camera ${this.cameraView.camera} is not recognized!`);
       }
+    } else if (highestNonZeroPoint) {
+      const { x, y, z } = highestNonZeroPoint;
+      // use default on new session that is empty
+      switch (this.cameraView.camera) {
+        case CamerasEnum.NORTH:
+          this.cameraView.slices.y = y;
+          break;
+        case CamerasEnum.SOUTH:
+          this.cameraView.slices.y = y;
+          break;
+        case CamerasEnum.EAST:
+          this.cameraView.slices.x = x;
+          break;
+        case CamerasEnum.WEST:
+          this.cameraView.slices.x = x;
+          break;
+        case CamerasEnum.TOP:
+          this.cameraView.slices.z = z;
+          break;
+        case CamerasEnum.BOTTOM:
+          this.cameraView.slices.z = z;
+          break;
+        default:
+          throw new Error(`camera ${this.cameraView.camera} is not recognized!`);
+      }
     } else {
       // use default on new session that is empty
     }
@@ -342,7 +368,6 @@ export default class Display2DController {
 
   /** Draw the current view from the current camera angle and sliceIndex */
   updateViews = () => {
-    console.log('update view', this.cameraView.slices.y);
     let sliceIndex;
     switch (this.cameraView.camera) {
       case CamerasEnum.NORTH:

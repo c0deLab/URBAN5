@@ -1,6 +1,27 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import './index.css';
-import App from './App';
+import * as THREE from 'three';
+import Demo from './Demo';
 
-ReactDOM.render(<App />, document.getElementById('root'));
+/* global window */
+/* global document */
+
+// Create a global settings object for shared settings across the project
+const SETTINGS = {
+  w: 852,
+  h: 852,
+  color: '#E8E8DA',
+  gridSize: 17,
+  xMax: 17,
+  yMax: 17,
+  zMax: 7,
+  r: 50,
+  material: new THREE.LineBasicMaterial({ color: 0xE8E8DA }),
+  stroke: 3.5,
+  clippingMax: 1,
+  userName: 'Ted'
+};
+window.SETTINGS = SETTINGS;
+
+ReactDOM.render(<Demo />, document.getElementById('root'));

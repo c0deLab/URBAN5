@@ -32,7 +32,29 @@ export default class DrawPage extends React.Component {
     this.wire();
   }
 
-  componentDidUpdate() {
+  componentDidUpdate(prevProps) {
+    const { action, session } = this.props;
+    const { action: prevAction } = prevProps;
+    if (action !== prevAction) {
+      // Add instructions on switch action
+      switch (action) {
+        case ActionsEnum.ADDCUBE:
+          session.monitor.setMessages(['Click to add a cube.']);
+          break;
+        case ActionsEnum.ADDTREE:
+          session.monitor.setMessages(['Click to add a tree.']);
+          break;
+        case ActionsEnum.ADDROOF:
+          session.monitor.setMessages(['Click to add a roof.']);
+          break;
+        case ActionsEnum.REMOVE:
+          session.monitor.setMessages(['Click to remove an object.']);
+          break;
+        default:
+          session.monitor.setMessages([]);
+          break;
+      }
+    }
     // When the model is created, we need to wire it
     this.wire();
   }

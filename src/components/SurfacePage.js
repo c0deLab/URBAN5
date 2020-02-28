@@ -4,6 +4,7 @@ import PropTypes from 'prop-types';
 import Display2DView from '../js/ui/Display2DView';
 import Display2DController from '../js/ui/Display2DController';
 import { getClosestEdgeInModelSpace } from '../js/helpers/Helpers';
+import ActionsEnum from '../js/enums/ActionsEnum';
 
 /* global document */
 /* global SETTINGS */
@@ -30,7 +31,23 @@ export default class SurfacePage extends React.Component {
     this.wire();
   }
 
-  componentDidUpdate() {
+  componentDidUpdate(prevProps) {
+    const { action, session } = this.props;
+    const { action: prevAction } = prevProps;
+    if (action !== prevAction) {
+      // Add instructions on switch action
+      switch (action) {
+        case ActionsEnum.SOLID_SURFACE:
+          session.monitor.setMessages(['Click to add surfaces on cubes to close off access.']);
+          break;
+        case ActionsEnum.NO_SURFACE:
+          session.monitor.setMessages(['Click to remove surfaces on cubes to add access.']);
+          break;
+        default:
+          break;
+      }
+    }
+
     // When the model is created, we need to wire it
     this.wire();
   }

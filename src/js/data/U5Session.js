@@ -74,7 +74,8 @@ class U5Session {
     getAt: xy => this._topo.getAt(xy),
     // Get a list of heights for the topography at the corners for a line representing it in a slice
     getSlice: (camera, slice) => this._topo.getSlice(camera, slice),
-    getBackgroundSlices: (camera, slice, max) => this._topo.getBackgroundSlices(camera, slice, max)
+    getBackgroundSlices: (camera, slice, max) => this._topo.getBackgroundSlices(camera, slice, max),
+    getHighestNonZeroPoint: () => this._topo.getHighestNonZeroPoint()
   };
 
   // Interface for the monitor
@@ -94,7 +95,6 @@ class U5Session {
   };
 
   save = () => {
-    console.log('save session!');
     const ice = U5Session.freeze(this);
     localStorage.setItem(this._id, JSON.stringify(ice));
     localStorage.setItem(`${this._id}_date`, Date.now());

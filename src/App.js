@@ -31,11 +31,11 @@ const SETTINGS = {
 };
 window.SETTINGS = SETTINGS;
 
-const timeout = 60000 * 10; // 10 minutes
-
 const defaultMainPageSettings = {
-  action: ActionsEnum.ADDCUBE, // Default action is ADDCUBE
-  displayType: 'DRAW',
+  // action: ActionsEnum.ADDCUBE, // Default action is ADDCUBE
+  // displayType: 'DRAW',
+  action: ActionsEnum.INCREASE_HEIGHT, // Default action is ADDCUBE
+  displayType: 'TOPO',
 };
 
 const defaultCameraView = () => (
@@ -43,7 +43,7 @@ const defaultCameraView = () => (
     camera: 0,
     slices: {
       x: 0,
-      y: 7,
+      y: 8,
       z: 0
     }
   }
@@ -56,7 +56,7 @@ export default class App extends React.Component {
     cameraView: defaultCameraView(),
     restartIndex: 0,
     isPanic: false,
-    displayType: 'START',
+    displayType: null,
     action: null,
     aboutToRestart: false
   }
@@ -64,19 +64,31 @@ export default class App extends React.Component {
   componentDidMount() {
     document.addEventListener('keydown', this.handleKeyDown);
     this.controlPad = new ControlPad(i => this.handleControlPadButtonPress(i));
-
-    // Add timer that checks for no activity, reset system after one minute
-    document.addEventListener('keydown', () => {
-      clearTimeout(this.resetTimer);
-      this.resetTimer = setTimeout(this.restart, timeout);
-    });
-    document.addEventListener('mousedown', () => {
-      clearTimeout(this.resetTimer);
-      this.resetTimer = setTimeout(this.restart, timeout);
-    });
-    this.resetTimer = setTimeout(this.restart, timeout);
-
     this.startSession(new U5SessionFactory().newSession());
+  }
+
+  componentDidUpdate(prevProps, prevState) {
+    const { displayType, session } = this.state;
+    const { displayType: prevDisplayType } = prevState;
+    if (displayType !== prevDisplayType) {
+      // Add instructions for each page as message on switch
+      switch (displayType) {
+        case 'TOPO':
+          session.monitor.setMessages(['Click the grid to increase elevation in the topography.']);
+          break;
+        case 'DRAW':
+          session.monitor.setMessages(['Click to add a cube.']);
+          break;
+        case 'SURF':
+          session.monitor.setMessages(['Click to remove surfaces on cubes to add access.']);
+          break;
+        case 'CALC':
+          session.monitor.setMessages(['Select a start and end point for the path.']);
+          break;
+        default:
+          break;
+      }
+    }
   }
 
   componentWillUnmount() {
@@ -120,16 +132,16 @@ export default class App extends React.Component {
       case 115: // F4
         this.setState({ debugView: 3 });
         break;
-      case 27: // ESC
-        this.restart();
-        break;
-      case 191: // /
-        this.state.session.monitor.clearConstraints(); // eslint-disable-line
-        break;
-      case 220: // \
-        this.state.session.clear(); // eslint-disable-line
-        location.reload(); // eslint-disable-line
-        break;
+      // case 27: // ESC
+      //   this.restart();
+      //   break;
+      // case 191: // /
+      //   this.state.session.monitor.clearConstraints(); // eslint-disable-line
+      //   break;
+      // case 220: // \
+      //   this.state.session.clear(); // eslint-disable-line
+      //   location.reload(); // eslint-disable-line
+      //   break;
       default:
         break;
     }
@@ -148,6 +160,7 @@ export default class App extends React.Component {
   // Reset the system for a new user
   restart = () => {
     const { restartIndex } = this.state;
+    const { onRestart } = this.props;
     const newSession = new U5SessionFactory().newSession();
     this.setState({
       session: newSession,
@@ -156,11 +169,12 @@ export default class App extends React.Component {
       isPanic: false,
       ...defaultMainPageSettings
     });
+    onRestart();
   }
 
   // handles all the button actions possible for this app
   handleActions(i) {
-    const { session, isPanic, aboutToRestart } = this.state;
+    const { session, isPanic } = this.state;
     console.log(`Do action ${i}`); // eslint-disable-line
     // 0: graphical -> START (go to start menu to load session)
     // 1: graphical -> TOPO (go to TOPO page for current session)

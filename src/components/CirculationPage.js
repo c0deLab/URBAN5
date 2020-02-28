@@ -28,8 +28,6 @@ export default class CirculationPage extends React.Component {
       session.monitor.setMessages([`${SETTINGS.userName}, No path could be found.`]);
     } else if (distance) {
       session.monitor.setMessages([`${SETTINGS.userName}, I have arrived at the destination point`, `the trip distance (in feet) is ${distance}.`]);
-    } else if (!path) {
-      session.monitor.setMessages(['Select a start and end point for the path.']);
     }
 
     return (

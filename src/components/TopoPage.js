@@ -25,7 +25,23 @@ export default class TopoPage extends React.Component {
     this.wire();
   }
 
-  componentDidUpdate() {
+  componentDidUpdate(prevProps) {
+    const { action, session } = this.props;
+    const { action: prevAction } = prevProps;
+    if (action !== prevAction) {
+      // Add instructions on switch action
+      switch (action) {
+        case ActionsEnum.INCREASE_HEIGHT:
+          session.monitor.setMessages(['Click the grid to increase elevation in the topography.']);
+          break;
+        case ActionsEnum.DECREASE_HEIGHT:
+          session.monitor.setMessages(['Click the grid to decrease elevation in the topography.']);
+          break;
+        default:
+          session.monitor.setMessages([]);
+          break;
+      }
+    }
     // When the model is created, we need to wire it
     this.wire();
   }

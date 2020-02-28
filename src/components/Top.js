@@ -45,7 +45,7 @@ export default class Top extends React.PureComponent {
   scrollElement = () => {
     window.requestAnimationFrame(() => {
       const container = document.getElementById('topContainer');
-      if (container !== undefined) {
+      if (container) {
         container.scrollTop = container.scrollHeight + 100;
       }
     });

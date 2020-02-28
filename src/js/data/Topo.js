@@ -157,9 +157,21 @@ class Topo {
     return corners;
   };
 
+  getHighestNonZeroPoint = () => {
+    let max = 0;
+    let loc = null;
+    this.heights.forEach((row, y) => row.forEach((z, x) => {
+      if (z > max) {
+        max = z;
+        loc = { x, y, z };
+      }
+    }));
+    return loc;
+  };
+
   fill = () => {
     this.heights[8][12] = 1;
-  }
+  };
 }
 
 Topo.freeze = topo => {

@@ -63,7 +63,7 @@ export default class SessionPageContainer extends React.Component {
           ActionsEnum.ADDTREE,
           ActionsEnum.ADDROOF,
           ActionsEnum.REMOVE,
-          ActionsEnum.SPEAK_CONSTRAINT
+          // ActionsEnum.SPEAK_CONSTRAINT
         ];
       case 'CALC':
         return [];
