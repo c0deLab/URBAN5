@@ -19,7 +19,7 @@ export default class UserSession extends React.Component {
 
   renderAskUserName() {
     return (
-      <div style={{ width: '1024px', height: '100%', float: 'left', padding: '80px' }}>
+      <div style={{ padding: '20px' }}>
         <div>What is your name?</div>
         <TextInput onSubmit={userName => this.setUserName(userName)} />
       </div>
@@ -59,10 +59,6 @@ export default class UserSession extends React.Component {
       body = <App onRestart={onRestart} />;
     }
 
-    return (
-      <div className="app">
-        { body }
-      </div>
-    );
+    return body;
   }
 }

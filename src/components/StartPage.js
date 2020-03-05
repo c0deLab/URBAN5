@@ -79,8 +79,8 @@ export default class StartPage extends React.Component {
     const recentIds = ids.slice(0, 8);
 
     return (
-      <div style={{ width: '1024px', height: '100%', float: 'left', padding: '80px' }}>
-        <p>Select a session to use</p>
+      <div style={{ width: '1024px', height: '100%', float: 'left', padding: '20px' }}>
+        <div>Select a session to use</div>
         <ul style={{ lineHeight: '28px' }} ref="sessions">
           <li key="new"><button type="button" onClick={() => this.onButtonClick('new')}>START NEW SESSION{ active === 0 ? '_' : '' }</button></li>
           <br/>

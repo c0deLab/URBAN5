@@ -8,10 +8,8 @@ const timeout = 60000 * 10; // 10 minutes
 
 function renderDemo() {
   return (
-    <div style={{ width: '1024px', height: '100%', float: 'left', padding: '20px' }}>
-      <div style={{ textAlign: 'center' }}>
-        <img src="./imgs/long.gif" alt="Usage Demo" style={{ width: '852px' }} />
-      </div>
+    <div style={{ textAlign: 'center' }}>
+      <video src="./imgs/startdemo.mp4" autoPlay muted loop style={{ width: '100%' }} />
     </div>
   );
 }

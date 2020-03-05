@@ -13,7 +13,10 @@ function HelpPage(props) {
           <p>Open a previously saved project by clicking on one of the links.</p>
           <br />
           <div style={{ textAlign: 'center' }}>
-            <img src="./imgs/long.gif" alt="Usage Demo" style={{ width: '60%' }} />
+            <video autoPlay autoPlay="true" loop>
+              <source src="./imgs/startdemo.mp4" type="video/mp4" />
+            </video>
+            {/*<img src="./imgs/long.gif" alt="Usage Demo" style={{ width: '60%' }} />*/}
           </div>
           <br />
           <p>Press the PANIC button to return to the start page at any time.</p>
@@ -87,7 +90,7 @@ function HelpPage(props) {
   }
 
   return (
-    <div style={{ width: '1024px', height: '100%', float: 'left', padding: '80px' }}>
+    <div style={{ width: '1024px', height: '100%', float: 'left', padding: '20px' }}>
       <h3>{ `Help for: ${displayType} Page` }</h3>
       <div>{ helpText }</div>
     </div>
