@@ -170,6 +170,8 @@ export default class App extends React.Component {
       0: 1,
       2: 2,
       3: 3,
+      4: 4,
+      5: 5,
       10: 16,
       11: 18
     };

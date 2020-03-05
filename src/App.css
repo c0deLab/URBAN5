@@ -32,6 +32,7 @@ button {
   font: inherit;
   cursor: pointer;
   outline: inherit;
+  padding: 4px 0;
 }
 
 .app {
