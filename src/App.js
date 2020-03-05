@@ -172,6 +172,10 @@ export default class App extends React.Component {
       3: 3,
       4: 4,
       5: 5,
+      6: 6,
+      9: 10,
+      8: 11,
+      7: 12,
       10: 16,
       11: 18
     };
@@ -275,6 +279,38 @@ export default class App extends React.Component {
         if (actions && actions.length > 1) {
           this.setState({
             action: actions[1]
+          });
+        }
+        break;
+      case 6: // (symbolic -> 2)
+        console.log('symbolic -> 2'); // eslint-disable-line
+        if (actions && actions.length > 2) {
+          this.setState({
+            action: actions[2]
+          });
+        }
+        break;
+      case 10: // (symbolic -> 10)
+        console.log('symbolic -> 10'); // eslint-disable-line
+        if (actions && actions.length > 4) {
+          this.setState({
+            action: actions[4]
+          });
+        }
+        break;
+      case 11: // (symbolic -> 11)
+        console.log('symbolic -> 11'); // eslint-disable-line
+        if (actions && actions.length > 5) {
+          this.setState({
+            action: actions[5]
+          });
+        }
+        break;
+      case 12: // (symbolic -> 12)
+        console.log('symbolic -> 12'); // eslint-disable-line
+        if (actions && actions.length > 6) {
+          this.setState({
+            action: actions[6]
           });
         }
         break;
