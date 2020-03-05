@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 
 import Menu from './Menu';
 import Top from './Top';
-import ActionsEnum from '../js/enums/ActionsEnum';
+import { getActions } from '../js/enums/ActionsEnum';
 
 import DrawPage from './DrawPage';
 import TopoPage from './TopoPage';
@@ -51,41 +51,7 @@ export default class SessionPageContainer extends React.Component {
 
   getActions = () => {
     const { displayType } = this.props;
-
-    switch (displayType) {
-      case 'DRAW':
-        return [
-          ActionsEnum.STEPOUT,
-          ActionsEnum.STEPIN,
-          ActionsEnum.ROTATELT,
-          ActionsEnum.ROTATERT,
-          ActionsEnum.ADDCUBE,
-          ActionsEnum.ADDTREE,
-          ActionsEnum.ADDROOF,
-          ActionsEnum.REMOVE,
-          // ActionsEnum.SPEAK_CONSTRAINT
-        ];
-      case 'CALC':
-        return [];
-      case 'TOPO':
-        return [
-          ActionsEnum.INCREASE_HEIGHT,
-          ActionsEnum.DECREASE_HEIGHT
-        ];
-      case 'SURF':
-        return [
-          ActionsEnum.STEPOUT,
-          ActionsEnum.STEPIN,
-          ActionsEnum.ROTATELT,
-          ActionsEnum.ROTATERT,
-          ActionsEnum.SOLID_SURFACE,
-          ActionsEnum.NO_SURFACE,
-        ];
-      default:
-        break;
-    }
-
-    return [];
+    return getActions(displayType);
   }
 
   render() {

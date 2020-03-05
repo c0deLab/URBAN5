@@ -7,7 +7,7 @@ import SessionPageContainer from './components/SessionPageContainer';
 import HelpPage from './components/HelpPage';
 import DebuggingConstraints from './debugging/DebuggingConstraints';
 import Debugging3D from './debugging/Debugging3D';
-import ActionsEnum from './js/enums/ActionsEnum';
+import ActionsEnum, { getActions } from './js/enums/ActionsEnum';
 import ControlPad from './js/helpers/ControlPad';
 import U5SessionFactory from './js/data/U5SessionFactory';
 
@@ -114,9 +114,18 @@ export default class App extends React.Component {
       return;
     }
 
-    // Map keys 1-8 to actions for testing purposes
-    if (event.keyCode >= 49 && event.keyCode <= 56) {
-      this.handleActions(event.keyCode - 49);
+    // Map keys 1-0 to actions for testing purposes
+    if (event.keyCode >= 48 && event.keyCode <= 57) {
+      if (event.keyCode >= 49 && event.keyCode <= 52) {
+        this.handleActions(event.keyCode - 49); // top row
+      } else if (event.keyCode >= 53 && event.keyCode <= 56) {
+        this.handleActions(event.keyCode - 53 + 16); // bottom row
+      } else if (event.keyCode === 57) {
+        this.handleActions(4); // first num button
+      } else if (event.keyCode === 48) {
+        this.handleActions(5); // second num button
+      }
+      return;
     }
 
     switch (event.keyCode) {
@@ -149,7 +158,19 @@ export default class App extends React.Component {
 
   handleControlPadButtonPress = i => {
     console.log(`Control Pad: ${i} pressed`); // eslint-disable-line
-    this.handleActions(i);
+    //     1  0  2  3
+    //  4  5  6  n  n  n
+    //  9  8  7  n  n  n
+    //     10 n  11 n
+    const keyMapping = {
+      1: 0,
+      0: 1,
+      2: 2,
+      3: 3,
+      10: 16,
+      11: 18
+    };
+    this.handleActions(keyMapping[i]);
   }
 
   startSession = session => {
@@ -174,18 +195,10 @@ export default class App extends React.Component {
 
   // handles all the button actions possible for this app
   handleActions(i) {
-    const { session, isPanic } = this.state;
+    const { session, isPanic, displayType } = this.state;
     console.log(`Do action ${i}`); // eslint-disable-line
-    // 0: graphical -> START (go to start menu to load session)
-    // 1: graphical -> TOPO (go to TOPO page for current session)
-    // 2: graphical -> DRAW (go to DRAW page for current session)
-    // 3: graphical -> SURF (go to SURF page for current session)
-    // 4: operational -> circul. (go to path selection and 3D walkthrough page)
-    // 5: theraputic -> PANIC (pull up contextual help menu for current page)
-    // 6: procedural -> RESTA. (start new session, go to DRAW page)
-    // 7: procedural -> STORE (save current sess)
 
-    if (i === 6) { // (procedural -> RESTA.)
+    if (i === 17) { // (procedural -> RESTA.)
       console.log('procedural -> RESTA.'); // eslint-disable-line
       // TODO: add a confirmation?
       session.monitor.setMessages(['Are you sure you want to restart (y)?']);
@@ -193,7 +206,7 @@ export default class App extends React.Component {
       return;
     }
 
-    if (i === 5) { // (theraputic -> PANIC)
+    if (i === 19) { // (theraputic -> PANIC)
       console.log('theraputic -> PANIC'); // eslint-disable-line
       this.setState({
         isPanic: !isPanic
@@ -209,41 +222,58 @@ export default class App extends React.Component {
       return;
     }
 
+    const actions = getActions(displayType);
     switch (i) {
-      case 0: // (graphical -> START)
+      case 16: // (graphical -> START)
         console.log('graphical -> START'); // eslint-disable-line
         this.setState({
           displayType: 'START'
         });
         break;
-      case 1: // (graphical -> TOPO)
+      case 0: // (graphical -> TOPO)
         console.log('graphical -> TOPO'); // eslint-disable-line
         this.setState({
           displayType: 'TOPO',
           action: ActionsEnum.INCREASE_HEIGHT
         });
         break;
-      case 2: // (graphical -> DRAW)
+      case 1: // (graphical -> DRAW)
         console.log('graphical -> DRAW'); // eslint-disable-line
         this.setState({
           displayType: 'DRAW',
           action: ActionsEnum.ADDCUBE
         });
         break;
-      case 3: // (graphical -> SURF)
+      case 2: // (graphical -> SURF)
         console.log('graphical -> SURF'); // eslint-disable-line
         this.setState({
           displayType: 'SURF',
           action: ActionsEnum.NO_SURFACE
         });
         break;
-      case 4: // (operational -> circul.)
+      case 3: // (operational -> circul.)
         console.log('operational -> circul.'); // eslint-disable-line
         this.setState({
           displayType: 'CALC'
         });
         break;
-      case 7: // (procedural -> STORE)
+      case 4: // (symbolic -> 0)
+        console.log('symbolic -> 0'); // eslint-disable-line
+        if (actions && actions.length > 0) {
+          this.setState({
+            action: actions[0]
+          });
+        }
+        break;
+      case 5: // (symbolic -> 1)
+        console.log('symbolic -> 1'); // eslint-disable-line
+        if (actions && actions.length > 1) {
+          this.setState({
+            action: actions[1]
+          });
+        }
+        break;
+      case 18: // (procedural -> STORE)
         console.log('procedural -> STORE'); // eslint-disable-line
         session.save();
         session.monitor.setMessages(['Session saved.']);

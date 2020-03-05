@@ -24,4 +24,10 @@ const SETTINGS = {
 };
 window.SETTINGS = SETTINGS;
 
+window.addEventListener('touchstart', () => {
+  // the user touched the screen!
+  // remove the cursor
+  document.body.classList.add('touch');
+});
+
 ReactDOM.render(<Demo />, document.getElementById('root'));

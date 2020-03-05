@@ -27,3 +27,40 @@ const ActionsEnum = {
 };
 
 export default ActionsEnum;
+
+export function getActions(displayType) {
+  switch (displayType) {
+    case 'DRAW':
+      return [
+        ActionsEnum.STEPOUT,
+        ActionsEnum.STEPIN,
+        ActionsEnum.ROTATELT,
+        ActionsEnum.ROTATERT,
+        ActionsEnum.ADDCUBE,
+        ActionsEnum.ADDTREE,
+        ActionsEnum.ADDROOF,
+        ActionsEnum.REMOVE,
+        ActionsEnum.SPEAK_CONSTRAINT
+      ];
+    case 'CALC':
+      return [];
+    case 'TOPO':
+      return [
+        ActionsEnum.INCREASE_HEIGHT,
+        ActionsEnum.DECREASE_HEIGHT
+      ];
+    case 'SURF':
+      return [
+        ActionsEnum.STEPOUT,
+        ActionsEnum.STEPIN,
+        ActionsEnum.ROTATELT,
+        ActionsEnum.ROTATERT,
+        ActionsEnum.SOLID_SURFACE,
+        ActionsEnum.NO_SURFACE,
+      ];
+    default:
+      break;
+  }
+
+  return [];
+  }
