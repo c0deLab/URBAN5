@@ -24,9 +24,4 @@ const SETTINGS = {
 };
 window.SETTINGS = SETTINGS;
 
-// window.addEventListener('gamepadconnected', () => {
-//   // if there is a gamepad, we assume it also has a touchscreen monitor and so we remove cursor
-//   document.body.classList.add('touch');
-// });
-
 ReactDOM.render(<Demo />, document.getElementById('root'));

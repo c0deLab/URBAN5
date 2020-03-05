@@ -141,6 +141,9 @@ export default class App extends React.Component {
       case 115: // F4
         this.setState({ debugView: 3 });
         break;
+      case 116: // F5
+        document.body.classList.add('touch');
+        break;
       // case 27: // ESC
       //   this.restart();
       //   break;
