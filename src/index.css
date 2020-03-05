@@ -13,6 +13,6 @@ code {
     monospace;
 }
 
-.touch #root {
+.touch * {
   cursor: none;
 }
