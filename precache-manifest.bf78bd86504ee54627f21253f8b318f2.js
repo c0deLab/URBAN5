@@ -1,11 +1,11 @@
 self.__precacheManifest = [
   {
-    "revision": "32b88f865a654007323a",
+    "revision": "4f12a8cf5980b2a14f41",
     "url": "/URBAN5/static/css/main.e41d992e.chunk.css"
   },
   {
-    "revision": "32b88f865a654007323a",
-    "url": "/URBAN5/static/js/main.32b88f86.chunk.js"
+    "revision": "4f12a8cf5980b2a14f41",
+    "url": "/URBAN5/static/js/main.4f12a8cf.chunk.js"
   },
   {
     "revision": "33648706cc5c99544b7d",
@@ -16,7 +16,7 @@ self.__precacheManifest = [
     "url": "/URBAN5/static/js/runtime~main.95ae6a75.js"
   },
   {
-    "revision": "bab10dd282fce8af53330b34eb149e75",
+    "revision": "d15a7d48fddfa8ccd0da7f5922d874bd",
     "url": "/URBAN5/index.html"
   }
 ];
