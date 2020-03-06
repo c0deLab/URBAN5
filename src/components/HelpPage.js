@@ -24,10 +24,10 @@ function HelpPage(props) {
       helpText = (
         <div>
           <p>Click on the grid to change the elevation of the topography.</p>
-          <p>When INCRS HT is selected, the elevation will increase. When DECRS HT is selected, the elevation will decrease.</p>
+          <p>&#8226; INCRS/DECRS HT</p>
           <br />
           <div style={{ textAlign: 'center', marginTop: '10px', marginBottom: '40px' }}>
-            <img src="./imgs/topoHelp.gif" style={{ width: '60%' }} alt="topo help" />
+            <img src="./imgs/topoDemo.gif" alt="Usage Demo" style={{ width: '60%' }} />
           </div>
           <p>The maximum elevation is 6, and the minimum is 0.</p>
           <br />
@@ -38,12 +38,21 @@ function HelpPage(props) {
     case 'DRAW':
       helpText = (
         <div>
-          <p>The DRAW page allows placing or removing objects (ADD CUBE/TREE/ROOF, DELETE), moving or rotating the view (STEP OUT, STEP  IN, LOOKLEFT, LOOKRGHT), and adding design constraints (SPEAK).</p>
-          <p>Select actions from the text links in the top right. The active link will determine the effect of clicks in the design.</p>
-          <p>The design is 7 units high with a topography of 17 by 17 units. A unit represents 10 ft.</p>
+          <p>The DRAW page allows placing or removing objects and adding design constraints in slices a 17x17 grid that is 7 units high. A unit represents 10 ft.</p>
           <br />
+          <p>&#8226; ADD CUBE/ROOF/TREE, DELETE</p>
           <div style={{ textAlign: 'center' }}>
-            <img src="./imgs/long.gif" alt="Usage Demo" style={{ width: '60%' }} />
+            <img src="./imgs/adddeleteDemo.gif" alt="Usage Demo" style={{ width: '60%' }} />
+          </div>
+          <br />
+          <p>&#8226; STEP OUT/IN, LOOK LEFT/RIGHT</p>
+          <div style={{ textAlign: 'center' }}>
+            <img src="./imgs/cameraDemo.gif" alt="Usage Demo" style={{ width: '60%' }} />
+          </div>
+          <br />
+          <p>&#8226; SPEAK</p>
+          <div style={{ textAlign: 'center' }}>
+            <img src="./imgs/cameraDemo.gif" alt="Usage Demo" style={{ width: '60%' }} />
           </div>
           <br />
           <p>Press the PANIC button to return to the DRAW page at any time.</p>
