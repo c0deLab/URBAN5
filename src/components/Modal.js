@@ -32,7 +32,7 @@ export default class Modal extends React.Component {
   render() {
     const { children } = this.props;
     return (
-      <div style={{ width: '1024px', height: '100%', float: 'left', padding: '20px' }}>
+      <div style={{ paddingTop: '20px' }}>
         { children }
       </div>
     );

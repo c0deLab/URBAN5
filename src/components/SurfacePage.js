@@ -14,6 +14,8 @@ export default class SurfacePage extends React.Component {
     action: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
     session: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
     cameraView: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
+    registerActionListener: PropTypes.func.isRequired, // eslint-disable-line react/forbid-prop-types
+    unregisterActionListener: PropTypes.func.isRequired, // eslint-disable-line react/forbid-prop-types
   }
 
   state = {
@@ -26,6 +28,9 @@ export default class SurfacePage extends React.Component {
     this.canvas = document.getElementById('surface');
     document.addEventListener('keydown', this.handleKeyDown);
     this.canvas.addEventListener('click', this.handleClick);
+
+    const { registerActionListener } = this.props;
+    registerActionListener(this.onSelectAction);
 
     // If the model had already been created, immediately wire
     this.wire();
@@ -55,6 +60,8 @@ export default class SurfacePage extends React.Component {
   componentWillUnmount() {
     document.removeEventListener('keydown', this.handleKeyDown);
     this.canvas.removeEventListener('click', this.handleClick);
+    const { unregisterActionListener } = this.props;
+    unregisterActionListener(this.onSelectAction);
   }
 
   /**
@@ -106,6 +113,26 @@ export default class SurfacePage extends React.Component {
         break;
       case 40: // down arrow
         controller.previousSlice();
+        break;
+      default:
+        break;
+    }
+  }
+
+  onSelectAction = action => {
+    const { controller } = this.state;
+    switch (action) {
+      case ActionsEnum.STEPIN:
+        controller.nextSlice();
+        break;
+      case ActionsEnum.STEPOUT:
+        controller.previousSlice();
+        break;
+      case ActionsEnum.ROTATELT:
+        controller.rotateLeft();
+        break;
+      case ActionsEnum.ROTATERT:
+        controller.rotateRight();
         break;
       default:
         break;

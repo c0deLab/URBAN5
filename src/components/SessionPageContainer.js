@@ -23,7 +23,31 @@ export default class SessionPageContainer extends React.Component {
 
   onMenuClick = action => {
     const { setAction } = this.props;
-    setAction(action);
+    if (this.actionListeners) {
+      this.actionListeners.forEach(fn => {
+        fn(action);
+      });
+    }
+    if (!action.nonSelectable) {
+      setAction(action);
+    }
+  }
+
+  // These functions handle passing menu clicks to the page views
+  registerActionListener = fn => {
+    if (!this.actionListeners) {
+      this.actionListeners = [];
+    }
+    this.actionListeners.push(fn);
+  }
+
+  unregisterActionListener = fn => {
+    if (this.actionListeners) {
+      const index = this.actionListeners.indexOf(fn);
+      if (index > -1) {
+        this.actionListeners.splice(index, 1);
+      }
+    }
   }
 
   getDisplay = () => {
@@ -35,13 +59,29 @@ export default class SessionPageContainer extends React.Component {
 
     switch (displayType) {
       case 'DRAW':
-        return (<DrawPage action={action} session={session} cameraView={cameraView} />);
+        return (
+          <DrawPage
+            action={action}
+            session={session}
+            cameraView={cameraView}
+            registerActionListener={this.registerActionListener}
+            unregisterActionListener={this.unregisterActionListener}
+          />
+        );
       case 'CALC':
         return (<CirculationPage session={session} />);
       case 'TOPO':
         return (<TopoPage action={action} session={session} />);
       case 'SURF':
-        return (<SurfacePage action={action} session={session} cameraView={cameraView} />);
+        return (
+          <SurfacePage
+            action={action}
+            session={session}
+            cameraView={cameraView}
+            registerActionListener={this.registerActionListener}
+            unregisterActionListener={this.unregisterActionListener}
+          />
+        );
       default:
         break;
     }

@@ -1,10 +1,10 @@
 const ActionsEnum = {
-  STEPOUT: { id: 0, label: 'STEP OUT' }, // Retreat to the previous slice
-  STEPIN: { id: 1, label: 'STEP  IN' }, // Advance to the next slice
+  STEPOUT: { id: 0, label: 'STEP OUT', nonSelectable: true }, // Retreat to the previous slice
+  STEPIN: { id: 1, label: 'STEP  IN', nonSelectable: true }, // Advance to the next slice
   ADDCUBE: { id: 2, label: 'ADD CUBE' }, // Add a cube
   REMOVE: { id: 3, label: 'DELETE' }, // Remove an object
-  ROTATELT: { id: 4, label: 'LOOKLEFT' }, // Rotate the view to the right
-  ROTATERT: { id: 5, label: 'LOOKRGHT' }, // Rotate the view to the left
+  ROTATELT: { id: 4, label: 'LOOKLEFT', nonSelectable: true }, // Rotate the view to the right
+  ROTATERT: { id: 5, label: 'LOOKRGHT', nonSelectable: true }, // Rotate the view to the left
   ADDTREE: { id: 6, label: 'ADD TREE' }, // Add a Tree (trunk and foliage)
   ADD_ROOF_NORTH: { id: 7, label: 'ADDROOFN' }, // Add Angled Roof down towards north
   ADD_ROOF_SOUTH: { id: 8, label: 'ADDROOFS' }, // Add Angled Roof down towards south

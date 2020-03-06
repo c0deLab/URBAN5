@@ -12,6 +12,7 @@ body{
   background: #000;
   -webkit-tap-highlight-color: rgba(0,0,0,0);
   -webkit-tap-highlight-color: transparent;
+  padding: 40px;
 }
 
 canvas {
@@ -37,7 +38,9 @@ button {
 
 .app {
   width: 1024px;
-  padding: 40px 20px 20px 20px;
+  height: 1024px;
+  border: 1px solid #fff;
+  padding: 20px;
   margin: 0 auto;
   background: #000;
   color: #E8E8DA;

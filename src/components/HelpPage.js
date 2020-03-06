@@ -13,10 +13,7 @@ function HelpPage(props) {
           <p>Open a previously saved project by clicking on one of the links.</p>
           <br />
           <div style={{ textAlign: 'center' }}>
-            <video autoPlay autoPlay="true" loop>
-              <source src="./imgs/startdemo.mp4" type="video/mp4" />
-            </video>
-            {/*<img src="./imgs/long.gif" alt="Usage Demo" style={{ width: '60%' }} />*/}
+            <video src="./imgs/startdemo.mp4" autoPlay muted loop style={{ width: '100%' }} />
           </div>
           <br />
           <p>Press the PANIC button to return to the start page at any time.</p>
@@ -26,13 +23,14 @@ function HelpPage(props) {
     case 'TOPO':
       helpText = (
         <div>
-          <p>Click on the grid to change the elevation of the topography at that location.</p>
-          <p>When INCRS HT is selected, clicking on the grid will increase the elevation. When DECRS HT is selected, the elevation will decrease.</p>
-          <p>The maximum elevation is 6, and the minimum is 0.</p>
+          <p>Click on the grid to change the elevation of the topography.</p>
+          <p>When INCRS HT is selected, the elevation will increase. When DECRS HT is selected, the elevation will decrease.</p>
           <br />
           <div style={{ textAlign: 'center', marginTop: '10px', marginBottom: '40px' }}>
             <img src="./imgs/topoHelp.gif" style={{ width: '60%' }} alt="topo help" />
           </div>
+          <p>The maximum elevation is 6, and the minimum is 0.</p>
+          <br />
           <p>Press the PANIC button to return to the TOPO page at any time.</p>
         </div>
       );

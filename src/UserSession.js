@@ -40,7 +40,7 @@ export default class UserSession extends React.Component {
         </ul>
         <br />
         <div style={{ textAlign: 'center' }}>
-          <img src="./imgs/long.gif" alt="Usage Demo" style={{ width: '60%' }} />
+          <video src="./imgs/startdemo.mp4" autoPlay muted loop style={{ height: '740px' }} />
         </div>
       </Modal>
     );
