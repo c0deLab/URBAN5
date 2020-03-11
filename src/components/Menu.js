@@ -33,7 +33,7 @@ export default class Menu extends React.PureComponent {
     }
 
     return (
-      <div>
+      <div id="menu">
         {buttonElements}
       </div>
     );

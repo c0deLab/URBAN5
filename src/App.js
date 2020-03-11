@@ -1,19 +1,12 @@
 import React from 'react';
 import UserSession from './components/UserSession';
+import Demo from './components/Demo';
 import ControlPad from './helpers/ControlPad';
 import './App.css';
 
 /* global document */
 
 const timeout = 60000 * 10; // 10 minutes
-
-function renderDemo() {
-  return (
-    <div style={{ textAlign: 'center' }}>
-      <video src="./imgs/startdemo.mp4" autoPlay muted loop style={{ width: '100%' }} />
-    </div>
-  );
-}
 
 // When no interaction has happened with the system for the duration of the timeout, go to demo
 // When there is any interaction in demo mode, clear
@@ -24,9 +17,9 @@ export default class App extends React.Component {
 
   componentDidMount() {
     // Reset the demo countdown on any user action
-    document.addEventListener('keydown', event => this.handleKeyDown(event));
-    document.addEventListener('mousedown', () => this.setDemoTimer());
-    this.controlPad = new ControlPad(() => this.setDemoTimer());
+    document.addEventListener('keydown', this.handleKeyDown);
+    document.addEventListener('mousedown', this.leaveDemo);
+    this.controlPad = new ControlPad(this.leaveDemo);
   }
 
   componentWillUnmount() {
@@ -34,27 +27,27 @@ export default class App extends React.Component {
       clearTimeout(this.resetTimer);
     }
 
-    document.removeEventListener('keydown', event => this.handleKeyDown(event));
-    document.removeEventListener('mousedown', () => this.setDemoTimer());
+    document.removeEventListener('keydown', this.handleKeyDown);
+    document.removeEventListener('mousedown', this.leaveDemo);
     this.controlPad.remove();
   }
 
-  setDemoTimer() {
+  handleKeyDown = event => {
+    if (event.keyCode === 27) { // esc
+      this.goToDemo();
+    } else {
+      this.leaveDemo();
+    }
+  }
+
+  goToDemo = () => this.setState({ isDemo: true })
+
+  leaveDemo = () => {
     this.setState({ isDemo: false });
     if (this.resetTimer) {
       clearTimeout(this.resetTimer);
     }
     this.resetTimer = setTimeout(this.goToDemo, timeout);
-  }
-
-  goToDemo = () => this.setState({ isDemo: true })
-
-  handleKeyDown = event => {
-    if (event.keyCode === 27) { // esc
-      this.setState({ isDemo: true });
-    } else {
-      this.setDemoTimer();
-    }
   }
 
   render() {
@@ -63,8 +56,8 @@ export default class App extends React.Component {
       <div className="app">
         {
           isDemo
-            ? renderDemo()
-            : <UserSession onRestart={() => this.setState({ isDemo: true })} />
+            ? <Demo />
+            : <UserSession onRestart={() => this.goToDemo()} />
         }
       </div>
     );

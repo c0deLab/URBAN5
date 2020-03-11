@@ -40,6 +40,50 @@ class Topo {
   getAt = position => this.heights[position.y][position.x];
 
   /**
+   * Get the topography height at the given positions (interpolated)
+   * @param {object} path - list of 2D positions in the form {x:x,y:y}
+   */
+  interpolate = path => {
+    // The elevation is dependent on the corners of the grid position
+    const corners = this.getCorners();
+
+    const dist = (x0, y0, x1, y1) => Math.sqrt(((x0 - x1) ** 2) + ((y0 - y1) ** 2));
+    // Interpolate height based on distance to given corner
+    const heights = path.map(pt => {
+      const { x, y } = pt;
+      const gx = Math.floor(x);
+      const gy = Math.floor(y);
+      const c0 = corners[gy][gx];
+      const d0 = dist(x, y, gx, gy);
+      const c1 = corners[gy + 1][gx];
+      const d1 = dist(x, y, gx, gy + 1);
+      const c2 = corners[gy][gx + 1];
+      const d2 = dist(x, y, gx + 1, gy);
+      const c3 = corners[gy + 1][gx + 1];
+      const d3 = dist(x, y, gx + 1, gy + 1);
+
+      if (d0 === 0) {
+        return c0;
+      }
+      if (d1 === 0) {
+        return c1;
+      }
+      if (d2 === 0) {
+        return c2;
+      }
+      if (d3 === 0) {
+        return c3;
+      }
+
+      const dSum = (1 / d0) + (1 / d1) + (1 / d2) + (1 / d3);
+      const z = (((1 / d0) / dSum) * c0) + (((1 / d1) / dSum) * c1) + (((1 / d2) / dSum) * c2) + (((1 / d3) / dSum) * c3);
+      return z;
+    });
+
+    return heights;
+  }
+
+  /**
    * Get a the 1D array of heights for the given slice at the camera angle
    * @param {int} camera - The CamerasEnum camera view
    * @param {int} sliceIndex - The current slice being viewed from that camera view

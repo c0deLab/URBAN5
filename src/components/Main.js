@@ -268,49 +268,37 @@ export default class Main extends React.Component {
       case 4: // (symbolic -> 0)
         console.log('symbolic -> 0'); // eslint-disable-line
         if (actions && actions.length > 0) {
-          this.setState({
-            action: actions[0]
-          });
+          document.querySelectorAll('#menu button')[0].click();
         }
         break;
       case 5: // (symbolic -> 1)
         console.log('symbolic -> 1'); // eslint-disable-line
         if (actions && actions.length > 1) {
-          this.setState({
-            action: actions[1]
-          });
+          document.querySelectorAll('#menu button')[1].click();
         }
         break;
       case 6: // (symbolic -> 2)
         console.log('symbolic -> 2'); // eslint-disable-line
         if (actions && actions.length > 2) {
-          this.setState({
-            action: actions[2]
-          });
+          document.querySelectorAll('#menu button')[2].click();
         }
         break;
       case 10: // (symbolic -> 10)
         console.log('symbolic -> 10'); // eslint-disable-line
         if (actions && actions.length > 4) {
-          this.setState({
-            action: actions[4]
-          });
+          document.querySelectorAll('#menu button')[4].click();
         }
         break;
       case 11: // (symbolic -> 11)
         console.log('symbolic -> 11'); // eslint-disable-line
         if (actions && actions.length > 5) {
-          this.setState({
-            action: actions[5]
-          });
+          document.querySelectorAll('#menu button')[5].click();
         }
         break;
       case 12: // (symbolic -> 12)
         console.log('symbolic -> 12'); // eslint-disable-line
         if (actions && actions.length > 6) {
-          this.setState({
-            action: actions[6]
-          });
+          document.querySelectorAll('#menu button')[6].click();
         }
         break;
       case 18: // (procedural -> STORE)

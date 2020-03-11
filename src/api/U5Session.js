@@ -70,8 +70,10 @@ class U5Session {
     },
     // Get the 2D array of heights for the topography
     getCorners: () => this._topo.getCorners(),
-    // Get the 2D array of heights for the topography
+    // Get the height at the given grid location
     getAt: xy => this._topo.getAt(xy),
+    // Get the heights at the given positions
+    interpolate: path => this._topo.interpolate(path),
     // Get a list of heights for the topography at the corners for a line representing it in a slice
     getSlice: (camera, slice) => this._topo.getSlice(camera, slice),
     getBackgroundSlices: (camera, slice, max) => this._topo.getBackgroundSlices(camera, slice, max),

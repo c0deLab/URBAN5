@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 
 import Display2DView from '../ui/Display2DView';
 import { getGridPointInModelSpace } from '../helpers/Helpers';
-import calculatePath from '../helpers/CalculatePath';
+import calculatePath, { stepsPer } from '../helpers/CalculatePath';
 
 /* global document */
 /* global SETTINGS */
@@ -96,10 +96,10 @@ export default class ChoosePath extends React.Component {
         this.end = null;
         this.setState({ hasStart: false });
         // Currently 3 steps per 10 feet
-        const distance = ((path.length - 1) / 3) * 10;
+        const distance = ((path.length - 1) / stepsPer) * 10;
         onSelectPath(path, distance);
       };
-      const speed = 75;
+      const speed = 150 / stepsPer;
       this.view.animateX(path, 0, speed, callback);
     }
   }

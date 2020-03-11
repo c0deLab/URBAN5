@@ -6,11 +6,13 @@ export default class ControlPad {
     this.buttonCache = {};
     this.onButtonPress = onButtonPress;
     this.eventListener = () => this._loop();
+    console.log('constructor cp');
     window.addEventListener('gamepadconnected', this.eventListener);
   }
 
   // clean up the event listener and
   remove() {
+    console.log('deconstructor cp');
     window.removeEventListener('gamepadconnected', this.eventListener);
     if (this.controlPadTimeout) {
       clearTimeout(this.controlPadTimeout);

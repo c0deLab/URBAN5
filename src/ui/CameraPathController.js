@@ -1,3 +1,5 @@
+import { stepsPer } from '../helpers/CalculatePath';
+
 /** Class for controlling a 3D view mimicking a walk through of the model */
 export default class CameraPathController {
   constructor(session, onWalkthroughEnd) {
@@ -18,14 +20,14 @@ export default class CameraPathController {
     setTimeout(() => this.animateCameraPath(), 500);
   }
 
-  /** Every 500ms update the camera position of the views to the next in the path */
+  /** Every X ms update the camera position of the views to the next in the path */
   animateCameraPath = () => {
     if (this.i < this.path.length - 2) {
       this.i += 1;
       const p = this.path[this.i];
-      const nextP = this.path[this.i + 1];
-      this.views.forEach(v => v.setCameraPosition(p, nextP));
-      setTimeout(() => this.animateCameraPath(), 150);
+      const direction = this.path[this.path.length - 1];
+      this.views.forEach(v => v.setCameraPosition(p, direction));
+      setTimeout(() => this.animateCameraPath(), 300 / stepsPer);
     } else {
       this.onWalkthroughEnd();
     }

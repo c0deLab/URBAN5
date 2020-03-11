@@ -1,6 +1,7 @@
-const PF = require('pathfinding');
-
+/* global PF */
 /* global SETTINGS */
+
+export const stepsPer = 10;
 
 // Calculate the 2D path along the ground that avoids objects, but can pass through walls (except on slopes)
 function getPathWithWallOpenings(session, start, end) {
@@ -18,7 +19,6 @@ function getPathWithWallOpenings(session, start, end) {
 
       const cornerZ = Math.max(topoCorners[y][x], topoCorners[y][x + 1], topoCorners[y + 1][x], topoCorners[y + 1][x + 1]);
       if (z !== cornerZ) {
-        console.log('z comp', z, cornerZ);
         // If you are on slope, check for all objects on slope
         let isObjectInWay = false;
         for (let h = z; h < cornerZ + 1; h += 1) {
@@ -75,33 +75,22 @@ function getPathWithWallOpenings(session, start, end) {
     }
   }
 
-  const finder = new PF.AStarFinder({
-    allowDiagonal: true,
-    dontCrossCorners: true
+  const finder = new PF.ThetaStarFinder({
+    weight: 1.1,
   });
-  let path = finder.findPath((start.x * 3) + 1, (start.y * 3) + 1, (end.x * 3) + 1, (end.y * 3) + 1, grid);
-  // get every third and adjust
-  const adjPath = [];
-  let currX = null;
-  let currY = null;
-  for (let i = 0; i < path.length; i += 1) {
-    const [x, y] = path[i];
-    const adjX = Math.floor(x / 3);
-    const adjY = Math.floor(y / 3);
-    if (adjX !== currX || adjY !== currY) {
-      currX = adjX;
-      currY = adjY;
-      // new point
-      adjPath.push({ x: currX, y: currY });
-    }
-  }
 
+  const path = finder.findPath((start.x * 3) + 1, (start.y * 3) + 1, (end.x * 3) + 1, (end.y * 3) + 1, grid);
+  const adjPath = path.map(pt => ({ x: Math.floor(pt[0] / 3), y: Math.floor(pt[1] / 3) }));
   return adjPath;
 }
 
+function getDist(start, end) {
+  return Math.sqrt(((start.x - end.x) ** 2) + ((start.y - end.y) ** 2));
+}
+
 // Given a path, interpolate between the points with a given number of steps per point
-function smoothPath(path, steps) {
-  if (steps > 1 && path.length < 2) {
+function smoothPath(path, stepsPer) {
+  if (stepsPer > 1 && path.length < 2) {
     return path;
   }
 
@@ -110,15 +99,15 @@ function smoothPath(path, steps) {
     const start = path[i - 1];
     const end = path[i];
 
+    const steps = getDist(start, end) * stepsPer;
+
     const dx = (end.x - start.x) / steps;
     const dy = (end.y - start.y) / steps;
-    const dz = (end.z - start.z) / steps;
     for (let s = 0; s < steps; s += 1) {
       const x = start.x + (s * dx);
       const y = start.y + (s * dy);
-      const z = start.z + (s * dz);
 
-      smoothedPath.push({ x, y, z });
+      smoothedPath.push({ x, y });
     }
   }
   smoothedPath.push(path[path.length - 1]);
@@ -137,24 +126,27 @@ function addNoise(path, range) {
   }
 }
 
+// Add raw 3D values (unsmoothed)
+function makePath3D(session, path) {
+  const heights = session.topo.interpolate(path);
+  const path3D = path.map((p, i) => ({ ...p, z: heights[i] }));
+  return path3D;
+}
+
 // Given a start and end point, navigate through the design along the ground
 // The path goes around objects, but can pass through walls (except on hills)
 export default function calculatePath(session, start, end) {
   const path = getPathWithWallOpenings(session, start, end);
 
-  // make 3D
-  const path3D = path.map(p => {
-    const { x, y } = p;
-    const z = session.topo.getAt({ x, y });
-    return { x, y, z };
-  });
+  // smooth path (interpolate in xy plane)
+  const smoothedPath = smoothPath(path, stepsPer);
 
-  // smooth path
-  const smoothedPath = smoothPath(path3D, 3);
+  // add heights
+  const path3D = makePath3D(session, smoothedPath);
 
   // Add noise (except for start and last spot)
   const range = 0.1;
-  addNoise(smoothedPath, range);
+  addNoise(path3D, range);
 
-  return smoothedPath;
+  return path3D;
 }
