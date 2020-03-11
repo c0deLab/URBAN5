@@ -1,6 +1,6 @@
-import Cube from '../data/Cube';
-import { Trunk, Foliage } from '../data/Tree';
-import Roof from '../data/Roof';
+import Cube from '../api/Cube';
+import { Trunk, Foliage } from '../api/Tree';
+import Roof from '../api/Roof';
 
 // Mapping of class type to name for serialization across browsers after mangling of class names
 const TypeToConstructorEnum = Object.freeze({

@@ -1,8 +1,8 @@
 import * as THREE from 'three';
 import SurfacesEnum from '../enums/SurfacesEnum';
-import Cube from '../data/Cube';
-import { Trunk, Foliage } from '../data/Tree';
-import Roof from '../data/Roof';
+import Cube from '../api/Cube';
+import { Trunk, Foliage } from '../api/Tree';
+import Roof from '../api/Roof';
 
 /* global SETTINGS */
 

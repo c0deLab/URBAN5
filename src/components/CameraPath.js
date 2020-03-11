@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import CameraPathController from '../js/ui/CameraPathController';
-import CameraPathView from '../js/ui/CameraPathView';
+import CameraPathController from '../ui/CameraPathController';
+import CameraPathView from '../ui/CameraPathView';
 
 /* global document */
 /* global SETTINGS */

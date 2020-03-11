@@ -1,6 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import CameraPathView from '../js/ui/CameraPathView';
+import CameraPathView from '../ui/CameraPathView';
 
 /* global document */
 

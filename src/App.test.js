@@ -1,4 +1,4 @@
-import parseText from './js/helpers/TextToConstraint';
+import parseText from './helpers/TextToConstraint';
 
 const compareConstraints = (text, expected) => {
   const actual = parseText(text);

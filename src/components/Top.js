@@ -1,6 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import ActionsEnum from '../js/enums/ActionsEnum';
+import ActionsEnum from '../enums/ActionsEnum';
 import TextInput from './TextInput';
 
 /* global window */

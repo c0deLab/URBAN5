@@ -1,10 +1,10 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
-import Display2DView from '../js/ui/Display2DView';
-import Display2DController from '../js/ui/Display2DController';
-import { getClosestEdgeInModelSpace } from '../js/helpers/Helpers';
-import ActionsEnum from '../js/enums/ActionsEnum';
+import Display2DView from '../ui/Display2DView';
+import Display2DController from '../ui/Display2DController';
+import { getClosestEdgeInModelSpace } from '../helpers/Helpers';
+import ActionsEnum from '../enums/ActionsEnum';
 
 /* global document */
 /* global SETTINGS */

@@ -1,7 +1,7 @@
 import React from 'react';
-import App from './App';
-import TextInput from './components/TextInput';
-import Modal from './components/Modal';
+import Main from './Main';
+import TextInput from './TextInput';
+import Modal from './Modal';
 
 /* global window */
 
@@ -56,7 +56,7 @@ export default class UserSession extends React.Component {
     } else if (!hasFinishedInstructions) {
       body = this.renderInstructions();
     } else {
-      body = <App onRestart={onRestart} />;
+      body = <Main onRestart={onRestart} />;
     }
 
     return body;
