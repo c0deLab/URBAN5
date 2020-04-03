@@ -3,7 +3,7 @@ import * as THREE from 'three';
 
 import StartPage from './StartPage';
 import SessionPageContainer from './SessionPageContainer';
-import HelpPage from './HelpPage';
+import HelpPage from '../../HelpPage';
 import DebuggingConstraints from './debugging/DebuggingConstraints';
 import Debugging3D from './debugging/Debugging3D';
 import ActionsEnum, { getActions } from '../../api/enums/ActionsEnum';
@@ -27,7 +27,7 @@ const SETTINGS = {
   material: new THREE.LineBasicMaterial({ color: 0xE8E8DA }),
   stroke: 3.5,
   clippingMax: 1,
-  userName: 'Ted'
+  userName: 'User'
 };
 window.SETTINGS = SETTINGS;
 

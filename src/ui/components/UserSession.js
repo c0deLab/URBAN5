@@ -13,7 +13,7 @@ export default class UserSession extends React.Component {
   }
 
   setUserName(userName) {
-    window.SETTINGS.userName = userName;
+    window.SETTINGS.userName = userName || 'User';
     this.setState({ hasUserName: true });
   }
 
