@@ -167,3 +167,7 @@ yarn start
 To Deploy to gh-pages:
 
 yarn deploy
+
+Test:
+
+yarn test

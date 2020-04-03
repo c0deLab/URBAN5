@@ -1,4 +1,4 @@
-import SurfacesEnum from '../enums/SurfacesEnum';
+import SurfacesEnum from './enums/SurfacesEnum';
 import Cube from './Cube';
 
 export default class Roof {

@@ -1,6 +1,6 @@
 import React from 'react';
 
-import U5SessionFactory from '../api/U5SessionFactory';
+import U5SessionFactory from '../../api/U5SessionFactory';
 
 /* global localStorage */
 /* global document */

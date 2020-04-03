@@ -1,6 +1,6 @@
 import * as THREE from 'three';
-import { getEmpty2DArray } from '../helpers/Helpers';
-import CamerasEnum from '../enums/CamerasEnum';
+import { getEmpty2DArray } from '../../helpers/Helpers';
+import CamerasEnum from '../../api/enums/CamerasEnum';
 
 /* global SETTINGS */
 

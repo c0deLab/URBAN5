@@ -1,6 +1,6 @@
 import Array2D from 'array2d';
-import ObjectsEnum from '../enums/ObjectsEnum';
-import CamerasEnum from '../enums/CamerasEnum';
+import ObjectsEnum from './enums/ObjectsEnum';
+import CamerasEnum from './enums/CamerasEnum';
 
 import { getOppositeDirection, getEmpty2DArray, getEmpty3DArray, getCellContext3D } from '../helpers/Helpers';
 
@@ -8,7 +8,7 @@ import Cube from './Cube';
 import Roof from './Roof';
 import { Foliage, Trunk } from './Tree';
 
-import TypeToConstructorEnum from '../enums/TypeToConstructorEnum';
+import TypeToConstructorEnum from './enums/TypeToConstructorEnum';
 
 /* global SETTINGS */
 

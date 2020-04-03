@@ -1,7 +1,7 @@
-import CamerasEnum from '../enums/CamerasEnum';
-import ActionsEnum from '../enums/ActionsEnum';
-import ObjectsEnum from '../enums/ObjectsEnum';
-import SurfacesEnum from '../enums/SurfacesEnum';
+import CamerasEnum from '../../api/enums/CamerasEnum';
+import ActionsEnum from '../../api/enums/ActionsEnum';
+import ObjectsEnum from '../../api/enums/ObjectsEnum';
+import SurfacesEnum from '../../api/enums/SurfacesEnum';
 
 /* global SETTINGS */
 

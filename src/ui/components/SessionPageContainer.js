@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 
 import Menu from './Menu';
 import Top from './Top';
-import { getActions } from '../enums/ActionsEnum';
+import { getActions } from '../../api/enums/ActionsEnum';
 
 import DrawPage from './DrawPage';
 import TopoPage from './TopoPage';

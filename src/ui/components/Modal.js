@@ -1,6 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import ControlPad from '../helpers/ControlPad';
+import ControlPad from '../../helpers/ControlPad';
 
 /* global document */
 

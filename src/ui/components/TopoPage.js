@@ -1,9 +1,9 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
-import TopoView from '../ui/TopoView';
-import { getGridPointInModelSpace } from '../helpers/Helpers';
-import ActionsEnum from '../enums/ActionsEnum';
+import TopoView from '../js/TopoView';
+import { getGridPointInModelSpace } from '../../helpers/Helpers';
+import ActionsEnum from '../../api/enums/ActionsEnum';
 
 /* global document */
 /* global SETTINGS */

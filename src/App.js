@@ -1,6 +1,6 @@
 import React from 'react';
-import UserSession from './components/UserSession';
-import Demo from './components/Demo';
+import UserSession from './ui/components/UserSession';
+import Demo from './ui/components/Demo';
 import ControlPad from './helpers/ControlPad';
 import './App.css';
 

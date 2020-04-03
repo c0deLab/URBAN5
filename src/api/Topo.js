@@ -1,5 +1,5 @@
 import Array2D from 'array2d';
-import CamerasEnum from '../enums/CamerasEnum';
+import CamerasEnum from './enums/CamerasEnum';
 import { getEmpty2DArray, getCellContext3x3, getCornerContext2x2 } from '../helpers/Helpers';
 
 /* global SETTINGS */

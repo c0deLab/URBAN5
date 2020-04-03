@@ -1,9 +1,9 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
-import Display2DView from '../ui/Display2DView';
-import { getGridPointInModelSpace } from '../helpers/Helpers';
-import calculatePath, { stepsPer } from '../helpers/CalculatePath';
+import Display2DView from '../js/Display2DView';
+import { getGridPointInModelSpace } from '../../helpers/Helpers';
+import calculatePath, { stepsPer } from '../../helpers/CalculatePath';
 
 /* global document */
 /* global SETTINGS */

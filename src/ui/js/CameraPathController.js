@@ -1,4 +1,4 @@
-import { stepsPer } from '../helpers/CalculatePath';
+import { stepsPer } from '../../helpers/CalculatePath';
 
 /** Class for controlling a 3D view mimicking a walk through of the model */
 export default class CameraPathController {

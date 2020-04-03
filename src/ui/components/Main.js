@@ -4,11 +4,12 @@ import * as THREE from 'three';
 import StartPage from './StartPage';
 import SessionPageContainer from './SessionPageContainer';
 import HelpPage from './HelpPage';
-import DebuggingConstraints from '../debugging/DebuggingConstraints';
-import Debugging3D from '../debugging/Debugging3D';
-import ActionsEnum, { getActions } from '../enums/ActionsEnum';
-import ControlPad from '../helpers/ControlPad';
-import U5SessionFactory from '../api/U5SessionFactory';
+import DebuggingConstraints from './debugging/DebuggingConstraints';
+import Debugging3D from './debugging/Debugging3D';
+import ActionsEnum, { getActions } from '../../api/enums/ActionsEnum';
+import ControlPad from '../../helpers/ControlPad';
+import U5SessionFactory from '../../api/U5SessionFactory';
+import controlPadMapping from '../../controlPadMapping';
 
 /* global window */
 /* global document */
@@ -160,25 +161,7 @@ export default class Main extends React.Component {
 
   handleControlPadButtonPress = i => {
     console.log(`Control Pad: ${i} pressed`); // eslint-disable-line
-    //     1  0  2  3
-    //  4  5  6  n  n  n
-    //  9  8  7  n  n  n
-    //     10 n  11 n
-    const keyMapping = {
-      1: 0,
-      0: 1,
-      2: 2,
-      3: 3,
-      4: 4,
-      5: 5,
-      6: 6,
-      9: 10,
-      8: 11,
-      7: 12,
-      10: 16,
-      11: 18
-    };
-    this.handleActions(keyMapping[i]);
+    this.handleActions(controlPadMapping[i]);
   }
 
   startSession = session => {

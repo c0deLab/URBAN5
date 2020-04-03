@@ -1,6 +1,6 @@
 import { createjs } from '@createjs/easeljs';
-import CamerasEnum from '../enums/CamerasEnum';
-import { getEmpty2DArray } from '../helpers/Helpers';
+import CamerasEnum from '../../api/enums/CamerasEnum';
+import { getEmpty2DArray } from '../../helpers/Helpers';
 
 import TopoRenderer2D from './TopoRenderer2D';
 import DesignRenderer2D from './DesignRenderer2D';
