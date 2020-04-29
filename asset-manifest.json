@@ -1,15 +1,15 @@
 {
-  "main.css": "/URBAN5/static/css/main.234b0791.chunk.css",
-  "main.js": "/URBAN5/static/js/main.4fadf292.chunk.js",
-  "main.js.map": "/URBAN5/static/js/main.4fadf292.chunk.js.map",
-  "static/css/1.0915a2cd.chunk.css": "/URBAN5/static/css/1.0915a2cd.chunk.css",
-  "static/js/1.a138d86a.chunk.js": "/URBAN5/static/js/1.a138d86a.chunk.js",
-  "static/js/1.a138d86a.chunk.js.map": "/URBAN5/static/js/1.a138d86a.chunk.js.map",
-  "runtime~main.js": "/URBAN5/static/js/runtime~main.95ae6a75.js",
-  "runtime~main.js.map": "/URBAN5/static/js/runtime~main.95ae6a75.js.map",
-  "static/css/main.234b0791.chunk.css.map": "/URBAN5/static/css/main.234b0791.chunk.css.map",
-  "static/css/1.0915a2cd.chunk.css.map": "/URBAN5/static/css/1.0915a2cd.chunk.css.map",
-  "index.html": "/URBAN5/index.html",
-  "precache-manifest.92f444a149e4b5ac1fc13ef9c79a8046.js": "/URBAN5/precache-manifest.92f444a149e4b5ac1fc13ef9c79a8046.js",
-  "service-worker.js": "/URBAN5/service-worker.js"
+  "main.css": "./static/css/main.234b0791.chunk.css",
+  "main.js": "./static/js/main.4fadf292.chunk.js",
+  "main.js.map": "./static/js/main.4fadf292.chunk.js.map",
+  "static/css/1.0915a2cd.chunk.css": "./static/css/1.0915a2cd.chunk.css",
+  "static/js/1.a138d86a.chunk.js": "./static/js/1.a138d86a.chunk.js",
+  "static/js/1.a138d86a.chunk.js.map": "./static/js/1.a138d86a.chunk.js.map",
+  "runtime~main.js": "./static/js/runtime~main.4a686d48.js",
+  "runtime~main.js.map": "./static/js/runtime~main.4a686d48.js.map",
+  "static/css/main.234b0791.chunk.css.map": "./static/css/main.234b0791.chunk.css.map",
+  "static/css/1.0915a2cd.chunk.css.map": "./static/css/1.0915a2cd.chunk.css.map",
+  "index.html": "./index.html",
+  "precache-manifest.d7f50ce5e0458b1e499e6b35536a2de1.js": "./precache-manifest.d7f50ce5e0458b1e499e6b35536a2de1.js",
+  "service-worker.js": "./service-worker.js"
 }
