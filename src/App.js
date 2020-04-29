@@ -6,7 +6,14 @@ import './App.css';
 
 /* global document */
 
-const timeout = 60000 * 10; // 10 minutes
+// demo timeout
+const timeout = 60000 * 10; // 10 minutes (in milliseconds)
+
+// disable mouse on screen
+const showMouse = true;
+
+// disable hot keys
+const enableHotKeys = true;
 
 // When no interaction has happened with the system for the duration of the timeout, go to demo
 // When there is any interaction in demo mode, clear

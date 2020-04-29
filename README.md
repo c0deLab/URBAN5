@@ -167,6 +167,8 @@ yarn start
 To Deploy to gh-pages:
 
 yarn deploy
+...or...
+npm run deploy
 
 Test:
 

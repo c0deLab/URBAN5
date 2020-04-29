@@ -1,6 +1,9 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
+import { Tab, Tabs, TabList, TabPanel } from 'react-tabs';
+import 'react-tabs/style/react-tabs.css';
+
 function HelpPage(props) {
   const { displayType } = props;
 
@@ -9,14 +12,9 @@ function HelpPage(props) {
     case 'START':
       helpText = (
         <div>
-          <p>Select START NEW SESSION to create a new project</p>
-          <p>Open a previously saved project by clicking on one of the links.</p>
-          <br />
-          <div style={{ textAlign: 'center' }}>
-            <video src="./imgs/startdemo.mp4" autoPlay muted loop style={{ width: '100%' }} />
-          </div>
-          <br />
-          <p>Press the PANIC button to return to the start page at any time.</p>
+          <p>&#8226; Select START NEW SESSION to create a new project</p>
+          <p>or</p>
+          <p>&#8226; Select a link to open a previously saved project.</p>
         </div>
       );
       break;
@@ -24,54 +22,76 @@ function HelpPage(props) {
       helpText = (
         <div>
           <p>Click on the grid to change the elevation of the topography.</p>
-          <p>&#8226; INCRS/DECRS HT</p>
-          <br />
-          <div style={{ textAlign: 'center', marginTop: '10px', marginBottom: '40px' }}>
-            <img src="./imgs/topoDemo.gif" alt="Usage Demo" style={{ width: '60%' }} />
-          </div>
           <p>The maximum elevation is 6, and the minimum is 0.</p>
           <br />
-          <p>Press the PANIC button to return to the TOPO page at any time.</p>
+          <div style={{ textAlign: 'center', marginTop: '10px', marginBottom: '40px' }}>
+            <img src="./imgs/topoDemo.gif" alt="Usage Demo" style={{ height: '555px' }} />
+          </div>
         </div>
       );
       break;
     case 'DRAW':
       helpText = (
         <div>
-          <p>The DRAW page allows placing or removing objects and adding design constraints in slices a 17x17 grid that is 7 units high. A unit represents 10 ft.</p>
+          <p>The DRAW page is for adding/removing objects and constraints. The world is 17x17x7 in dimension. Each unit represents 10 ft.</p>
           <br />
-          <p>&#8226; ADD CUBE/ROOF/TREE, DELETE</p>
-          <div style={{ textAlign: 'center' }}>
-            <img src="./imgs/adddeleteDemo.gif" alt="Usage Demo" style={{ width: '60%' }} />
-          </div>
-          <br />
-          <p>&#8226; STEP OUT/IN, LOOK LEFT/RIGHT</p>
-          <div style={{ textAlign: 'center' }}>
-            <img src="./imgs/cameraDemo.gif" alt="Usage Demo" style={{ width: '60%' }} />
-          </div>
-          <br />
-          <p>&#8226; SPEAK</p>
-          <div style={{ textAlign: 'center' }}>
-            <img src="./imgs/cameraDemo.gif" alt="Usage Demo" style={{ width: '60%' }} />
-          </div>
-          <br />
-          <p>Press the PANIC button to return to the DRAW page at any time.</p>
+          <Tabs>
+            <TabList>
+              <Tab>ADD/DELETE</Tab>
+              <Tab>CONSTRAINTS</Tab>
+              <Tab>CAMERA CONTROLS</Tab>
+            </TabList>
+
+            <TabPanel>
+              <p>Users can add and delete cubes, roofs, and trees.</p>
+              <div style={{ textAlign: 'center' }}>
+                <img src="./imgs/adddeleteDemo.gif" alt="Usage Demo" style={{ height: '555px' }} />
+              </div>
+            </TabPanel>
+            <TabPanel>
+              <p>Users can add constraints for maximum height, maximum area, and minimum distance to access by selecting SPEAK, typing the constraint, and pressing ENTER.</p>
+              <br />
+              <p>Examples include:</p>
+              <ul>
+                <li>&quot;The maximum height for buildings is 30ft tall.&quot;</li>
+                <li>&quot;The total area of the building should be less than 500 sqft&quot;</li>
+                <li>&quot;No area should be more than 30 ft from access.&quot;</li>
+              </ul>
+            </TabPanel>
+            <TabPanel>
+              <p>Users can move the camera view by selecting step in/step out or lookleft/lookrght.</p>
+              <div style={{ textAlign: 'center' }}>
+                <img src="./imgs/cameraDemo.gif" alt="Usage Demo" style={{ height: '555px' }} />
+              </div>
+            </TabPanel>
+          </Tabs>
         </div>
       );
       break;
     case 'SURF':
       helpText = (
         <div>
-          <p>The SURF page allows placing or removing surfaces on cubes (SOLIDSRF, NO SRF) and moving or rotating the view (STEP OUT, STEP  IN, LOOKLEFT, LOOKRGHT).</p>
-          <p>Select actions from the text links in the top right. The active link will determine the effect of clicks in the design.</p>
-          <p>Surfaces determine access through buildings.</p>
-          <p>The design is 7 units high with a topography of 17 by 17 units. A unit represents 10 ft.</p>
+          <p>The SURFACE page is for adding and removing surfaces on buildings. Surfaces determine access to buildings.</p>
           <br />
-          <div style={{ textAlign: 'center' }}>
-            <img src="./imgs/long.gif" alt="Usage Demo" style={{ width: '60%' }} />
-          </div>
-          <br />
-          <p>Press the PANIC button to return to the SURF page at any time.</p>
+          <Tabs>
+            <TabList>
+              <Tab>ADD/REMOVE</Tab>
+              <Tab>CAMERA CONTROLS</Tab>
+            </TabList>
+
+            <TabPanel>
+              <p>Users can add or remove surfaces on the sides of cubes.</p>
+              <div style={{ textAlign: 'center' }}>
+                <img src="./imgs/surfDemo.gif" alt="Usage Demo" style={{ height: '555px' }} />
+              </div>
+            </TabPanel>
+            <TabPanel>
+              <p>Users can move the camera view by selecting step in/step out or lookleft/lookrght.</p>
+              <div style={{ textAlign: 'center' }}>
+                <img src="./imgs/cameraDemo.gif" alt="Usage Demo" style={{ height: '555px' }} />
+              </div>
+            </TabPanel>
+          </Tabs>
         </div>
       );
       break;
@@ -79,27 +99,25 @@ function HelpPage(props) {
       helpText = (
         <div>
           <p>The CALC page allows the user to calculate circulation through the design and to see a 3D walkthrough.</p>
-          <p>First, select a start and end point on the top-down view of the design. Circles will be placed representing the start and end.</p>
-          <p>After selection, an X will find its way through the design. Once a path has been calculated, a 3D walkthrough will be rendered.</p>
-          <p>The circulation path can only move through open ground or surfaces that have been removed.</p>
+          <p>To do a walkthrough, select a start and end point on the top-down view of the design.</p>
           <br />
           <div style={{ textAlign: 'center' }}>
-            <img src="./imgs/long.gif" alt="Usage Demo" style={{ width: '60%' }} />
+            <img src="./imgs/calcDemo.gif" alt="Usage Demo" style={{ height: '555px' }} />
           </div>
-          <br />
-          <p>Press the PANIC button to return to the CALC page at any time.</p>
         </div>
       );
       break;
     default:
-      helpText = 'Press START to return to the start menu';
+      helpText = 'Press the PANIC button to return.';
       break;
   }
 
   return (
-    <div style={{ width: '1024px', height: '100%', float: 'left', padding: '20px' }}>
+    <div style={{ width: '984px', height: '100%', float: 'left', padding: '20px' }}>
       <h3>{ `Help for: ${displayType} Page` }</h3>
-      <div>{ helpText }</div>
+      <hr />
+      <div style={{ paddingTop: '8px', lineHeight: '30px' }}>{ helpText }</div>
+      <p style={{ position: 'absolute', top: '1016px' }}>{ `Press the PANIC button to return to the ${displayType} page at any time.` }</p>
     </div>
   );
 }

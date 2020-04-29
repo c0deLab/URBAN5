@@ -2,6 +2,10 @@ html {
   touch-action: manipulation;
 }
 
+.touch * {
+  cursor: none;
+}
+
 body{
   -webkit-touch-callout: none;
   -webkit-user-select: none;
@@ -39,7 +43,7 @@ button {
 .app {
   width: 1024px;
   height: 1024px;
-  border: 1px solid #fff;
+  /*border: 1px solid #fff;*/
   padding: 20px;
   margin: 0 auto;
   background: #000;
@@ -67,4 +71,13 @@ input[type="text"] {
 
 ul {
   list-style: none;
+}
+
+.react-tabs__tab {
+  padding: 12px 24px;
+  border-radius: 0;
+}
+
+.react-tabs__tab-panel {
+  padding-top: 8px;
 }
