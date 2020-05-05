@@ -3,14 +3,14 @@ import UserSession from './ui/components/UserSession';
 import Demo from './Demo';
 import ControlPad from './helpers/ControlPad';
 import './App.css';
-import settings from './flags';
 
 /* global document */
+/* global window */
 
 // When not in kiosk mode:
 // isKioskMode: show mouse on screen, enable hot keys
 // timeout: time before resetting app to demo video (timeout in minutes)
-const { isKioskMode, timeout } = settings;
+const { isKioskMode, timeout } = window.URBAN5_flags;
 
 // When no interaction has happened with the system for the duration of the timeout, go to demo
 // When there is any interaction in demo mode, clear

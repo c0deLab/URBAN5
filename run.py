@@ -57,18 +57,19 @@ def run(is_kiosk_mode, port):
 
 
 # Recompile the project with the given settings
-def compile(is_kiosk_mode, timeout):
-    # Write to settings file before build
-    file_out = open('./src/flags.js', 'w')
-    file_out.write('const settings = {\n')
-    file_out.write('  timeout: ' + str(timeout) + ', // demo timeout (in minutes)\n')
-    file_out.write('  isKioskMode: ' + str(is_kiosk_mode).lower() + ', // is going to be run in kiosk mode for display\n')
-    file_out.write('};\n')
-    file_out.write('export default settings;\n')
-    file_out.close()
-
+def build():
     # Run build scripts
     os.system('npm run build')
+
+
+def update_flags(is_kiosk_mode, timeout):
+    # Write to flags file after build
+    file_out = open('./build/lib/flags.js', 'w')
+    file_out.write('window.URBAN5_flags = {\n')
+    file_out.write('  timeout: ' + str(timeout) + ', // demo timeout (in minutes)\n')
+    file_out.write('  isKioskMode: ' + str(is_kiosk_mode).lower() + ', // is going to be run in kiosk mode for display (disable cursor and keyboard hot keys)\n')
+    file_out.write('};\n')
+    file_out.close()
 
 
 # from: https://stackoverflow.com/questions/15008758/parsing-boolean-values-with-argparse
@@ -89,7 +90,7 @@ def get_flags():
     usage = 'run.py -build <should rebuild> -timeout <timeout length> -kiosk <is kiosk mode> -port <port number>'
     timeout = 10
     is_kiosk_mode = True
-    should_rebuild = True
+    should_rebuild = False
     port = PORT
     try:
         opts, args = getopt.getopt(argv, 'hb:t:k:p:', ['build=', 'timeout=', 'kiosk=', 'port='])
@@ -118,6 +119,8 @@ if __name__ == '__main__':
 
     # compile the build folder
     if should_rebuild:
-        compile(is_kiosk_mode, timeout)
+        build()
+
+    update_flags(is_kiosk_mode, timeout)
     # start a server and launch Chrome
     run(is_kiosk_mode, port)

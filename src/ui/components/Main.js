@@ -10,14 +10,13 @@ import ActionsEnum, { getActions } from '../../api/enums/ActionsEnum';
 import ControlPad from '../../helpers/ControlPad';
 import U5SessionFactory from '../../api/U5SessionFactory';
 import controlPadMapping from '../../controlPadMapping';
-import settings from '../../flags';
-
-// When not in kiosk mode:
-// enable hot keys
-const { isKioskMode } = settings;
 
 /* global window */
 /* global document */
+
+// When not in kiosk mode:
+// enable hot keys
+const { isKioskMode } = window.URBAN5_flags;
 
 // Create a global settings object for shared settings across the project
 const SETTINGS = {

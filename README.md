@@ -156,22 +156,22 @@ When URBAN5 finds an inconsistency between what has been said (linguistically) a
 
 &nbsp;
 
-## Running the App
-(Instead of opening [https://c0delab.github.io/URBAN5/](https://c0delab.github.io/URBAN5/) in a browser)
+## Running the App Locally
+(Easiest way to run app is not locally by opening [https://c0delab.github.io/URBAN5/](https://c0delab.github.io/URBAN5/) in a browser)
 ### Served Locally:
 
-Download the folder: *[download](https://github.com/c0deLab/URBAN5/archive/master.zip)*
+Download the folder: *[URBAN5](https://github.com/c0deLab/URBAN5/archive/master.zip)*
 
-Navigate to the main folder in the command line, then run:
+Navigate to the folder in the command line, then run (`-p 8000` sets the port to 8000):
 
 ```
 python run.py -p 8000
 ```
 
-With flags example:
+To change the port number, rebuild the project after changes, update the timeout (in minutes), or disable kiosk mode, use flags:
 
 ```
-python run.py -b False -p 8008 -t 5 -k False
+python run.py -p 8008 -b True -t 5 -k False
 ```
 
 ### Optional Flags Include:
@@ -179,9 +179,9 @@ python run.py -b False -p 8008 -t 5 -k False
 
 If True, kiosk mode is true. Opens app in Chrome and disables mouse and some hotkeys.
 
-`-b` <True (default)/False>
+`-b` <True/False (default)>
 
-If True, create fresh build, else use existing. Defaults to True.
+If True, create fresh build, else use existing. Defaults to False.
 
 `-p` <Number>
 
@@ -189,21 +189,14 @@ Port number for server, defaults to 8000.
 
 `-t` <Number>
 
-Number of minutes for timeout and return to sleep mode/demo in app.
+Number of minutes for timeout to return to sleep mode/demo in app.
 
 ### Troubleshooting:
 -Make sure Python 3 is installed
 
--In an emergency, you can skip the rebuild with '-b False' (but you are stuck with the last build)
+-Try changing the port number with something like '-p 8001' in case the port was in use.
 
--If you need to rebuild (ie. you made a change to the source code or flags), make sure npm is installed.
-
--Try changing the port number with something like '-p 8001' in case the port was in use (or run 'lsof -i:$PORT' and then 'kill $pid' to kill the process if you want to free the port).
-
--Check the source code in run.py to see what is broken.
-
-
-## Local Setup
+## Local Setup For Development
 To setup the code for local editing, download the source code:
 
 *[git](https://git-scm.com/book/en/v2/Getting-Started-Installing-Git)*
