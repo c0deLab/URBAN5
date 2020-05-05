@@ -22,13 +22,14 @@ A user can select the light buttons on the right menu to choose what their actio
 
 f1: Main View
 
-f2: DEBUG: Perspective View
+f2: Combined View
 
-f3: DEBUG: View Constraints and Metrics
+f3: DEBUG: Perspective View
 
-f4: Combined View
+f4: DEBUG: View Constraints and Metrics
 
-#### Swith Mode:
+
+#### Switch Mode:
 
 1: DRAW
 
@@ -162,7 +163,7 @@ When URBAN5 finds an inconsistency between what has been said (linguistically) a
 
 Download the folder: *[URBAN5](https://github.com/c0deLab/URBAN5/archive/master.zip)*
 
-Navigate to the folder in the command line, then run (`-p 8000` sets the port to 8000):
+Navigate to the folder in the command line, the following command will open the app (with the mouse cursor hidden and test hot keys disabled) in Google Chrome in kiosk mode at port 8000 (hosted from the build/ folder, without rebuilding):
 
 ```
 python run.py -p 8000
