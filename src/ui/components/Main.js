@@ -10,6 +10,11 @@ import ActionsEnum, { getActions } from '../../api/enums/ActionsEnum';
 import ControlPad from '../../helpers/ControlPad';
 import U5SessionFactory from '../../api/U5SessionFactory';
 import controlPadMapping from '../../controlPadMapping';
+import settings from '../../flags';
+
+// When not in kiosk mode:
+// enable hot keys
+const { isKioskMode } = settings;
 
 /* global window */
 /* global document */
@@ -27,7 +32,8 @@ const SETTINGS = {
   material: new THREE.LineBasicMaterial({ color: 0xE8E8DA }),
   stroke: 3.5,
   clippingMax: 1,
-  userName: 'User'
+  userName: 'User',
+  enableHotKeys: !isKioskMode
 };
 window.SETTINGS = SETTINGS;
 
@@ -62,7 +68,9 @@ export default class Main extends React.Component {
   }
 
   componentDidMount() {
-    document.addEventListener('keydown', this.handleKeyDown);
+    if (SETTINGS.enableHotKeys) {
+      document.addEventListener('keydown', this.handleKeyDown);
+    }
     this.controlPad = new ControlPad(i => this.handleControlPadButtonPress(i));
     this.startSession(new U5SessionFactory().newSession());
   }
@@ -92,7 +100,9 @@ export default class Main extends React.Component {
   }
 
   componentWillUnmount() {
-    document.removeEventListener('keydown', this.handleKeyDown);
+    if (SETTINGS.enableHotKeys) {
+      document.removeEventListener('keydown', this.handleKeyDown);
+    }
     this.controlPad.remove();
   }
 

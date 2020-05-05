@@ -156,20 +156,58 @@ When URBAN5 finds an inconsistency between what has been said (linguistically) a
 
 &nbsp;
 
+## Running the App
+
+### Served locally:
+Navigate to the main folder in the command line, then run:
+python run.py -p 8000
+
+With flags:
+python run.py -b False -p 8008 -t 5 -k False
+
+### Optional Flags include:
+-k <True (default)/False>
+If True, kiosk mode is true. Opens app in Chrome and disables mouse and some hotkeys.
+
+-b <True (default)/False>
+If True, create fresh build, else use existing. Defaults to True.
+
+-p <Number>
+Port number for server, defaults to 8000.
+
+-t <Number>
+Number of minutes for timeout and return to sleep mode/demo in app.
+
+### Troubleshooting:
+-Make sure Python 3 is installed
+-In an emergency, you can skip the rebuild with '-b False' (but you are stuck with the last build)
+-If you need to rebuild (ie. you made a change to the source code or flags), make sure npm is installed.
+-Try changing the port number with something like '-p 8001' in case the port was in use (or run 'lsof -i:$PORT' and then 'kill $pid' to kill the process if you want to free the port).
+-Check the source code in run.py to see what is broken.
+
 ## Local Setup
 
-Download the source code, then run:
+To setup the code for local editing, download the source code:
 
+*[git](https://git-scm.com/book/en/v2/Getting-Started-Installing-Git)*
+git clone https://github.com/c0deLab/URBAN5.git
+...or...
+*[download](https://github.com/c0deLab/URBAN5/archive/master.zip)*
+
+To build, make sure [npm](https://www.npmjs.com/get-npm) or [yarn](https://classic.yarnpkg.com/en/docs/install/) is installed on the command line and then, run:
+
+npm install
+npm run start
+...or...
 yarn install
-
 yarn start
 
-To Deploy to gh-pages:
+To deploy to GitHub (gh-pages):
 
 yarn deploy
 ...or...
 npm run deploy
 
-Test:
+Test (currently only tests constraints):
 
 yarn test

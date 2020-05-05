@@ -3,17 +3,14 @@ import UserSession from './ui/components/UserSession';
 import Demo from './Demo';
 import ControlPad from './helpers/ControlPad';
 import './App.css';
+import settings from './flags';
 
 /* global document */
 
-// demo timeout
-const timeout = 60000 * 10; // 10 minutes (in milliseconds)
-
-// disable mouse on screen
-const showMouse = true;
-
-// disable hot keys
-const enableHotKeys = true;
+// When not in kiosk mode:
+// isKioskMode: show mouse on screen, enable hot keys
+// timeout: time before resetting app to demo video (timeout in minutes)
+const { isKioskMode, timeout } = settings;
 
 // When no interaction has happened with the system for the duration of the timeout, go to demo
 // When there is any interaction in demo mode, clear
@@ -41,7 +38,9 @@ export default class App extends React.Component {
 
   handleKeyDown = event => {
     if (event.keyCode === 27) { // esc
-      this.goToDemo();
+      if (!isKioskMode) { // Only allow esc key in test mode
+        this.goToDemo();
+      }
     } else {
       this.leaveDemo();
     }
@@ -54,11 +53,16 @@ export default class App extends React.Component {
     if (this.resetTimer) {
       clearTimeout(this.resetTimer);
     }
-    this.resetTimer = setTimeout(this.goToDemo, timeout);
+    this.resetTimer = setTimeout(this.goToDemo, 60000 * timeout);
   }
 
   render() {
     const { isDemo } = this.state;
+
+    if (isKioskMode) { // in exhibition, hide cursor
+      document.body.classList.add('hide-cursor');
+    }
+
     return (
       <div className="app">
         {

@@ -27,7 +27,9 @@ export default class DrawPage extends React.Component {
     this.isWired = false;
 
     this.canvas = document.getElementById('draw');
-    document.addEventListener('keydown', this.handleKeyDown);
+    if (SETTINGS.enableHotKeys) {
+      document.addEventListener('keydown', this.handleKeyDown);
+    }
     this.canvas.addEventListener('mousedown', this.handleClick);
 
     const { registerActionListener } = this.props;
@@ -65,7 +67,9 @@ export default class DrawPage extends React.Component {
   }
 
   componentWillUnmount() {
-    document.removeEventListener('keydown', this.handleKeyDown);
+    if (SETTINGS.enableHotKeys) {
+      document.removeEventListener('keydown', this.handleKeyDown);
+    }
     this.canvas.removeEventListener('mousedown', this.handleClick);
     const { unregisterActionListener } = this.props;
     unregisterActionListener(this.onSelectAction);

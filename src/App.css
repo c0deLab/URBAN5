@@ -2,7 +2,7 @@ html {
   touch-action: manipulation;
 }
 
-.touch * {
+.hide-cursor * {
   cursor: none;
 }
 

@@ -26,7 +26,9 @@ export default class SurfacePage extends React.Component {
     this.isWired = false;
 
     this.canvas = document.getElementById('surface');
-    document.addEventListener('keydown', this.handleKeyDown);
+    if (SETTINGS.enableHotKeys) {
+      document.addEventListener('keydown', this.handleKeyDown);
+    }
     this.canvas.addEventListener('click', this.handleClick);
 
     const { registerActionListener } = this.props;
@@ -58,7 +60,9 @@ export default class SurfacePage extends React.Component {
   }
 
   componentWillUnmount() {
-    document.removeEventListener('keydown', this.handleKeyDown);
+    if (SETTINGS.enableHotKeys) {
+      document.removeEventListener('keydown', this.handleKeyDown);
+    }
     this.canvas.removeEventListener('click', this.handleClick);
     const { unregisterActionListener } = this.props;
     unregisterActionListener(this.onSelectAction);
