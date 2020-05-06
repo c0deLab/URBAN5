@@ -105,9 +105,11 @@ When URBAN5 finds an inconsistency between what has been said (linguistically) a
 &nbsp;
 ## Using the Demo App
 
-The demo can be accessed [online](https://c0delab.github.io/URBAN5/) or run locally. It can be controlled through the replicas of the original control pad and touch interaction or with a mouse and keyboard hot keys in the browser.
+The demo can be accessed [online](https://c0delab.github.io/URBAN5/) or run locally. 
 
 ### Hot Key Controls (Browser)
+
+The online demo uses mouse and keyboard instead of touch interaction and external control pad.
 
 #### Switch Mode:
 
@@ -125,22 +127,22 @@ The demo can be accessed [online](https://c0delab.github.io/URBAN5/) or run loca
 
 7: STORE
 
-7: PANIC (Help)
+8: PANIC (Help)
 
 #### Debug View:
 
-f1: Main View
+F1: Main View
 
-f2: Combined View
+F2: Combined View
 
-f3: DEBUG: Perspective View
+F3: DEBUG: Perspective View
 
-f4: DEBUG: View Constraints and Metrics
+F4: DEBUG: View Constraints and Metrics
 
 &nbsp;
 ## Running the App Locally
 
-Download the folder: *[URBAN5](https://github.com/c0deLab/URBAN5/archive/master.zip)*
+Download the project: *[URBAN5](https://github.com/c0deLab/URBAN5/archive/master.zip)*
 
 Then, navigate to the folder in the command line and enter the following to open the app in Google Chrome in kiosk mode at port 8000:
 
@@ -148,7 +150,7 @@ Then, navigate to the folder in the command line and enter the following to open
 python run.py -p 8000
 ```
 
-To change the port number, update the timeout (in minutes), or disable kiosk mode, use flags:
+To change the port number, update the timeout for sleep mode (in minutes), or disable kiosk mode, use flags:
 
 ```
 python run.py -p 8008 -t 5 -k False
@@ -162,31 +164,31 @@ python run.py -b True
 
 
 ### Optional Flags Include:
-`-k` <True (default)/False>
+`-k`
 
 If True, kiosk mode is true: opens app in Chrome in kiosk mode and disables the mouse cursor and hotkeys. Otherwise, opens app in normal Chrome and enables mouse and hot key interaction. Defaults to True.
 
-`-p` <Number>
+`-p`
 
 Port number for server, defaults to 8000.
 
-`-t` <Number>
+`-t`
 
 Number of minutes for timeout to return app to sleep/demo mode.
 
-`-b` <True/False (default)>
+`-b`
 
 If True, create fresh build, else use existing. Defaults to False.
 
 ### Troubleshooting:
-If a problem is encountered, first try the following
+If a problem is encountered, try the following:
 
--Make sure Python 3 is installed
+-Make sure Python 3 is installed.
 
--Try changing the port number with something like '-p 8001' in case the port is still in use.
+-Try changing the port number with something like `-p 8001` in case the port is still in use.
 
 ## Local Setup For Development
-To setup the code for local editing, clone the *[git](https://git-scm.com/book/en/v2/Getting-Started-Installing-Git)* repo:
+To setup the code for local editing, clone the repo using *[git](https://git-scm.com/book/en/v2/Getting-Started-Installing-Git)*:
 
 ```
 git clone https://github.com/c0deLab/URBAN5.git
@@ -238,8 +240,8 @@ Videos and images should be placed in in the public/imgs/ folder and can be refe
 
 ### Updating the Control Pad Key Mapping
 
-The control pad keys should be mapped when introducing a new control pad. These mappings can be specified in the file at: src/controlPadMapping.js. Instructions are included in that file.
+The control pad keys should be mapped when introducing a new control pad. These mappings can be specified in the file: src/controlPadMapping.js. Instructions are included in that file.
 
 ### Updating Constraint Mappings
 
-Updates to what constraint text inputs match the three available constraints can be added in the src/controlPadMapping.js file. Instructions are included in that file.
+Updates to what constraint text inputs match the three available constraints can be added in the file: src/controlPadMapping.js. Instructions are included in that file.
