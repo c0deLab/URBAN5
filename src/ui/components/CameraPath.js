@@ -6,7 +6,7 @@ import CameraPathView from '../js/CameraPathView';
 /* global document */
 /* global SETTINGS */
 
-/** Class for the 3D fly throughs of the model */
+// Component for rendering the 3D walkthough on the Calc/Circulation page
 export default class CameraPath extends React.Component {
   static propTypes = {
     session: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types

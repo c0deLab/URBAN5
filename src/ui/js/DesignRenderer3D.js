@@ -6,6 +6,7 @@ import Roof from '../../api/Roof';
 
 /* global SETTINGS */
 
+/** Class responsible for rendering a 3D view of the world */
 class DesignRenderer3D {
   draw = (scene, objects) => {
     if (!objects) {

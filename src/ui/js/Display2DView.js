@@ -7,7 +7,7 @@ import DesignRenderer2D from './DesignRenderer2D';
 
 /* global SETTINGS */
 
-/** Class responsible for rednering a 2D slice */
+/** Class responsible for rendering a 2D slice of objects and topo */
 export default class Display2DView {
   constructor(canvas, session) {
     this.session = session;

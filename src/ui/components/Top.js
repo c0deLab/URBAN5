@@ -6,7 +6,7 @@ import TextInput from './TextInput';
 /* global window */
 /* global document */
 
-/** Class for the top of the screen where text interaction with URBAN5 takes place */
+// Component that renders the text input and output interaction with the system
 export default class Top extends React.PureComponent {
   static propTypes = {
     session: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types

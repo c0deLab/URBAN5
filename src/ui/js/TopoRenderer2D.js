@@ -2,6 +2,7 @@ import { createjs } from '@createjs/easeljs';
 
 /* global SETTINGS */
 
+/** Class responsible for rendering a 2D slice of topo */
 export default class TopoRenderer2D {
   constructor(stage) {
     this.stage = stage;

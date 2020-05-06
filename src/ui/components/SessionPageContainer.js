@@ -11,7 +11,7 @@ import SurfacePage from './SurfacePage';
 
 import CirculationPage from './CirculationPage';
 
-/** Class for rendering screen when a session has been started */
+// Component that handles switching between regular pages within a session
 export default class SessionPageContainer extends React.Component {
   static propTypes = {
     session: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types

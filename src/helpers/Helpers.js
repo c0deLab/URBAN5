@@ -1,5 +1,7 @@
 /* global SETTINGS */
 
+// Helper functions used by various files
+
 /**
  * Returns a 3D vector of the model position based on the normalized click
  * @param {float} clickX - Normalized x between 0 and 1

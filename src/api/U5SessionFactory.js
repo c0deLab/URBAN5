@@ -14,7 +14,6 @@ export default class U5SessionFactory {
 
     // filter out unsaved sessions
     ids = ids.filter(id => !!localStorage.getItem(id));
-    console.log(ids);
     return ids;
   }
 

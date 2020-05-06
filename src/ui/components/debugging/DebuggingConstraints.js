@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
-/** Class that renders various views helpful for debugging. */
+// Component for rendering the constraints and current metrics about the design in debug mode
 export default class DebuggingConstraints extends React.Component {
   static propTypes = {
     session: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types

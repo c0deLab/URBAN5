@@ -4,6 +4,7 @@ import CamerasEnum from '../../api/enums/CamerasEnum';
 
 /* global SETTINGS */
 
+/** Class responsible for rendering the topography in 3D */
 export default class TopoRenderer3D {
   draw = (scene, corners, cameraView) => {
     if (!corners) {

@@ -63,4 +63,4 @@ export function getActions(displayType) {
   }
 
   return [];
-  }
+}

@@ -1,5 +1,10 @@
 import { parseText } from './api/Constraint';
 
+/* global expect */
+
+// This test file contains test for various constraints
+// It can be run with 'npm run test'
+
 const compareConstraints = (text, expected) => {
   const actual = parseText(text);
   // console.log(actual);

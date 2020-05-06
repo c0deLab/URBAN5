@@ -7,7 +7,7 @@ import Roof from '../../api/Roof';
 
 /* global SETTINGS */
 
-/** Class responsible for rendering a 2D slice */
+/** Class responsible for rendering a 2D slice of objects */
 export default class DesignRenderer2D {
   constructor(stage) {
     this.stage = stage;

@@ -5,4 +5,5 @@ import App from './App';
 
 /* global document */
 
+// Root js file
 ReactDOM.render(<App />, document.getElementById('root'));

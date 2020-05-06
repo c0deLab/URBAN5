@@ -9,6 +9,7 @@ import ActionsEnum from '../../api/enums/ActionsEnum';
 /* global document */
 /* global SETTINGS */
 
+// Component that renders the Surface page
 export default class SurfacePage extends React.Component {
   static propTypes = {
     action: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types

@@ -4,7 +4,7 @@ import CameraPathView from '../../js/CameraPathView';
 
 /* global document */
 
-/** Class for the 3D fly throughs of the model */
+// Component for rendering a 3D debug view of the design world
 export default class Debugging3D extends React.Component {
   static propTypes = {
     session: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types

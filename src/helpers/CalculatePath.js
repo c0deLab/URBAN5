@@ -1,6 +1,8 @@
 /* global PF */
 /* global SETTINGS */
 
+// Functions for calculating a path through the design world for the Calc/Circulation page
+
 export const stepsPer = 10;
 
 // Calculate the 2D path along the ground that avoids objects, but can pass through walls (except on slopes)

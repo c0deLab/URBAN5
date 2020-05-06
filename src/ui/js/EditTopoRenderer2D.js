@@ -4,7 +4,7 @@ import { createjs } from '@createjs/easeljs';
 
 const grayValues = [0, 60, 110, 150, 180, 205, 225, 240];
 
-/** Class responsible for rendering a 2D slice */
+/** Class responsible for rendering a top down view of topo for editing */
 export default class EditTopoRenderer2D {
   constructor(stage) {
     this.stage = stage;

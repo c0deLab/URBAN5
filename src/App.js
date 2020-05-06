@@ -7,20 +7,17 @@ import './App.css';
 /* global document */
 /* global window */
 
-// When not in kiosk mode:
 // isKioskMode: show mouse on screen, enable hot keys
 // timeout: time before resetting app to demo video (timeout in minutes)
 const { isKioskMode, timeout } = window.URBAN5_flags;
 
-// When no interaction has happened with the system for the duration of the timeout, go to demo
-// When there is any interaction in demo mode, clear
+// Component that handles switching between the app and demo/sleep mode
 export default class App extends React.Component {
   state = {
     isDemo: true,
   }
 
   componentDidMount() {
-    // Reset the demo countdown on any user action
     document.addEventListener('keydown', this.handleKeyDown);
     document.addEventListener('mousedown', this.leaveDemo);
     this.controlPad = new ControlPad(this.leaveDemo);
@@ -53,6 +50,7 @@ export default class App extends React.Component {
     if (isDemo) { // update state if in demo mode
       this.setState({ isDemo: false });
     }
+    // Reset the demo countdown on any user action
     if (this.resetTimer) {
       clearTimeout(this.resetTimer);
     }
@@ -69,6 +67,8 @@ export default class App extends React.Component {
     return (
       <div className="app">
         {
+          // When no interaction has happened for the duration of the timeout, go to demo
+          // When there is any interaction, leave the demo
           isDemo
             ? <Demo />
             : <UserSession onRestart={() => this.goToDemo()} />

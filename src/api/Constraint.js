@@ -1,6 +1,8 @@
 import nlp from 'compromise';
 import constraintDefinitions from '../constraintDefinitions';
 
+// Defines constraints and how they are created and checked.
+
 const isNumber = value => typeof value === 'number' && !Number.isNaN(value);
 export function parseText(text) {
   let constraint;

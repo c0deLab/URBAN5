@@ -5,7 +5,7 @@ import U5SessionFactory from '../../api/U5SessionFactory';
 /* global localStorage */
 /* global document */
 
-/** Class for the rendering the view showing sessions that can be loaded */
+// Component that renders the view showing sessions that can be loaded
 export default class StartPage extends React.Component {
   state = {
     active: 0

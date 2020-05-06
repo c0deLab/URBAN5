@@ -4,7 +4,8 @@ import ControlPad from '../../helpers/ControlPad';
 
 /* global document */
 
-// Display some content and fire onDismiss on any action (to probably remove)
+// Component that displays some content and fires onDismiss on any action (to remove itself)
+// Used for the help overlays
 export default class Modal extends React.Component {
   static propTypes = {
     onDismiss: PropTypes.func.isRequired,

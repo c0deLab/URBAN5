@@ -5,7 +5,7 @@ import Modal from './Modal';
 
 /* global window */
 
-// Front door for new user session
+// Component that renders the start sequence for a new user
 export default class UserSession extends React.Component {
   state = {
     hasUserName: false,

@@ -1,5 +1,6 @@
 import React from 'react';
 
+// Component for rendering the markup for sleep/demo mode
 export default function Demo() {
   return (
     <div style={{ textAlign: 'center' }}>

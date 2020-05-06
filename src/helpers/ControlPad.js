@@ -1,6 +1,7 @@
 /* global window */
 /* global navigator */
 
+// Handles wiring a USB control pad
 export default class ControlPad {
   constructor(onButtonPress) {
     this.buttonCache = {};

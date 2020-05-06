@@ -1,9 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
-/* global document */
-
-/** Class for the top of the screen where text interaction with URBAN5 takes place */
+// Component that renders the text input for 'Speak' and name entry
 export default class TextInput extends React.PureComponent {
   static propTypes = {
     onSubmit: PropTypes.func.isRequired, // eslint-disable-line react/forbid-prop-types

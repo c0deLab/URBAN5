@@ -4,6 +4,7 @@ import PropTypes from 'prop-types';
 import { Tab, Tabs, TabList, TabPanel } from 'react-tabs';
 import 'react-tabs/style/react-tabs.css';
 
+// Component that contains the help text for all the app's pages (not including the start help page)
 function HelpPage(props) {
   const { displayType } = props;
 

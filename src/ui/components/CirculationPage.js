@@ -5,6 +5,8 @@ import CameraPath from './CameraPath';
 import ChoosePath from './ChoosePath';
 
 /* global SETTINGS */
+
+// Component for the 3D walkthough also known as the Calc or Circulation page
 export default class CirculationPage extends React.Component {
   static propTypes = {
     session: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types

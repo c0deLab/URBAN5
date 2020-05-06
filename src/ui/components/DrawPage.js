@@ -9,7 +9,7 @@ import { getGridPointInModelSpace } from '../../helpers/Helpers';
 /* global document */
 /* global SETTINGS */
 
-/** Class for the 2D slice views */
+// Component for the Draw page
 export default class DrawPage extends React.Component {
   static propTypes = {
     action: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
