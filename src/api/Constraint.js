@@ -72,6 +72,8 @@ class Constraint {
     let objectsOfType;
     if (this.type === 'Structure') {
       objectsOfType = design.getBuildings();
+    } else if (this.type === 'Any') {
+      objectsOfType = design.getObjects().map(item => item.object);
     } else {
       const objects = design.getObjects();
       objectsOfType = objects.filter(item => parseInt(this.type) === item.type);

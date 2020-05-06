@@ -14,9 +14,10 @@ export default class TextInput extends React.PureComponent {
   };
 
   componentDidMount() {
-    this.input = document.getElementById('speak');
-    this.input.addEventListener('keydown', this.handleKeyDown);
-    this.input.focus();
+    this.refs.input.addEventListener('keydown', this.handleKeyDown);
+    setTimeout(() => { // delay focus for mouse click event to pass by
+      this.refs.input.focus();
+    }, 0);
   }
 
   componentDidUpdate() {
@@ -24,7 +25,7 @@ export default class TextInput extends React.PureComponent {
   }
 
   componentWillUnmount() {
-    this.input.removeEventListener('keydown', this.handleKeyDown);
+    this.refs.input.removeEventListener('keydown', this.handleKeyDown);
   }
 
   handleKeyDown = event => {

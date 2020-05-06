@@ -6,13 +6,11 @@ export default class ControlPad {
     this.buttonCache = {};
     this.onButtonPress = onButtonPress;
     this.eventListener = () => this._loop();
-    console.log('constructor cp');
     window.addEventListener('gamepadconnected', this.eventListener);
   }
 
   // clean up the event listener and
   remove() {
-    console.log('deconstructor cp');
     window.removeEventListener('gamepadconnected', this.eventListener);
     if (this.controlPadTimeout) {
       clearTimeout(this.controlPadTimeout);
@@ -33,6 +31,7 @@ export default class ControlPad {
         // if currently pressed and cache doesn't show that it was being pressed, fire event
         if (button.pressed && !this.buttonCache[i]) {
           // fires once per press
+          console.log(`Control Pad Key: ${i}`);
           this.onButtonPress(i);
         }
         this.buttonCache[i] = button.pressed;

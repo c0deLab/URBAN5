@@ -49,7 +49,10 @@ export default class App extends React.Component {
   goToDemo = () => this.setState({ isDemo: true })
 
   leaveDemo = () => {
-    this.setState({ isDemo: false });
+    const { isDemo } = this.state;
+    if (isDemo) { // update state if in demo mode
+      this.setState({ isDemo: false });
+    }
     if (this.resetTimer) {
       clearTimeout(this.resetTimer);
     }

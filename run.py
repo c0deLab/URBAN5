@@ -8,30 +8,31 @@ import threading
 
 ########################################################################
 #
-#  This file handles building and serving app in Google Chrome.
+#  This file handles building and serving app in Google Chrome on Mac.
+#  By default, opens the app in Chrome kiosk mode with a timeout of 10 mins.
 #
 #  Usage: python run.py
-#  ex.: python run.py -g True -k False -t 10
 #
 #  Flags:
-#  -b <True (default)/False>
-#  If True, create fresh build, else use existing. Defaults to True.
+#  -b <True/False>
+#  If True, create fresh build, else use existing. Defaults to False.
 #
-#  -k <True (default)/False>
-#  If True, kiosk mode is true. Opens app in Chrome and disables mouse
-#  and some hotkeys.
+#  -k <True/False>
+#  If True, kiosk mode is true: opens app in Chrome in kiosk mode and
+#  disables mouse cursor and hotkeys. Otherwise, opens app in normal
+#  Chrome and enables mouse and hot key interaction. Defaults to True.
 #
 #  -p <Number>
 #  Port number for server, defaults to 8000.
 #
 #  -t <Number>
-#  Number of minutes for timeout and return to sleep mode/demo in app.
+#  Number of minutes for timeout that returns app to sleep/demo mode.
 #
 ########################################################################
 PORT = 8000
 
 
-# from: https://stackoverflow.com/questions/39801718/how-to-run-a-http-server-which-serves-a-specific-path
+# Start a local server that forwards requests to a given folder path. From: https://stackoverflow.com/questions/39801718/how-to-run-a-http-server-which-serves-a-specific-path
 def handler_from(directory):
     def _init(self, *args, **kwargs):
         return http.server.SimpleHTTPRequestHandler.__init__(self, *args, directory=self.directory, **kwargs)
@@ -40,12 +41,14 @@ def handler_from(directory):
                 {'__init__': _init, 'directory': directory})
 
 
+# Start a local server
 def create_server(port):
     with socketserver.TCPServer(('', port), handler_from('build')) as httpd:
         print('serving at port', port)
         httpd.serve_forever()
 
 
+# Start a local server and open Chrome pointing at that server
 def run(is_kiosk_mode, port):
     # Start server in separate thread (does not get cleaned up nicely...)
     threading.Thread(target=create_server, args=(port,)).start()
@@ -58,10 +61,11 @@ def run(is_kiosk_mode, port):
 
 # Recompile the project with the given settings
 def build():
-    # Run build scripts
+    # run build scripts
     os.system('npm run build')
 
 
+# Update the file that stores the flags for the app.
 def update_flags(is_kiosk_mode, timeout):
     # Write to flags file after build
     file_out = open('./build/lib/flags.js', 'w')
@@ -72,7 +76,7 @@ def update_flags(is_kiosk_mode, timeout):
     file_out.close()
 
 
-# from: https://stackoverflow.com/questions/15008758/parsing-boolean-values-with-argparse
+# Helper for processing command line args from: https://stackoverflow.com/questions/15008758/parsing-boolean-values-with-argparse
 def str2bool(v):
     if isinstance(v, bool):
         return v
@@ -84,7 +88,7 @@ def str2bool(v):
         raise argparse.ArgumentTypeError('Boolean value expected.')
 
 
-# Process the command line call to extract the settings
+# Process the command line call to extract the flags
 def get_flags():
     argv = sys.argv[1:]
     usage = 'run.py -build <should rebuild> -timeout <timeout length> -kiosk <is kiosk mode> -port <port number>'

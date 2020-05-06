@@ -25,7 +25,7 @@ function HelpPage(props) {
           <p>The maximum elevation is 6, and the minimum is 0.</p>
           <br />
           <div style={{ textAlign: 'center', marginTop: '10px', marginBottom: '40px' }}>
-            <img src="/imgs/topoDemo.gif" alt="Usage Demo" style={{ height: '555px' }} />
+            <img src="./imgs/topoDemo.gif" alt="Usage Demo" style={{ height: '555px' }} />
           </div>
         </div>
       );
@@ -45,7 +45,7 @@ function HelpPage(props) {
             <TabPanel>
               <p>Users can add and delete cubes, roofs, and trees.</p>
               <div style={{ textAlign: 'center' }}>
-                <img src="/imgs/adddeleteDemo.gif" alt="Usage Demo" style={{ height: '555px' }} />
+                <img src="./imgs/adddeleteDemo.gif" alt="Usage Demo" style={{ height: '555px' }} />
               </div>
             </TabPanel>
             <TabPanel>
@@ -61,7 +61,7 @@ function HelpPage(props) {
             <TabPanel>
               <p>Users can move the camera view by selecting step in/step out or lookleft/lookrght.</p>
               <div style={{ textAlign: 'center' }}>
-                <img src="/imgs/cameraDemo.gif" alt="Usage Demo" style={{ height: '555px' }} />
+                <img src="./imgs/cameraDemo.gif" alt="Usage Demo" style={{ height: '555px' }} />
               </div>
             </TabPanel>
           </Tabs>
@@ -82,13 +82,13 @@ function HelpPage(props) {
             <TabPanel>
               <p>Users can add or remove surfaces on the sides of cubes.</p>
               <div style={{ textAlign: 'center' }}>
-                <img src="/imgs/surfDemo.gif" alt="Usage Demo" style={{ height: '555px' }} />
+                <img src="./imgs/surfDemo.gif" alt="Usage Demo" style={{ height: '555px' }} />
               </div>
             </TabPanel>
             <TabPanel>
               <p>Users can move the camera view by selecting step in/step out or lookleft/lookrght.</p>
               <div style={{ textAlign: 'center' }}>
-                <img src="/imgs/cameraDemo.gif" alt="Usage Demo" style={{ height: '555px' }} />
+                <img src="./imgs/cameraDemo.gif" alt="Usage Demo" style={{ height: '555px' }} />
               </div>
             </TabPanel>
           </Tabs>
@@ -102,7 +102,7 @@ function HelpPage(props) {
           <p>To do a walkthrough, select a start and end point on the top-down view of the design.</p>
           <br />
           <div style={{ textAlign: 'center' }}>
-            <img src="/imgs/calcDemo.gif" alt="Usage Demo" style={{ height: '555px' }} />
+            <img src="./imgs/calcDemo.gif" alt="Usage Demo" style={{ height: '555px' }} />
           </div>
         </div>
       );

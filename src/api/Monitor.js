@@ -8,10 +8,10 @@ class Monitor {
     this.constraints = [];
     this.systemConstraints = [
       new Constraint({
-        text: 'no building below ground',
+        text: 'no object below ground',
         result: false,
         fn: 'MIN',
-        type: 'Structure',
+        type: 'Any',
         prop: 'ground',
         comp: '<',
         value: '0'
@@ -31,6 +31,15 @@ class Monitor {
         fn: 'SUM',
         type: 'Structure',
         prop: 'floating',
+        comp: '>',
+        value: '0' // the height of top of the building
+      }),
+      new Constraint({
+        text: 'no tree floating',
+        result: false,
+        fn: 'MIN',
+        type: 2,
+        prop: 'ground',
         comp: '>',
         value: '0' // the height of top of the building
       }),

@@ -2,10 +2,9 @@
   Use this file to adjust what input text matches which constraints.
 
   We choose if the text matches any constraint by looking for keywords that correspond
-  to the given constraint.
-  Then, the first number in the sentence is extracted and used as the value.
+  to the given constraint. Then, the first number in the sentence is extracted and used as the value.
 
-  'ambiguousKeywords' words allow us to be more generous about matching, even if we are less sure.
+  'ambiguousKeywords' allows us to be more generous about matching, even if we are less sure.
   They are applied after the first pass looking for keywords that we are more confident about.
  */
 

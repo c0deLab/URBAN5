@@ -16,7 +16,7 @@ export default class ChoosePath extends React.Component {
   }
 
   state = {
-    hasStart: false
+    hasStart: false,
   }
 
   componentDidMount() {
@@ -58,6 +58,10 @@ export default class ChoosePath extends React.Component {
   }
 
   handleClick = event => {
+    if (this.isBusy) { // prevent multiple clicks from triggering multiple times
+      return;
+    }
+
     const { hasStart } = this.state;
     const { onSelectPath, session } = this.props;
 
@@ -98,8 +102,10 @@ export default class ChoosePath extends React.Component {
         // Currently 3 steps per 10 feet
         const distance = ((path.length - 1) / stepsPer) * 10;
         onSelectPath(path, distance);
+        this.isBusy = false;
       };
       const speed = 150 / stepsPer;
+      this.isBusy = true; // prevent multiple clicks from triggering multiple times
       this.view.animateX(path, 0, speed, callback);
     }
   }

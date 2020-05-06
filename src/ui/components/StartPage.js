@@ -22,7 +22,7 @@ export default class StartPage extends React.Component {
   handleKeyDown = event => {
     const { active } = this.state;
     const ids = new U5SessionFactory().getIDList();
-    console.log(event.keyCode);
+
     switch (event.keyCode) {
       case 38: // up arrow
         //

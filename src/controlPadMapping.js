@@ -1,24 +1,33 @@
 /*
-  Use this file to map the control pad wiring to the functions of this program
+  Use this file to map the control pad wiring to the functions of the program.
 
-  This map shows the ids of the actions associated with each key on the control pad:
-       0   1   2   3
-   4   5   6   7   8    9
-   9   10  11  12  13   14
-       14  15  16  17
+  To do this, plug in the control pad and test out the buttons. Open the browser's console
+  under the menu: View -> Developer -> JavaScript Console. Then, observe the logs for:
+  'Control Pad Key: ${i}' to see which control pad keys map to which values.
 
-  The control pad should fire a given index for each of its keys. We want to map
-  from the key id to the id of the action.
+  Then, update 'controlPadMapping' to map the control pad value to the action id.
 
-  For example, if the top left button fires '7', we map '7: 0', '7' is the number
-  fired by the control pad, and '0' is the id of the action we want.
+  If more actions are needed, update the handleActions() function in src/ui/components/Main.js.
  */
 
-// Current mapping
-//     1  0  2  3
-//  4  5  6  n  n  n
-//  9  8  7  n  n  n
-//     10 n  11 n
+// Action ids:
+// 0: TOPO
+// 1: DRAW
+// 2: SURF
+// 3: CALC (circulation)
+// 4: MENU ITEM 1
+// 5: MENU ITEM 2
+// 6: MENU ITEM 3
+// 10: MENU ITEM 4
+// 11: MENU ITEM 5
+// 12: MENU ITEM 6
+// 16: START
+// 17: RESTA.
+// 18: STORE (Save)
+// 19: PANIC
+
+// first value is the value from the control pad ('Control Pad Key: ${i}') and
+// the second value is the id of the action from the list above.
 const controlPadMapping = {
   1: 0,
   0: 1,

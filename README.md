@@ -14,48 +14,6 @@ This URBAN5 reconstruction was developed by Erik Ulberg (MSCD '20) in 2019 under
 Demo: [https://c0delab.github.io/URBAN5/](https://c0delab.github.io/URBAN5/)
 
 &nbsp;
-## Controls
-
-A user can select the light buttons on the right menu to choose what their action is, however, there are also hotkeys for quicker use:
-
-#### Switch View:
-
-f1: Main View
-
-f2: Combined View
-
-f3: DEBUG: Perspective View
-
-f4: DEBUG: View Constraints and Metrics
-
-
-#### Switch Mode:
-
-1: DRAW
-
-2: SURFACE
-
-3: TOPO
-
-4: CIRCULation
-
-#### Move Camera:
-
-x: North 
-
-w: South
-
-a: East
-
-d: West 
-
-s: Top
-
-↑: Step In
-
-↓: Step Out
-
-&nbsp;
 ## Annotated Guide to URBAN5
 
 What follows shows correlations between descriptions of specific URBAN5 functions (excerpted from *The Architecture Machine* (Negroponte, 1971)) and our reconstruction.
@@ -126,7 +84,7 @@ In DRAW mode, when two cubes are place tangent to each other, **the adjoining su
 ![](https://github.com/c0deLab/URBAN5/raw/master/docs/readme/imgs/incompat.gif)
 
 &nbsp;
-Current predefined rules: No buildings floating, no buildings below ground, no roof without building below
+Current predefined rules: No objects floating, no objects below ground, no roof without building below
 
 &nbsp;
 ### Conflicts
@@ -145,44 +103,68 @@ When URBAN5 finds an inconsistency between what has been said (linguistically) a
 ![](https://github.com/c0deLab/URBAN5/raw/master/docs/readme/imgs/Image_20.png)
 
 &nbsp;
-### Startup
+## Using the Demo App
 
->the first question is whether this is the user’s first experience with the machine. If it is indeed the first time, the machine presents an unsolicited page of text that describes how to proceed, how to use the hardware, and what to do when the user gets stuck.
+The demo can be accessed [online](https://c0delab.github.io/URBAN5/) or run locally. It can be controlled through the replicas of the original control pad and touch interaction or with a mouse and keyboard hot keys in the browser.
 
-![](https://github.com/c0deLab/URBAN5/raw/master/docs/readme/imgs/Image_21.png)
+### Hot Key Controls (Browser)
+
+#### Switch Mode:
+
+1: TOPO
+
+2: DRAW
+
+3: SURFACE
+
+4: CIRCULation
+
+5: START
+
+6: RESTART
+
+7: STORE
+
+7: PANIC (Help)
+
+#### Debug View:
+
+f1: Main View
+
+f2: Combined View
+
+f3: DEBUG: Perspective View
+
+f4: DEBUG: View Constraints and Metrics
 
 &nbsp;
-![](https://github.com/c0deLab/URBAN5/raw/master/docs/readme/imgs/Image_22.png)
-![](https://github.com/c0deLab/URBAN5/raw/master/docs/readme/imgs/Image_23.png)![](https://github.com/c0deLab/URBAN5/raw/master/docs/readme/imgs/Image_24.png)
-
-&nbsp;
-
 ## Running the App Locally
-(Easiest way to run app is not locally by opening [https://c0delab.github.io/URBAN5/](https://c0delab.github.io/URBAN5/) in a browser)
-### Served Locally:
 
 Download the folder: *[URBAN5](https://github.com/c0deLab/URBAN5/archive/master.zip)*
 
-Navigate to the folder in the command line, the following command will open the app (with the mouse cursor hidden and test hot keys disabled) in Google Chrome in kiosk mode at port 8000 (hosted from the build/ folder, without rebuilding):
+Then, navigate to the folder in the command line and enter the following to open the app in Google Chrome in kiosk mode at port 8000:
 
 ```
 python run.py -p 8000
 ```
 
-To change the port number, rebuild the project after changes, update the timeout (in minutes), or disable kiosk mode, use flags:
+To change the port number, update the timeout (in minutes), or disable kiosk mode, use flags:
 
 ```
-python run.py -p 8008 -b True -t 5 -k False
+python run.py -p 8008 -t 5 -k False
 ```
+
+If a change has been made to the source code, the project must be rebuilt to reflect the change. Use the `-b` flag set to `True`:
+
+```
+python run.py -b True
+```
+
 
 ### Optional Flags Include:
 `-k` <True (default)/False>
 
-If True, kiosk mode is true. Opens app in Chrome and disables mouse and some hotkeys.
-
-`-b` <True/False (default)>
-
-If True, create fresh build, else use existing. Defaults to False.
+If True, kiosk mode is true: opens app in Chrome in kiosk mode and disables the mouse cursor and hotkeys. Otherwise, opens app in normal Chrome and enables mouse and hot key interaction. Defaults to True.
 
 `-p` <Number>
 
@@ -190,17 +172,21 @@ Port number for server, defaults to 8000.
 
 `-t` <Number>
 
-Number of minutes for timeout to return to sleep mode/demo in app.
+Number of minutes for timeout to return app to sleep/demo mode.
+
+`-b` <True/False (default)>
+
+If True, create fresh build, else use existing. Defaults to False.
 
 ### Troubleshooting:
+If a problem is encountered, first try the following
+
 -Make sure Python 3 is installed
 
--Try changing the port number with something like '-p 8001' in case the port was in use.
+-Try changing the port number with something like '-p 8001' in case the port is still in use.
 
 ## Local Setup For Development
-To setup the code for local editing, download the source code:
-
-*[git](https://git-scm.com/book/en/v2/Getting-Started-Installing-Git)*
+To setup the code for local editing, clone the *[git](https://git-scm.com/book/en/v2/Getting-Started-Installing-Git)* repo:
 
 ```
 git clone https://github.com/c0deLab/URBAN5.git
@@ -232,7 +218,7 @@ npm run deploy
 yarn deploy
 ```
 
-Test (currently only tests constraints):
+To run the test suite (currently only tests constraints):
 
 ```
 npm run test
@@ -243,3 +229,17 @@ npm run test
 ```
 yarn test
 ```
+
+### Updating the Help Pages and Demo
+
+The help text and videos can be found in the src/ folder in Demo.js, HelpPage.js, and UserSession.js (the start help text). These files use JSX to specify the text and videos in HTML. 
+
+Videos and images should be placed in in the public/imgs/ folder and can be referenced with a relative path like so: `<img src="./imgs/topoDemo.gif" />`. Using this style of path will allow it to work on GitHub, in development, and from a local build folder.
+
+### Updating the Control Pad Key Mapping
+
+The control pad keys should be mapped when introducing a new control pad. These mappings can be specified in the file at: src/controlPadMapping.js. Instructions are included in that file.
+
+### Updating Constraint Mappings
+
+Updates to what constraint text inputs match the three available constraints can be added in the src/controlPadMapping.js file. Instructions are included in that file.

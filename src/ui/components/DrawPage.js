@@ -27,9 +27,6 @@ export default class DrawPage extends React.Component {
     this.isWired = false;
 
     this.canvas = document.getElementById('draw');
-    if (SETTINGS.enableHotKeys) {
-      document.addEventListener('keydown', this.handleKeyDown);
-    }
     this.canvas.addEventListener('mousedown', this.handleClick);
 
     const { registerActionListener } = this.props;
@@ -67,9 +64,6 @@ export default class DrawPage extends React.Component {
   }
 
   componentWillUnmount() {
-    if (SETTINGS.enableHotKeys) {
-      document.removeEventListener('keydown', this.handleKeyDown);
-    }
     this.canvas.removeEventListener('mousedown', this.handleClick);
     const { unregisterActionListener } = this.props;
     unregisterActionListener(this.onSelectAction);
@@ -113,42 +107,6 @@ export default class DrawPage extends React.Component {
         break;
       case ActionsEnum.ROTATERT:
         controller.rotateRight();
-        break;
-      default:
-        break;
-    }
-  }
-
-  /** Add some hotkeys to make testing easier */
-  handleKeyDown = event => {
-    const { controller } = this.state;
-
-    const { action } = this.props;
-    if (action === ActionsEnum.SPEAK_CONSTRAINT) {
-      return; // text area has control
-    }
-
-    switch (event.keyCode) {
-      case 87: // w
-        controller.south();
-        break;
-      case 88: // x
-        controller.north();
-        break;
-      case 65: // a
-        controller.east();
-        break;
-      case 68: // d
-        controller.west();
-        break;
-      case 83: // s
-        controller.top();
-        break;
-      case 38: // up arrow
-        controller.nextSlice();
-        break;
-      case 40: // down arrow
-        controller.previousSlice();
         break;
       default:
         break;
